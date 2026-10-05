@@ -3,6 +3,8 @@ using Godot;
 public partial class Treasure : Area2D
 {
 	private Button _getButton;
+	private bool _playerInRange;   // 玩家是否在范围内
+	private bool _collected;       // 防止重复拾取
 
 	public override void _Ready()
 	{
@@ -13,42 +15,55 @@ public partial class Treasure : Area2D
 
 		// 玩家进入 / 离开碰撞范围
 		BodyEntered += OnBodyEntered;
-		BodyExited += OnBodyExited;
-
-		// 按下 get 按钮
-		_getButton.Pressed += OnGetPressed;
+		BodyExited  += OnBodyExited;
 	}
 
-	// 切换 get 的"可见 + 可交互"状态
+	// 每帧检测 F 键
+	public override void _Process(double delta)
+	{
+		if (_collected) return;
+		if (!_playerInRange) return;
+
+		// 检测 "interact" 动作是否刚被按下(即按 F 的那一刻)
+		if (Input.IsActionJustPressed("interact"))
+		{
+			OnGetPressed();
+		}
+	}
+
 	private void SetGetAvailable(bool available)
 	{
-		_getButton.Visible = available;
+		_getButton.Visible  = available;
 		_getButton.Disabled = !available;
 	}
 
 	private void OnBodyEntered(Node2D body)
 	{
+		if (_collected) return;
 		if (body.IsInGroup("player"))
 		{
+			_playerInRange = true;
 			SetGetAvailable(true);
 		}
 	}
 
 	private void OnBodyExited(Node2D body)
 	{
+		if (_collected) return;
 		if (body.IsInGroup("player"))
 		{
+			_playerInRange = false;
 			SetGetAvailable(false);
 		}
 	}
 
 	private void OnGetPressed()
 	{
-		// 只有 get 可见时才生效
-		if (!_getButton.Visible)
-		{
-			return;
-		}
+		if (_collected) return;
+		if (!_getButton.Visible) return;
+
+		_collected = true;
+		SetGetAvailable(false);
 
 		GD.Print("您已获得宝箱");
 		QueueFree();
