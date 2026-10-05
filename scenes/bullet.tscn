@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://d2u0f46gdxmmp"]
+
+[ext_resource type="Texture2D" uid="uid://duy305lxep58j" path="res://bin/下载.webp" id="1_mkf8s"]
+[ext_resource type="Script" uid="uid://cooelx1j5tap6" path="res://scenes/Bullet.cs" id="1_y25gk"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qxvy8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mkf8s")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_33age"]
+radius = 6.0
+
+[node name="Sprite2D" type="Area2D" unique_id=56878856]
+script = ExtResource("1_y25gk")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1602127718]
+scale = Vector2(0.14933628, 0.14933628)
+sprite_frames = SubResource("SpriteFrames_qxvy8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=969292836]
+shape = SubResource("CapsuleShape2D_33age")

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__godot-ai__editor_state",
+      "mcp__godot-ai__scene_get_hierarchy"
+    ]
+  }
+}

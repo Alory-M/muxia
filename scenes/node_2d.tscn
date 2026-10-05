@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://ckarjpaog4b0a"]
+
+[ext_resource type="PackedScene" uid="uid://d2u0f46gdxmmp" path="res://scenes/bullet.tscn" id="1_4dvvg"]
+[ext_resource type="Script" uid="uid://486vk5qb5yam" path="res://scenes/Therapy.cs" id="1_04qyp"]
+[ext_resource type="Texture2D" uid="uid://cd154one6u4yu" path="res://bin/sprites/knight.png" id="1_6e84v"]
+[ext_resource type="Script" uid="uid://dfwlwcftyrm0l" path="res://scenes/Player.cs" id="2_rnjyy"]
+[ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="4_4vge2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4dvvg"]
+atlas = ExtResource("1_6e84v")
+region = Rect2(0, 0, 32, 36)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_02hm2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4dvvg")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Node2D" type="Node2D" unique_id=261450284]
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1425987575]
+
+[node name="therapy" type="Button" parent="HUD" unique_id=289548059]
+offset_left = 954.0
+offset_top = 58.0
+offset_right = 1085.0
+offset_bottom = 121.0
+text = "治疗"
+script = ExtResource("1_04qyp")
+
+[node name="ColorRect" type="ColorRect" parent="HUD" unique_id=1570742043]
+offset_left = 38.0
+offset_top = 28.0
+offset_right = 320.0
+offset_bottom = 58.0
+color = Color(0.972549, 0.05882353, 0.03137255, 1)
+
+[node name="player" type="CharacterBody2D" parent="." unique_id=569109722 groups=["player"]]
+script = ExtResource("2_rnjyy")
+moveSpeed = 500.0
+bulletScene = ExtResource("1_4dvvg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="player" unique_id=705751674]
+shape = SubResource("RectangleShape2D_33age")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="player" unique_id=43979471]
+scale = Vector2(5, 5)
+sprite_frames = SubResource("SpriteFrames_02hm2")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=405162670]
+
+[node name="Treasure" parent="." unique_id=622065184 instance=ExtResource("4_4vge2")]
+position = Vector2(334, 2)
