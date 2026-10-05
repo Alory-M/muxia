@@ -5,8 +5,11 @@
 [ext_resource type="Texture2D" uid="uid://cd154one6u4yu" path="res://bin/sprites/knight.png" id="1_6e84v"]
 [ext_resource type="Script" uid="uid://cich5krm1wah0" path="res://scenes/Node2d.cs" id="1_fws66"]
 [ext_resource type="Script" uid="uid://dfwlwcftyrm0l" path="res://scenes/Player.cs" id="2_rnjyy"]
+[ext_resource type="Script" uid="uid://bwuqauq8l1axf" path="res://scenes/ColorRect.cs" id="3_3m5ht"]
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="4_4vge2"]
 [ext_resource type="Texture2D" uid="uid://dtcnvnd7x2316" path="res://bin/OIP-C.webp" id="7_hh0fu"]
+[ext_resource type="Script" uid="uid://b1ynjrijdxkey" path="res://scenes/State.cs" id="8_dubn7"]
+[ext_resource type="Script" uid="uid://cstg74fd6wd14" path="res://scenes/Clear.cs" id="9_dubn7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 
@@ -44,6 +47,7 @@ offset_top = 28.0
 offset_right = 320.0
 offset_bottom = 58.0
 color = Color(0.972549, 0.05882353, 0.03137255, 1)
+script = ExtResource("3_3m5ht")
 
 [node name="Map" type="Sprite2D" parent="HUD" unique_id=552770142]
 visible = false
@@ -51,9 +55,32 @@ position = Vector2(112.06251, 531.51117)
 scale = Vector2(0.6408228, 0.64082277)
 texture = ExtResource("7_hh0fu")
 
+[node name="btn_normal" type="Button" parent="HUD" unique_id=781705095]
+offset_left = 954.0
+offset_top = 130.0
+offset_right = 1085.0
+offset_bottom = 193.0
+text = "正常"
+
+[node name="btn_bleed" type="Button" parent="HUD" unique_id=2008822049]
+offset_left = 954.0
+offset_top = 202.0
+offset_right = 1085.0
+offset_bottom = 265.0
+text = "流血"
+
+[node name="btn_slow" type="Button" parent="HUD" unique_id=664828366]
+offset_left = 954.0
+offset_top = 274.0
+offset_right = 1085.0
+offset_bottom = 337.0
+text = "迟缓"
+
 [node name="player" type="CharacterBody2D" parent="." unique_id=569109722 groups=["player"]]
 script = ExtResource("2_rnjyy")
 moveSpeed = 500.0
+_drugCounter = 10
+hp = 50.0
 bulletScene = ExtResource("1_4dvvg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player" unique_id=705751674]
@@ -62,6 +89,14 @@ shape = SubResource("RectangleShape2D_33age")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="player" unique_id=43979471]
 scale = Vector2(5, 5)
 sprite_frames = SubResource("SpriteFrames_02hm2")
+
+[node name="state" type="Node" parent="player" unique_id=1575335001]
+script = ExtResource("8_dubn7")
+
+[node name="pack" type="Node" parent="player" unique_id=1990557265]
+
+[node name="clear" type="Node" parent="player" unique_id=1813551384]
+script = ExtResource("9_dubn7")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=405162670]
 

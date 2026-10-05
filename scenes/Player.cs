@@ -10,9 +10,22 @@ public partial class Player : CharacterBody2D
 	public int _BulletCounter = 6;
 	[Export]
 	public int _drugCounter = 1;
-	
+
+	// 绷带:按 Q 用来止血的消耗品,数量为 0 时按 Q 无效
 	[Export]
-	private float hp = 100f;
+	public int _bandageCounter = 3;
+
+	// 解毒剂:按 Z 用来解除迟缓的消耗品,数量为 0 时按 Z 无效
+	[Export]
+	public int _antidoteCounter = 3;
+	
+	// 改成 public 供 Therapy / ColorRect 读写
+	[Export]
+	public float hp = 100f;
+
+	// 血量上限。回血封顶、血条比例都以它为准,别再在别处写死 100
+	[Export]
+	public float MaxHp = 100f;
 
 	// 要发射的子弹场景,在检查器里指定 res://scenes/bullet.tscn
 	[Export]
