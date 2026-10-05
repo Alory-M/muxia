@@ -5,19 +5,70 @@ public partial class Player : CharacterBody2D
 	// 移动速度(像素/秒)
 	[Export]
 	private float moveSpeed = 100f;
-
+	
+	[Export]
+	public int _BulletCounter = 6;
+	[Export]
+	public int _drugCounter = 1;
+	
 	[Export]
 	private float hp = 100f;
-	
+
 	// 要发射的子弹场景,在检查器里指定 res://scenes/bullet.tscn
 	[Export]
 	private PackedScene bulletScene;
 
+	// 冲刺距离(像素)—— 外部可调
+	[Export]
+	private float dashDistance = 200f;
+
+	// 这段距离用多长时间跑完(秒),越小冲得越快
+	[Export]
+	private float dashDuration = 0.15f;
+
+	private Vector2 _facing = Vector2.Right;   // 最后一次的移动方向
+	private Vector2 _dashDirection = Vector2.Zero;
+	private float _dashRemaining = 0f;         // 本次冲刺还剩多少像素
+
+	private bool IsDashing => _dashRemaining > 0f;
+
+	// 冲刺速度由"距离 / 时间"推出来
+	private float DashSpeed => dashDistance / Mathf.Max(dashDuration, 0.0001f);
+
 	public override void _PhysicsProcess(double delta)
 	{
-		// 把 WASD 合成一个方向向量。
+		float dt = (float)delta;
+
+		// 冲刺中:无视常规移动,沿冲刺方向前进
+		if (IsDashing && dt > 0f)
+		{
+			Vector2 before = GlobalPosition;
+
+			// 最后一步做了限制,不会冲过头
+			float step = Mathf.Min(DashSpeed * dt, _dashRemaining);
+			Velocity = _dashDirection * (step / dt);
+			MoveAndSlide();
+
+			// 按"实际移动了多少"扣减:撞墙时冲刺会提前结束
+			_dashRemaining -= (GlobalPosition - before).Length();
+
+			// 浮点误差会让剩余距离永远差一丁点、无法真正归零,
+			// 那样就会卡死在冲刺状态(既走不动也冲不了),所以直接抹掉残值
+			if (_dashRemaining <= 0.01f)
+			{
+				_dashRemaining = 0f;
+			}
+			return;
+		}
+
+		// 常规移动:把 WASD 合成一个方向向量。
 		// GetVector 会自动把长度裁到 1,所以斜向移动不会比直线更快
 		Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
+
+		if (direction != Vector2.Zero)
+		{
+			_facing = direction.Normalized();   // 记住最后一次的移动方向
+		}
 
 		Velocity = direction * moveSpeed;
 		MoveAndSlide();
@@ -29,8 +80,30 @@ public partial class Player : CharacterBody2D
 	{
 		if (@event.IsActionPressed("mouse_press"))
 		{
-			Shoot();
+			if(_BulletCounter>0)
+			{
+				Shoot();
+				_BulletCounter-=1;
+			}
 		}
+		else if (@event.IsActionPressed("mouse_press2"))
+		{
+			StartDash();
+		}
+	}
+
+	private void StartDash()
+	{
+		if (IsDashing)
+		{
+			return;   // 冲刺途中不能再冲
+		}
+
+		// 方向 = 当前正在按的移动方向;如果站着不动,就用最后一次的移动方向
+		Vector2 input = Input.GetVector("move_left", "move_right", "move_up", "move_down");
+		_dashDirection = input != Vector2.Zero ? input.Normalized() : _facing;
+
+		_dashRemaining = dashDistance;
 	}
 
 	private void Shoot()

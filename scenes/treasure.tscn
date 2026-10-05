@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://xywe4crsrava"]
 
-[ext_resource type="Texture2D" uid="uid://b2n26ksvjp78y" path="res://bin/R-C.jpg" id="1_86quu"]
 [ext_resource type="Script" uid="uid://4od3xb2ulri5" path="res://scenes/Treasure.cs" id="1_it12x"]
+[ext_resource type="Texture2D" uid="uid://6r67goki3wxf" path="res://bin/treasure/QQ图片20261005185635.png" id="2_0g4qu"]
+[ext_resource type="Texture2D" uid="uid://v4r5wuxjt35m" path="res://bin/treasure/QQ图片20261005185635(1).png" id="3_wqbho"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 size = Vector2(441.2727, 136)
@@ -10,10 +11,18 @@ size = Vector2(441.2727, 136)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_86quu")
+"texture": ExtResource("2_0g4qu")
 }],
 "loop": 1,
-"name": &"default",
+"name": &"close",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_wqbho")
+}],
+"loop": 0,
+"name": &"open",
 "speed": 5.0
 }]
 
@@ -34,4 +43,10 @@ theme_override_font_sizes/font_size = 46
 text = "F开启宝箱"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=432834523]
+position = Vector2(3.636383, -10.909088)
+scale = Vector2(0.7084849, 0.75696975)
 sprite_frames = SubResource("SpriteFrames_33age")
+animation = &"close"
+
+[node name="Timer" type="Timer" parent="." unique_id=72510478]
+one_shot = true

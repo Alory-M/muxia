@@ -5,10 +5,14 @@ public partial class Treasure : Area2D
 	private Button _getButton;
 	private bool _playerInRange;   // 玩家是否在范围内
 	private bool _collected;       // 防止重复拾取
+	private AnimatedSprite2D _animatedSprite;
+	private Timer _freeTimer;
 
 	public override void _Ready()
 	{
 		_getButton = GetNode<Button>("get");
+		_animatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		_freeTimer = GetNode<Timer>("Timer");   // ← 这行缺失
 
 		// 初始状态:不可见、不可交互
 		SetGetAvailable(false);
@@ -16,6 +20,7 @@ public partial class Treasure : Area2D
 		// 玩家进入 / 离开碰撞范围
 		BodyEntered += OnBodyEntered;
 		BodyExited  += OnBodyExited;
+		_freeTimer.Timeout += OnFreeTimerTimeout;
 	}
 
 	// 每帧检测 F 键
@@ -63,9 +68,15 @@ public partial class Treasure : Area2D
 		if (!_getButton.Visible) return;
 
 		_collected = true;
-		SetGetAvailable(false);
-
+		_animatedSprite.Animation = "open";   // 属性，设置当前动画
+		
+		_freeTimer.Start();
+		
 		GD.Print("您已获得宝箱");
+	}
+	private void OnFreeTimerTimeout()
+	{
+		SetGetAvailable(false);
 		QueueFree();
 	}
 }
