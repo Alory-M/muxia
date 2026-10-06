@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://4od3xb2ulri5" path="res://scenes/Treasure.cs" id="1_it12x"]
 [ext_resource type="Texture2D" uid="uid://6r67goki3wxf" path="res://bin/treasure/QQ图片20261005185635.png" id="2_0g4qu"]
+[ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="2_wqbho"]
 [ext_resource type="Texture2D" uid="uid://v4r5wuxjt35m" path="res://bin/treasure/QQ图片20261005185635(1).png" id="3_wqbho"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
@@ -35,12 +36,29 @@ position = Vector2(-146.63635, 16)
 shape = SubResource("RectangleShape2D_33age")
 
 [node name="get" type="Button" parent="." unique_id=1089171805]
+self_modulate = Color(1, 1, 1, 0)
 offset_left = -425.45453
 offset_top = -127.27272
 offset_right = -145.45453
 offset_bottom = -25.454544
 theme_override_font_sizes/font_size = 46
-text = "F开启宝箱"
+
+[node name="Sprite2D" type="Sprite2D" parent="get" unique_id=1203310747]
+position = Vector2(145.45453, 54.545464)
+scale = Vector2(0.12709466, 0.12709467)
+texture = ExtResource("2_wqbho")
+
+[node name="Label" type="Label" parent="get" unique_id=332978016]
+layout_mode = 0
+offset_left = 43.63636
+offset_top = 25.454544
+offset_right = 238.63635
+offset_bottom = 84.454544
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 43
+text = "F打开宝箱"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=432834523]
 position = Vector2(3.636383, -10.909088)

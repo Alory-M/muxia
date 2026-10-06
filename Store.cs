@@ -28,6 +28,15 @@ public partial class Store : Node
 	// 玩家的钱,挂在 player/gold 上的 Gold。找不到就什么都不卖,不然会白发货
 	private Gold _gold;
 
+	// 商店界面的根节点(本节点的父节点)。它的可见性就代表"商店开没开"
+	private CanvasItem _ui;
+
+	// 开商店时冻结玩家和减益,细节都封在子节点 stop 里
+	private Stop _stop;
+
+	// 上一帧商店是开是关。用来发现"可见性变了"这件事
+	private bool _wasOpen;
+
 	// 每种商品对应的"买几份"控件,结算时读它的 Count
 	private readonly Dictionary<SupplyKind, 购买数量> _counters = new();
 
@@ -52,6 +61,16 @@ public partial class Store : Node
 			GD.PushWarning("Store: 找不到玩家身上的 Gold(player/gold),不知道有多少钱,一律不卖。");
 		}
 
+		// 界面根节点就是本节点的父节点;暂停开关挂在子节点 stop 上
+		_ui = GetParent() as CanvasItem;
+		_stop = GetNodeOrNull<Stop>("stop");
+		if (_stop == null)
+		{
+			GD.PushWarning("Store: 找不到子节点 stop,开商店时不会暂停。");
+		}
+
+		_wasOpen = _ui != null && _ui.Visible;
+
 		// 四行的对应关系。路径都从 store 出发:按钮和数量框都是 store 的兄弟节点,
 		// 所以要 ../ 上一层。数量框那四个节点名就是按物品起的,照名字找即可,
 		// 不用靠坐标去猜哪一列是哪样东西
@@ -59,6 +78,43 @@ public partial class Store : Node
 		HookRow(SupplyKind.Antidote, "../买解毒剂", "../购买解毒剂数量");
 		HookRow(SupplyKind.Bandage, "../买绷带", "../购买绷带数量");
 		HookRow(SupplyKind.Bullet, "../买子弹", "../购买子弹数量");
+	}
+
+	/// <summary>
+	/// 开/关商店界面。和 Packsys.SetOpen 同一个约定 ——
+	/// Win 关别的窗口时按这个统一调用,不用管每个界面内部是怎么实现的。
+	/// 暂停由下面 _Process 里的可见性监视负责,这里只管显隐。
+	/// </summary>
+	public void SetOpen(bool open)
+	{
+		if (_ui != null)
+		{
+			_ui.Visible = open;
+		}
+	}
+
+	// 盯住界面的可见性:一变就同步暂停状态。
+	// 这样开关商店的入口(F 键、关闭按钮、以后再加的别的)都不用各自记得去调暂停 ——
+	// 谁把界面显隐了,暂停都跟得上
+	public override void _Process(double delta)
+	{
+		if (_ui == null)
+		{
+			return;
+		}
+
+		bool open = _ui.Visible;
+		if (open == _wasOpen)
+		{
+			return;
+		}
+
+		_wasOpen = open;
+
+		if (_stop != null)
+		{
+			_stop.SetPaused(open);
+		}
 	}
 
 	/// <summary>把某个"购买"按钮和它那一行的数量框接起来</summary>
@@ -146,7 +202,8 @@ public partial class Store : Node
 		};
 	}
 
-	private int GetStock(SupplyKind kind)
+	/// <summary>当前剩余库存。Limit 要拿它来显示"剩余 xx"、并当作购买数量上限</summary>
+	public int GetStock(SupplyKind kind)
 	{
 		return kind switch
 		{

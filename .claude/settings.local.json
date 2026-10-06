@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "mcp__godot-ai__editor_state",
-      "mcp__godot-ai__scene_get_hierarchy"
+      "mcp__godot-ai__scene_get_hierarchy",
+      "mcp__godot-ai__node_get_properties"
     ]
   }
 }
