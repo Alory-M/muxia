@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://ceacl6at6huup"]
+
+[ext_resource type="Texture2D" uid="uid://ct1qvp7h5unsi" path="res://bin/pack/绷带.PNG" id="1_4gq7n"]
+
+[node name="Button" type="Button" unique_id=1986888439]
+self_modulate = Color(1, 1, 1, 0)
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="image" type="Sprite2D" parent="." unique_id=2029186005]
+position = Vector2(345, 142)
+scale = Vector2(0.0585382, 0.062769875)
+texture = ExtResource("1_4gq7n")
+
+[node name="counter" type="Label" parent="." unique_id=1853789729]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 9.419001
+anchor_bottom = 9.2560005
+offset_left = 371.0
+offset_top = 145.0
+offset_right = 335.648
+offset_bottom = 93.951996
+text = "1"

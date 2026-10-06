@@ -1,0 +1,127 @@
+[gd_scene format=3 uid="uid://bipb1owg5xw2i"]
+
+[ext_resource type="Texture2D" uid="uid://m5t5yf1s6npp" path="res://ui/商店.png" id="1_c176v"]
+[ext_resource type="Texture2D" uid="uid://dpk5nf8gdukow" path="res://bin/pack/药品.png" id="2_jdgcu"]
+[ext_resource type="Texture2D" uid="uid://mcwx1ognce4p" path="res://bin/item/物品框.png" id="3_a4gqu"]
+[ext_resource type="Texture2D" uid="uid://bg1d8ire2pdfx" path="res://bin/pack/解毒剂.png" id="3_sxxsk"]
+[ext_resource type="Texture2D" uid="uid://mtp6kfpn3d4v" path="res://bin/pack/子弹.png" id="4_a4gqu"]
+[ext_resource type="Texture2D" uid="uid://ct1qvp7h5unsi" path="res://bin/pack/绷带.PNG" id="5_mxlhg"]
+
+[node name="Control" type="Control" unique_id=1988767736]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="background" type="Sprite2D" parent="." unique_id=1675147224]
+position = Vector2(552.99994, 316)
+scale = Vector2(0.4876665, 0.48766637)
+texture = ExtResource("1_c176v")
+
+[node name="store" type="Node" parent="." unique_id=1089208150]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1613464529]
+position = Vector2(388, 264)
+scale = Vector2(0.0554301, 0.05587875)
+texture = ExtResource("3_a4gqu")
+metadata/_edit_lock_ = true
+
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=25892959]
+position = Vector2(521, 265)
+scale = Vector2(0.0554301, 0.05587875)
+texture = ExtResource("3_a4gqu")
+metadata/_edit_lock_ = true
+
+[node name="Sprite2D3" type="Sprite2D" parent="." unique_id=2058758159]
+position = Vector2(650, 265)
+scale = Vector2(0.0554301, 0.05587875)
+texture = ExtResource("3_a4gqu")
+metadata/_edit_lock_ = true
+
+[node name="Sprite2D4" type="Sprite2D" parent="." unique_id=1853461170]
+position = Vector2(784.00006, 266)
+scale = Vector2(0.0554301, 0.05587875)
+texture = ExtResource("3_a4gqu")
+metadata/_edit_lock_ = true
+
+[node name="drug" type="Sprite2D" parent="." unique_id=1009408977]
+z_index = 1
+position = Vector2(388.00003, 264.00003)
+scale = Vector2(0.10466667, 0.10466667)
+texture = ExtResource("2_jdgcu")
+metadata/_edit_lock_ = true
+
+[node name="Antidote" type="Sprite2D" parent="." unique_id=655972296]
+z_index = 1
+position = Vector2(517.00006, 264)
+scale = Vector2(0.058695644, 0.058695655)
+texture = ExtResource("3_sxxsk")
+metadata/_edit_lock_ = true
+
+[node name="Bullet" type="Sprite2D" parent="." unique_id=2102952933]
+z_index = 1
+position = Vector2(784, 263.00003)
+scale = Vector2(0.034986153, 0.034986142)
+texture = ExtResource("4_a4gqu")
+metadata/_edit_lock_ = true
+
+[node name="绷带" type="Sprite2D" parent="." unique_id=447946765]
+z_index = 1
+position = Vector2(647, 265.00003)
+scale = Vector2(0.10133337, 0.10133337)
+texture = ExtResource("5_mxlhg")
+metadata/_edit_lock_ = true
+
+[node name="药品" type="Label" parent="." unique_id=174401125]
+layout_mode = 0
+offset_left = 354.0
+offset_top = 304.0
+offset_right = 418.0
+offset_bottom = 349.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "药品"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="绷带2" type="Label" parent="." unique_id=685630412]
+layout_mode = 0
+offset_left = 618.0
+offset_top = 309.0
+offset_right = 682.0
+offset_bottom = 354.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "绷带"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="子弹" type="Label" parent="." unique_id=204865595]
+layout_mode = 0
+offset_left = 747.0
+offset_top = 309.0
+offset_right = 811.0
+offset_bottom = 354.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "子弹"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="解毒剂" type="Label" parent="." unique_id=1912541322]
+layout_mode = 0
+offset_left = 470.0
+offset_top = 307.0
+offset_right = 566.0
+offset_bottom = 352.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 29
+text = "解毒剂"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_lock_ = true

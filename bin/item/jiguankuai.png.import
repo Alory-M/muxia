@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://m5t5yf1s6npp"
-path="res://.godot/imported/鍟嗗煄鎵撳紑鐣岄潰.png-b4c5018964f3ba098ffd3c0e106a33a4.ctex"
+uid="uid://btstisne35qw7"
+path="res://.godot/imported/jiguankuai.png-08809214076e675c28c31cdbbc65b3c0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://界面/界面/鐣岄潰/鍟嗗煄鎵撳紑鐣岄潰.png"
-dest_files=["res://.godot/imported/鍟嗗煄鎵撳紑鐣岄潰.png-b4c5018964f3ba098ffd3c0e106a33a4.ctex"]
+source_file="res://bin/item/jiguankuai.png"
+dest_files=["res://.godot/imported/jiguankuai.png-08809214076e675c28c31cdbbc65b3c0.ctex"]
 
 [params]
 

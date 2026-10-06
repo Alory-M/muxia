@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://c8dye4fcemnu0"]
 
-[ext_resource type="Texture2D" uid="uid://boo6kjp34ftnb" path="res://bin/pack/背包.jpeg" id="1_0fbet"]
+[ext_resource type="Texture2D" uid="uid://boo6kjp34ftnb" path="res://ui/背包.jpeg" id="1_0fbet"]
 [ext_resource type="Script" uid="uid://e3us3pbiqrug" path="res://scenes/Packsys.cs" id="1_80bua"]
 [ext_resource type="Texture2D" uid="uid://dpk5nf8gdukow" path="res://bin/pack/药品.png" id="2_famm7"]
 [ext_resource type="Texture2D" uid="uid://bg1d8ire2pdfx" path="res://bin/pack/解毒剂.png" id="4_t1l7v"]
 [ext_resource type="Script" uid="uid://dsdpw46ay8klk" path="res://scenes/Stop.cs" id="5_80bua"]
-[ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/QQ图片20261006141028.jpeg" id="6_t1l7v"]
+[ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="6_t1l7v"]
 
 [node name="Control" type="Control" unique_id=1854951336]
 layout_mode = 3
@@ -20,46 +20,6 @@ script = ExtResource("1_80bua")
 position = Vector2(552.99994, 316)
 scale = Vector2(0.4876665, 0.48766637)
 texture = ExtResource("1_0fbet")
-
-[node name="button11" type="Button" parent="." unique_id=1248297989]
-self_modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 249.0
-offset_top = 136.0
-offset_right = 320.0
-offset_bottom = 208.0
-
-[node name="image" type="Sprite2D" parent="button11" unique_id=211467918]
-position = Vector2(36, 36)
-scale = Vector2(0.09466665, 0.09466665)
-texture = ExtResource("2_famm7")
-
-[node name="button12" type="Button" parent="." unique_id=486045204]
-self_modulate = Color(1, 1, 1, 0)
-layout_mode = 1
-offset_left = 349.0
-offset_top = 136.0
-offset_right = 420.0
-offset_bottom = 208.0
-
-[node name="image" type="Sprite2D" parent="button12" unique_id=1408463122]
-position = Vector2(36, 36)
-scale = Vector2(0.055, 0.055)
-texture = ExtResource("4_t1l7v")
-
-[node name="button13" type="Button" parent="." unique_id=1023860168]
-self_modulate = Color(1, 1, 1, 0)
-layout_mode = 1
-anchors_preset = -1
-offset_left = 447.0
-offset_top = 136.0
-offset_right = 518.0
-offset_bottom = 208.0
-
-[node name="image" type="Sprite2D" parent="button13" unique_id=945238380]
-position = Vector2(36, 36)
-scale = Vector2(0.058090575, 0.054357592)
-texture = ExtResource("4_t1l7v")
 
 [node name="stop" type="Node" parent="." unique_id=84635088]
 script = ExtResource("5_80bua")
@@ -109,3 +69,66 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 140
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="button11" type="Button" parent="." unique_id=398537517]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 249.0
+offset_top = 136.0
+offset_right = 320.0
+offset_bottom = 208.0
+
+[node name="image" type="Sprite2D" parent="button11" unique_id=576964443]
+position = Vector2(36, 36)
+scale = Vector2(0.09466665, 0.09466665)
+texture = ExtResource("2_famm7")
+
+[node name="counter" type="Label" parent="button11" unique_id=1930237141]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 42.0
+offset_right = 65.0
+offset_bottom = 65.0
+text = "1"
+
+[node name="button12" type="Button" parent="." unique_id=423775599]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 349.0
+offset_top = 136.0
+offset_right = 420.0
+offset_bottom = 208.0
+
+[node name="image" type="Sprite2D" parent="button12" unique_id=550849784]
+position = Vector2(36, 36)
+scale = Vector2(0.055, 0.055)
+texture = ExtResource("4_t1l7v")
+
+[node name="counter" type="Label" parent="button12" unique_id=2095782735]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 42.0
+offset_right = 94.0
+offset_bottom = 65.0
+text = "1"
+
+[node name="button13" type="Button" parent="." unique_id=951525698]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 447.0
+offset_top = 136.0
+offset_right = 518.0
+offset_bottom = 208.0
+
+[node name="image" type="Sprite2D" parent="button13" unique_id=1249730984]
+position = Vector2(36, 36)
+scale = Vector2(0.058090575, 0.054357592)
+texture = ExtResource("4_t1l7v")
+
+[node name="Label" type="Label" parent="button13" unique_id=1095911934]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 42.0
+offset_right = 94.0
+offset_bottom = 65.0
+text = "1"

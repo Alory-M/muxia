@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://boo6kjp34ftnb"
-path="res://.godot/imported/背包.jpeg-b2cb12ae87ca9bddb6513bfac5a0a643.ctex"
+uid="uid://dt55ty7pqubo1"
+path="res://.godot/imported/僵尸血条框.png-3c6310c3d481ed0565575d6b3f969d00.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bin/pack/背包.jpeg"
-dest_files=["res://.godot/imported/背包.jpeg-b2cb12ae87ca9bddb6513bfac5a0a643.ctex"]
+source_file="res://bin/item/僵尸血条框.png"
+dest_files=["res://.godot/imported/僵尸血条框.png-3c6310c3d481ed0565575d6b3f969d00.ctex"]
 
 [params]
 
