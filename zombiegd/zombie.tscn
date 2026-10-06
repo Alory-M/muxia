@@ -1,45 +1,18 @@
 [gd_scene format=3 uid="uid://ctoe37kfmw4k0"]
 
 [ext_resource type="Script" uid="uid://bpf3g05xovbaq" path="res://zombiegd/zombie.gd" id="1_02rw5"]
-[ext_resource type="Texture2D" uid="uid://3rvilba2b8e7" path="res://bin/sprites/slime_green.png" id="2_xkwan"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_emocd"]
 radius = 7.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_lnshm"]
-atlas = ExtResource("2_xkwan")
-region = Rect2(0, 0, 24, 24)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_x5rsa"]
-atlas = ExtResource("2_xkwan")
-region = Rect2(24, 0, 24, 24)
+[sub_resource type="CircleShape2D" id="CircleShape2D_detect"]
+radius = 150.0
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_2myke"]
 animations = [{
 "frames": [],
 "loop": 1,
 "name": &"ATTACK",
-"speed": 5.0
-}, {
-"frames": [],
-"loop": 1,
-"name": &"CHASE",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_lnshm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_x5rsa")
-}],
-"loop": 1,
-"name": &"IDEL",
-"speed": 5.0
-}, {
-"frames": [],
-"loop": 1,
-"name": &"SHOOT",
 "speed": 5.0
 }]
 
@@ -61,25 +34,48 @@ func _process(delta: float) -> void:
 script = ExtResource("1_02rw5")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=630990669]
-position = Vector2(40, 51)
+position = Vector2(2.7200003, 3.4680002)
+scale = Vector2(0.068, 0.068)
 shape = SubResource("CircleShape2D_emocd")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=698874992]
+scale = Vector2(0.068, 0.068)
+
+[node name="ColorRect" type="ColorRect" parent="Sprite2D" unique_id=1176879974]
+offset_right = 1000.0
+offset_bottom = 180.0
+color = Color(1, 0.0627451, 0.015686275, 1)
 
 [node name="DetectArea" type="Area2D" parent="." unique_id=631155310]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea" unique_id=1380626074]
+position = Vector2(0, 1)
+shape = SubResource("CircleShape2D_detect")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2139137393]
 position = Vector2(40, 44)
 sprite_frames = SubResource("SpriteFrames_2myke")
-animation = &"IDEL"
-frame = 1
-frame_progress = 0.8409252
+animation = &"ATTACK"
 script = SubResource("GDScript_dcs8h")
 
 [node name="AttackHitbox" type="Area2D" parent="." unique_id=1099513601]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox" unique_id=1548455069]
 
 [node name="BulletSpawPoint" type="Node2D" parent="." unique_id=1092485348]
+visible = false
+
+[node name="Coffin" type="Node2D" parent="." unique_id=1440873548]
+visible = false
+
+[node name="Closed" type="Polygon2D" parent="Coffin" unique_id=325660427]
+color = Color(0.45, 0.28, 0.15, 1)
+polygon = PackedVector2Array(-20, -40, 20, -40, 20, 40, -20, 40)
+
+[node name="Open" type="Polygon2D" parent="Coffin" unique_id=1422016106]
+visible = false
+color = Color(0.28, 0.16, 0.08, 1)
+polygon = PackedVector2Array(-20, -40, 20, -40, 20, 40, -20, 40)
 
 [connection signal="area_entered" from="AttackHitbox" to="." method="_on_hitbox_body_entered"]

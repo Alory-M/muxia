@@ -8,6 +8,9 @@ public partial class Bullet : Area2D
 	// 飞多少像素后自行销毁
 	[Export] public float MaxDistance { get; set; } = 800.0f;
 
+	// 命中目标时造成的伤害
+	[Export] public int Damage { get; set; } = 25;
+
 	private Vector2 _direction = Vector2.Zero;   // 由 Launch() 传入,之后不再改变
 	private float _traveled = 0.0f;              // 已经飞了多远
 	private bool _isMoving = false;
@@ -22,6 +25,28 @@ public partial class Bullet : Area2D
 		{
 			GD.PushWarning("Bullet: 找不到子节点 rotate,子弹不会跟着飞行方向转向。");
 		}
+
+		// 命中检测:子弹撞到任何物理体都会触发
+		BodyEntered += OnBodyEntered;
+	}
+
+	/// <summary>子弹撞到东西时的处理:对可受伤目标扣血,然后销毁子弹</summary>
+	private void OnBodyEntered(Node2D body)
+	{
+		// 子弹从玩家身上出生,会立刻和玩家重叠;玩家不算目标,直接放过
+		if (body.IsInGroup("player"))
+		{
+			return;
+		}
+
+		// 命中可受伤目标(僵尸有 take_damage 方法)就扣血
+		if (body.HasMethod("take_damage"))
+		{
+			body.Call("take_damage", Damage);
+		}
+
+		// 子弹打中任何东西(除了玩家)就消失
+		QueueFree();
 	}
 
 	// 由发射者调用:给它一个方向,它就开始飞

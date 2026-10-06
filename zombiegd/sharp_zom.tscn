@@ -1,6 +1,13 @@
 [gd_scene format=3 uid="uid://dtoyej8f13wux"]
 
 [ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/zombie.tscn" id="1_kvmt0"]
+[ext_resource type="Texture2D" uid="uid://cljmkajaxlv08" path="res://bin/sprites/利爪僵尸.png" id="2_hhau8"]
+[ext_resource type="Texture2D" uid="uid://b5o7cthk7n1c1" path="res://bin/item/guancai close.png" id="3_odlu8"]
+[ext_resource type="Texture2D" uid="uid://c8g56ulxjkhfm" path="res://bin/item/guancai open.png" id="4_bmu51"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4kx6i"]
+radius = 426.47046
+height = 1529.4121
 
 [node name="sharpZom" unique_id=1172295772 instance=ExtResource("1_kvmt0")]
 max_hp = 30
@@ -8,3 +15,38 @@ attack_damage = 40
 move_speed = 6.0
 attack_cd = 1.0
 attack_range = 2.0
+
+[node name="CollisionShape2D" parent="." index="0" unique_id=630990669]
+position = Vector2(-882.3533, 88.23484)
+shape = SubResource("CapsuleShape2D_4kx6i")
+
+[node name="Sprite2D" parent="." index="1" unique_id=698874992]
+position = Vector2(303, 237.00003)
+texture = ExtResource("2_hhau8")
+
+[node name="ColorRect" parent="Sprite2D" index="0" unique_id=1176879974]
+offset_left = -1397.0593
+offset_top = -1264.7063
+offset_right = -397.05933
+offset_bottom = -1084.7063
+
+[node name="CollisionShape2D" parent="DetectArea" parent_id_path=PackedInt32Array(631155310) index="0" unique_id=1380626074]
+position = Vector2(645, 239)
+shape = null
+
+[node name="AttackHitbox" parent="." index="4" unique_id=1099513601]
+position = Vector2(59, 150)
+
+[node name="BulletSpawPoint" parent="." index="5" unique_id=1092485348]
+position = Vector2(65, 29)
+
+[node name="Coffin" parent="." index="6" unique_id=1440873548]
+visible = true
+
+[node name="Closed" parent="Coffin" index="0" unique_id=325660427]
+position = Vector2(109, 215)
+texture = ExtResource("3_odlu8")
+
+[node name="Open" parent="Coffin" index="1" unique_id=1422016106]
+visible = true
+texture = ExtResource("4_bmu51")
