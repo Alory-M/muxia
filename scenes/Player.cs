@@ -40,6 +40,10 @@ public partial class Player : CharacterBody2D
 	// 冲刺速度由"距离 / 时间"推出来
 	private float DashSpeed => dashDistance / Mathf.Max(dashDuration, 0.0001f);
 
+	// 这一步实际走的距离不足计划距离的这个比例,就认定是被碰撞箱正面挡住了,
+	// 而不是"贴着墙滑"。0.5 表示被吃掉一半以上才算撞墙。
+	private const float BlockedStepFactor = 0.5f;
+
 	public override void _Ready()
 	{
 		_pack = GetNodeOrNull<Pack>("pack");
@@ -64,11 +68,19 @@ public partial class Player : CharacterBody2D
 			MoveAndSlide();
 
 			// 按"实际移动了多少"扣减:撞墙时冲刺会提前结束
-			_dashRemaining -= (GlobalPosition - before).Length();
+			float moved = (GlobalPosition - before).Length();
+			_dashRemaining -= moved;
 
-			// 浮点误差会让剩余距离永远差一丁点、无法真正归零,
-			// 那样就会卡死在冲刺状态(既走不动也冲不了),所以直接抹掉残值
-			if (_dashRemaining <= 0.01f)
+			// 结束冲刺的两种情况:
+			// 1) 距离冲完了(浮点误差下剩的那一丁点直接抹掉);
+			// 2) 这一步几乎没走成 —— 被碰撞箱正面挡死了。
+			// 第 2 条是必须的:垂直撞上水平碰撞箱时,MoveAndSlide 的滑动分量正好是 0
+			// (motion - normal * (motion·normal) = (0,-1) - (0,1)*(-1) = 0),
+			// moved 恒为 0,剩余距离一像素都扣不掉,冲刺就永远结束不了 ——
+			// IsDashing 一直是 true,_PhysicsProcess 每次都在这里提前 return,
+			// 人就被永久锁死(既走不动也冲不了),光靠抹掉浮点残值救不回来。
+			// 只被吃掉一个分量时(比如 45° 蹭墙)moved 还占 step 的大头,照旧滑完。
+			if (_dashRemaining <= 0.01f || moved < step * BlockedStepFactor)
 			{
 				_dashRemaining = 0f;
 			}

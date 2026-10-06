@@ -7,8 +7,9 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qxvy8"]
 size = Vector2(176, 142)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
-size = Vector2(106, 138.375)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_b6e46"]
+radius = 30.0
+height = 125.625
 
 [node name="Area2D" type="Area2D" unique_id=1648233843]
 script = ExtResource("1_fkqpk")
@@ -24,9 +25,8 @@ shape = SubResource("RectangleShape2D_qxvy8")
 [node name="solid" type="StaticBody2D" parent="." unique_id=740371555]
 
 [node name="re" type="CollisionShape2D" parent="solid" unique_id=1618805337]
-visible = false
-position = Vector2(2, -7.8125)
-shape = SubResource("RectangleShape2D_33age")
+position = Vector2(-7, -3)
+shape = SubResource("CapsuleShape2D_b6e46")
 
 [node name="get" type="Button" parent="." unique_id=1839336128]
 self_modulate = Color(1, 1, 1, 0)

@@ -6,10 +6,12 @@
 [ext_resource type="PackedScene" uid="uid://c5xx126tloqba" path="res://scenes/background.tscn" id="2_m4url"]
 [ext_resource type="Script" uid="uid://486vk5qb5yam" path="res://scenes/Therapy.cs" id="3_m4url"]
 [ext_resource type="Script" uid="uid://bwuqauq8l1axf" path="res://scenes/ColorRect.cs" id="4_8ool0"]
-[ext_resource type="Texture2D" uid="uid://dtcnvnd7x2316" path="res://bin/OIP-C.webp" id="5_pr1ej"]
 [ext_resource type="PackedScene" uid="uid://c8dye4fcemnu0" path="res://scenes/packsys.tscn" id="6_05nbr"]
 [ext_resource type="Script" uid="uid://cwhg22pl5b6jq" path="res://scenes/Win.cs" id="7_0sl42"]
+[ext_resource type="Texture2D" uid="uid://b376xmcsuv2j6" path="res://界面/地图.png" id="7_m4url"]
+[ext_resource type="Texture2D" uid="uid://cg65yeyql1wjs" path="res://界面/主角图标（用于小地图显示位置）.png" id="8_8ool0"]
 [ext_resource type="Script" uid="uid://dfwlwcftyrm0l" path="res://scenes/Player.cs" id="8_oaba0"]
+[ext_resource type="Script" uid="uid://rmvkxdnshkhy" path="res://scenes/Map.cs" id="8_pr1ej"]
 [ext_resource type="PackedScene" uid="uid://d2u0f46gdxmmp" path="res://scenes/bullet.tscn" id="9_458eo"]
 [ext_resource type="Texture2D" uid="uid://bk451302d7b5o" path="res://host/侧跑/IMG_2907-1.png" id="10_h3rex"]
 [ext_resource type="Texture2D" uid="uid://liyvst8aeiui" path="res://host/侧跑/IMG_2907-2.png" id="11_fedci"]
@@ -40,6 +42,7 @@
 [ext_resource type="PackedScene" uid="uid://x8qgje1ggp81" path="res://scenes/businessman.tscn" id="36_2iuns"]
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="37_7gkqi"]
 [ext_resource type="PackedScene" uid="uid://cb68diu653yey" path="res://zombiegd/coffin.tscn" id="38_753oq"]
+[ext_resource type="PackedScene" uid="uid://cw2icyxh8v33y" path="res://scenes/end.tscn" id="43_05nbr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 size = Vector2(22, 88)
@@ -134,13 +137,16 @@ animations = [{
 script = ExtResource("1_nepv3")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=405162670]
-position = Vector2(577.205, 1132.325)
+position = Vector2(577.205, 1123.205)
 script = ExtResource("2_8ool0")
 
 [node name="background" parent="." unique_id=199233029 instance=ExtResource("2_m4url")]
 metadata/_edit_use_anchors_ = true
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1425987575]
+
+[node name="end" parent="HUD" unique_id=355917944 instance=ExtResource("43_05nbr")]
+visible = false
 
 [node name="store" parent="HUD" unique_id=1988767736 instance=ExtResource("2_7025r")]
 visible = false
@@ -163,9 +169,15 @@ script = ExtResource("4_8ool0")
 
 [node name="Map" type="Sprite2D" parent="HUD" unique_id=552770142]
 visible = false
-position = Vector2(112.06251, 531.51117)
-scale = Vector2(0.6408228, 0.64082277)
-texture = ExtResource("5_pr1ej")
+position = Vector2(123, 559)
+scale = Vector2(0.09564212, 0.09564211)
+texture = ExtResource("7_m4url")
+script = ExtResource("8_pr1ej")
+
+[node name="in" type="Sprite2D" parent="HUD/Map" unique_id=459464759]
+position = Vector2(-851.2278, 528.3968)
+scale = Vector2(0.1616222, 0.1616222)
+texture = ExtResource("8_8ool0")
 
 [node name="btn_normal" type="Button" parent="HUD" unique_id=781705095]
 offset_left = 954.0
@@ -229,10 +241,10 @@ script = ExtResource("34_o8oq8")
 script = ExtResource("35_sxt1d")
 
 [node name="businessman" parent="." unique_id=1648233843 instance=ExtResource("36_2iuns")]
-position = Vector2(246, -194)
+position = Vector2(826, 206)
 
 [node name="Treasure" parent="." unique_id=622065184 instance=ExtResource("37_7gkqi")]
-position = Vector2(334, 2)
+position = Vector2(989, 659)
 
 [node name="coffin" parent="." unique_id=847161236 instance=ExtResource("38_753oq")]
-position = Vector2(-432, -14)
+position = Vector2(1085, 1256)
