@@ -7,13 +7,6 @@
 [ext_resource type="Script" uid="uid://dsdpw46ay8klk" path="res://scenes/Stop.cs" id="5_80bua"]
 [ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/QQ图片20261006141028.jpeg" id="6_t1l7v"]
 
-[sub_resource type="Gradient" id="Gradient_62e2m"]
-offsets = PackedFloat32Array(1)
-colors = PackedColorArray(1, 1, 1, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_33age"]
-gradient = SubResource("Gradient_62e2m")
-
 [node name="Control" type="Control" unique_id=1854951336]
 layout_mode = 3
 anchors_preset = 15
@@ -68,47 +61,14 @@ position = Vector2(36, 36)
 scale = Vector2(0.058090575, 0.054357592)
 texture = ExtResource("4_t1l7v")
 
-[node name="ask" type="Sprite2D" parent="." unique_id=1689471043]
-visible = false
-position = Vector2(548, 314)
-scale = Vector2(6.5859385, 3.151736)
-texture = SubResource("GradientTexture2D_33age")
-
-[node name="yes" type="Button" parent="ask" unique_id=473703804]
-offset_left = -20.042702
-offset_top = 4.7592816
-offset_right = 3.9572983
-offset_bottom = 35.75928
-scale = Vector2(0.335, 0.335)
-text = "是"
-
-[node name="no" type="Button" parent="ask" unique_id=1721011056]
-offset_left = 14.424667
-offset_top = 4.759286
-offset_right = 38.424667
-offset_bottom = 35.759285
-scale = Vector2(0.335, 0.335)
-text = "否"
-
 [node name="stop" type="Node" parent="." unique_id=84635088]
 script = ExtResource("5_80bua")
 
 [node name="item" type="Sprite2D" parent="." unique_id=154524614]
+visible = false
 position = Vector2(758, 203)
 scale = Vector2(0.14666663, 0.14666663)
 texture = ExtResource("2_famm7")
-
-[node name="itemname" type="Label" parent="item" unique_id=263958568]
-offset_left = -361.3637
-offset_top = 490.9093
-offset_right = 402.273
-offset_bottom = 704.81836
-scale = Vector2(1.005, 1.005)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 140
-text = "药品"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="EnsureButton" type="Button" parent="." unique_id=626442909]
 visible = false
@@ -126,3 +86,26 @@ offset_right = 118.9493
 offset_bottom = 50.0
 texture = ExtResource("6_t1l7v")
 expand_mode = 1
+
+[node name="Label" type="Label" parent="EnsureButton" unique_id=70029848]
+layout_mode = 0
+offset_top = 3.0
+offset_right = 118.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(0.011764706, 0, 0, 1)
+text = "使用"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="itemname" type="Label" parent="." unique_id=263958568]
+layout_mode = 0
+offset_left = 705.0
+offset_top = 275.0
+offset_right = 1468.0
+offset_bottom = 489.0
+scale = Vector2(0.14666663, 0.14666663)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 140
+text = "药品"
+horizontal_alignment = 1
+vertical_alignment = 1

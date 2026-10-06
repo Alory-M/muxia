@@ -6,7 +6,10 @@ using System.Collections.Generic;
 ///
 /// 按 B 开关:开着的时候控件可交互,关掉之后既不可见也不吃鼠标事件。
 /// 道具数量统一从 player/pack(Pack.cs)读,不在界面里另存一份;
-/// 真正"用掉"道具的动作交给 player/clear(Clear.cs),这里只负责问一句。
+/// 真正"用掉"道具的动作交给 player/clear(Clear.cs),这里只负责选和转发。
+///
+/// 选中流程:点格子 → item 显示那样道具的大图和名字 + EnsureButton 出现
+///          → 点 EnsureButton 才真的用掉一份
 /// </summary>
 public partial class Packsys : Control
 {
@@ -25,7 +28,7 @@ public partial class Packsys : Control
 		SupplyKind.Antidote,
 	};
 
-	// 图标缩放。药品和绷带都是 750×750 的方图,共用一套;
+	// 格子图标的缩放。药品和绷带都是 750×750 的方图,共用一套;
 	// 解毒剂是 920×1067 的非方图,得单独给一套,否则换到别的格子会被拉变形
 	private static readonly Vector2 DefaultIconScale = new(0.09466665f, 0.09466665f);
 	private static readonly Vector2 AntidoteIconScale = new(0.055f, 0.054357592f);
@@ -49,15 +52,20 @@ public partial class Packsys : Control
 	// 开背包时的暂停开关(冻结玩家、停掉减益),细节都封在子节点 stop 里
 	private Stop _stop;
 
-	// 确认框:面板、问题文字、是、否。ask 平时不可见也不可交互,弹出来才放行
-	private Sprite2D _ask;
-	private Label _askLabel;
-	private Button _yes;
-	private Button _no;
-	private bool _askReady;
+	// 选中详情区:item 是那张大图,item 的子节点 itemname 是道具名,
+	// EnsureButton 是按下去才真的用掉一份的那颗按钮。
+	// 三个都藏起来,点格子才一起出现
+	private Sprite2D _item;
+	private Label _itemName;
+	private Button _ensureButton;
+	private bool _detailReady;
 
-	// 确认框当前问的是哪样道具。空 = 没有待确认的问题
-	private SupplyKind? _pending;
+	// item 大图的基准缩放 = 场景里调好的那套(以药品为准),_Ready 时读进来。
+	// 其余道具按"格子图标之间的比例"等比换算,格子和预览的大小关系就始终一致
+	private Vector2 _previewBaseScale = Vector2.One;
+
+	// 当前选中的是哪样道具。空 = 什么都没选,详情区收着
+	private SupplyKind? _selected;
 
 	// 开局强制收起。场景实例上本来就有 visible=false,这里再兜一次底,
 	// 免得以后谁在检查器里改了覆盖值,背包一进游戏就敞着
@@ -73,7 +81,7 @@ public partial class Packsys : Control
 		_clear = GetNodeOrNull<Clear>("../../player/clear");
 		if (_clear == null)
 		{
-			GD.PushWarning("Packsys: 找不到 ../../player/clear,点\"是\"不会真的用掉道具。");
+			GD.PushWarning("Packsys: 找不到 ../../player/clear,点 EnsureButton 不会真的用掉道具。");
 		}
 
 		_stop = GetNodeOrNull<Stop>("stop");
@@ -105,19 +113,26 @@ public partial class Packsys : Control
 			slot.Pressed += () => OnSlotPressed(slot);
 		}
 
-		_ask = GetNodeOrNull<Sprite2D>("ask");
-		_askLabel = _ask?.GetNodeOrNull<Label>("Label");
-		_yes = _ask?.GetNodeOrNull<Button>("yes");
-		_no = _ask?.GetNodeOrNull<Button>("no");
-		_askReady = _ask != null && _askLabel != null && _yes != null && _no != null;
-		if (_askReady)
+		_item = GetNodeOrNull<Sprite2D>("item");
+		// itemname 是根 Control 的子节点,不是 item 的 —— 挂在 item 下面的话
+		// 会连图标的缩放一起继承,换个道具名字的字号和位置就跟着变
+		_itemName = GetNodeOrNull<Label>("itemname");
+		_ensureButton = GetNodeOrNull<Button>("EnsureButton");
+
+		// 记下场景里给 item 调的 scale 当基准。以后在检查器里改药品预览的大小,
+		// 其余道具会自动跟着等比变化,不用回来改代码
+		if (_item != null)
 		{
-			_yes.Pressed += OnYesPressed;
-			_no.Pressed += OnNoPressed;
+			_previewBaseScale = _item.Scale;
+		}
+		_detailReady = _item != null && _itemName != null && _ensureButton != null;
+		if (_detailReady)
+		{
+			_ensureButton.Pressed += OnEnsurePressed;
 		}
 		else
 		{
-			GD.PushWarning("Packsys: ask 确认框的节点没找齐,点图标不会弹确认框。");
+			GD.PushWarning("Packsys: item / itemname / EnsureButton 没找齐,点格子不会弹出道具详情。");
 		}
 
 		SetOpen(false);
@@ -174,52 +189,62 @@ public partial class Packsys : Control
 				_slotKind.Remove(_slots[i]);
 			}
 
-			// 空格子不吃点击,不然点空位也会弹确认框
+			// 空格子不吃点击,不然点空位也会弹详情
 			_slots[i].MouseFilter = filled ? MouseFilterEnum.Stop : MouseFilterEnum.Ignore;
 		}
 	}
 
-	/// <summary>点了某个格子的图标:把确认框弹出来,并记住问的是哪样道具</summary>
+	/// <summary>点了某个格子的图标:选中那样道具,把详情区亮出来</summary>
 	private void OnSlotPressed(Button slot)
 	{
-		if (!_askReady)
-		{
-			return;
-		}
-
 		// 空格子不吃点击,真走到这儿说明表里没它,忽略
 		if (!_slotKind.TryGetValue(slot, out SupplyKind kind))
 		{
 			return;
 		}
 
-		OpenAsk(kind);
+		Select(kind);
 	}
 
-	/// <summary>弹确认框。ask 平时不可见也不可交互,到这一步才放出来,问题文字按道具来</summary>
-	private void OpenAsk(SupplyKind kind)
+	/// <summary>
+	/// 选中一样道具:大图、名字、EnsureButton 一起出现。
+	/// 大图的缩放交给场景里调好的值,这里只换贴图和文字,不碰 scale
+	/// </summary>
+	private void Select(SupplyKind kind)
 	{
-		_pending = kind;
-		_askLabel.Text = $"是否使用{NameFor(kind)}";
-		_ask.Visible = true;
-	}
+		_selected = kind;
 
-	/// <summary>收起确认框,并清掉待确认的道具。没点"是"就什么都不会被消耗</summary>
-	private void CloseAsk()
-	{
-		_pending = null;
-		if (_ask != null)
+		if (!_detailReady)
 		{
-			_ask.Visible = false;
+			return;
 		}
+
+		_item.Texture = _textures[kind];
+		_item.Scale = PreviewScaleFor(kind);
+		_itemName.Text = NameFor(kind);
+		_item.Visible = true;
+		_ensureButton.Visible = true;
 	}
 
-	/// <summary>点了"是":真的用掉一份,然后重排列(用光了就消失,后面的往前补)</summary>
-	private void OnYesPressed()
+	/// <summary>收起详情区,回到"什么都没选"的状态</summary>
+	private void HideDetail()
 	{
-		// 先取出来再收框:CloseAsk 会把 _pending 清掉
-		SupplyKind? kind = _pending;
-		CloseAsk();
+		_selected = null;
+
+		if (!_detailReady)
+		{
+			return;
+		}
+
+		_item.Visible = false;
+		_ensureButton.Visible = false;
+	}
+
+	/// <summary>点了 EnsureButton:真的用掉一份,然后重排列、刷新详情区</summary>
+	private void OnEnsurePressed()
+	{
+		// 先取出来:下面 HideDetail 会把 _selected 清掉
+		SupplyKind? kind = _selected;
 
 		if (kind == null || _clear == null)
 		{
@@ -241,16 +266,22 @@ public partial class Packsys : Control
 				break;
 		}
 
+		// 数量变了,格子要重排(用光了就消失,后面的往前补)
 		RefreshItems();
+
+		// 还有货就保持选中(方便连点),用光了才收起——
+		// 否则会留着一张"已经没有了的道具"的大图
+		if (_pack != null && _pack.GetCount(kind.Value) > 0)
+		{
+			Select(kind.Value);
+		}
+		else
+		{
+			HideDetail();
+		}
 	}
 
-	/// <summary>点了"否":什么也不消耗,只把确认框收掉</summary>
-	private void OnNoPressed()
-	{
-		CloseAsk();
-	}
-
-	/// <summary>开/关背包。关的时候把确认框一起收掉,下次打开不该还挂着上一个问题</summary>
+	/// <summary>开/关背包。关的时候把详情区一起收掉,下次打开不该还挂着上次选的道具</summary>
 	private void SetOpen(bool open)
 	{
 		Visible = open;
@@ -272,8 +303,17 @@ public partial class Packsys : Control
 		}
 		else
 		{
-			CloseAsk();
+			HideDetail();
 		}
+	}
+
+	/// <summary>
+	/// item 大图的缩放:以场景里调好的基准(药品)为准,再按格子图标的比例换算。
+	/// 解毒剂的源图比另外两张大一截,直接套基准 scale 会顶出边框、压到名字上
+	/// </summary>
+	private Vector2 PreviewScaleFor(SupplyKind kind)
+	{
+		return _previewBaseScale * (ScaleFor(kind) / DefaultIconScale);
 	}
 
 	/// <summary>道具图标的缩放。解毒剂的源图尺寸和另外两张不一样,单独一套</summary>
@@ -294,7 +334,7 @@ public partial class Packsys : Control
 		};
 	}
 
-	/// <summary>确认框里用的中文名</summary>
+	/// <summary>详情区里显示的中文名</summary>
 	private static string NameFor(SupplyKind kind)
 	{
 		return kind switch
