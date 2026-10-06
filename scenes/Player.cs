@@ -149,4 +149,17 @@ public partial class Player : CharacterBody2D
 		bullet.GlobalPosition = GlobalPosition;
 		bullet.Launch(toMouse);
 	}
+
+	/// <summary>
+	/// 受到伤害。供 GDScript 的僵尸脚本调用(对应 GDScript 里的 take_damage)。
+	/// 血量扣到 0 为止,不再往下扣。
+	/// </summary>
+	public void TakeDamage(float amount)
+	{
+		if (amount <= 0f)
+		{
+			return;
+		}
+		hp = Mathf.Max(hp - amount, 0f);
+	}
 }
