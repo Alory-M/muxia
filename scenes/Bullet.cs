@@ -12,6 +12,18 @@ public partial class Bullet : Area2D
 	private float _traveled = 0.0f;              // 已经飞了多远
 	private bool _isMoving = false;
 
+	// 朝向组件,挂在 rotate 子节点上。缺了只是不转向,不影响飞行
+	private Rotate _rotate;
+
+	public override void _Ready()
+	{
+		_rotate = GetNodeOrNull<Rotate>("rotate");
+		if (_rotate == null)
+		{
+			GD.PushWarning("Bullet: 找不到子节点 rotate,子弹不会跟着飞行方向转向。");
+		}
+	}
+
 	// 由发射者调用:给它一个方向,它就开始飞
 	public void Launch(Vector2 direction)
 	{
@@ -25,6 +37,12 @@ public partial class Bullet : Area2D
 		_direction = direction.Normalized();
 		_traveled = 0.0f;
 		_isMoving = true;
+
+		// 转向交给 rotate 组件。子弹美术本来朝右,所以 0 度 = 朝右
+		if (_rotate != null)
+		{
+			_rotate.FaceDirection(_direction);
+		}
 	}
 
 	public override void _Process(double delta)

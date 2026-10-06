@@ -2,7 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://d2u0f46gdxmmp" path="res://scenes/bullet.tscn" id="1_4dvvg"]
 [ext_resource type="Script" uid="uid://486vk5qb5yam" path="res://scenes/Therapy.cs" id="1_04qyp"]
-[ext_resource type="Texture2D" uid="uid://cd154one6u4yu" path="res://bin/sprites/knight.png" id="1_6e84v"]
 [ext_resource type="Script" uid="uid://cich5krm1wah0" path="res://scenes/Node2d.cs" id="1_fws66"]
 [ext_resource type="Script" uid="uid://dfwlwcftyrm0l" path="res://scenes/Player.cs" id="2_rnjyy"]
 [ext_resource type="Script" uid="uid://bwuqauq8l1axf" path="res://scenes/ColorRect.cs" id="3_3m5ht"]
@@ -10,23 +9,20 @@
 [ext_resource type="PackedScene" uid="uid://c8dye4fcemnu0" path="res://scenes/packsys.tscn" id="5_f6ptj"]
 [ext_resource type="Texture2D" uid="uid://dtcnvnd7x2316" path="res://bin/OIP-C.webp" id="7_hh0fu"]
 [ext_resource type="Script" uid="uid://b1ynjrijdxkey" path="res://scenes/State.cs" id="8_dubn7"]
+[ext_resource type="Texture2D" uid="uid://cu2ikgwh4syed" path="res://host/host gun back.png" id="8_f6ptj"]
 [ext_resource type="Script" uid="uid://lcivnm5ognjd" path="res://scenes/Pack.cs" id="9_08kqv"]
 [ext_resource type="Script" uid="uid://cstg74fd6wd14" path="res://scenes/Clear.cs" id="9_dubn7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_4dvvg"]
-atlas = ExtResource("1_6e84v")
-region = Rect2(0, 0, 32, 36)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_02hm2"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_4dvvg")
+"texture": ExtResource("8_f6ptj")
 }],
 "loop": 1,
-"name": &"default",
+"name": &"run",
 "speed": 5.0
 }]
 
@@ -91,8 +87,9 @@ bulletScene = ExtResource("1_4dvvg")
 shape = SubResource("RectangleShape2D_33age")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="player" unique_id=43979471]
-scale = Vector2(5, 5)
+scale = Vector2(0.06774194, 0.06774194)
 sprite_frames = SubResource("SpriteFrames_02hm2")
+animation = &"run"
 
 [node name="state" type="Node" parent="player" unique_id=1575335001]
 script = ExtResource("8_dubn7")

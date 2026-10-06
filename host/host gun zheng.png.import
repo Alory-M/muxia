@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dpq2gjhos1d6o"
-path="res://.godot/imported/瀛愬脊.png-db0d090b6ab6b65b5166ebefb01be0a2.ctex"
+uid="uid://b88kth3qrrj4a"
+path="res://.godot/imported/host gun zheng.png-ceff26f5f7c12f8bb27bd7e215188592.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bin/item/item/item/瀛愬脊.png"
-dest_files=["res://.godot/imported/瀛愬脊.png-db0d090b6ab6b65b5166ebefb01be0a2.ctex"]
+source_file="res://host/host gun zheng.png"
+dest_files=["res://.godot/imported/host gun zheng.png-ceff26f5f7c12f8bb27bd7e215188592.ctex"]
 
 [params]
 
