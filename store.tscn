@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://bg1d8ire2pdfx" path="res://bin/pack/解毒剂.png" id="3_sxxsk"]
 [ext_resource type="Texture2D" uid="uid://mtp6kfpn3d4v" path="res://bin/pack/子弹.png" id="4_a4gqu"]
 [ext_resource type="Texture2D" uid="uid://ct1qvp7h5unsi" path="res://bin/pack/绷带.PNG" id="5_mxlhg"]
+[ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="7_a4gqu"]
 
 [node name="Control" type="Control" unique_id=1988767736]
 layout_mode = 3
@@ -14,11 +15,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+metadata/_edit_lock_ = true
 
 [node name="background" type="Sprite2D" parent="." unique_id=1675147224]
 position = Vector2(552.99994, 316)
 scale = Vector2(0.4876665, 0.48766637)
 texture = ExtResource("1_c176v")
+metadata/_edit_lock_ = true
 
 [node name="store" type="Node" parent="." unique_id=1089208150]
 
@@ -86,6 +89,102 @@ text = "药品"
 horizontal_alignment = 1
 vertical_alignment = 1
 metadata/_edit_lock_ = true
+
+[node name="买药" type="Button" parent="." unique_id=115090077]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 358.0
+offset_top = 422.0
+offset_right = 417.0
+offset_bottom = 447.0
+
+[node name="Sprite2D" type="Sprite2D" parent="买药" unique_id=319673588]
+position = Vector2(30, 13)
+scale = Vector2(0.028801847, 0.028801845)
+texture = ExtResource("7_a4gqu")
+
+[node name="Label" type="Label" parent="买药" unique_id=1692322264]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 1.0
+offset_right = 48.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "购买"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="买解毒剂" type="Button" parent="." unique_id=574388205]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 486.0
+offset_top = 424.0
+offset_right = 545.0
+offset_bottom = 449.0
+
+[node name="Sprite2D" type="Sprite2D" parent="买解毒剂" unique_id=1270999592]
+position = Vector2(30, 13)
+scale = Vector2(0.028801847, 0.028801845)
+texture = ExtResource("7_a4gqu")
+
+[node name="Label" type="Label" parent="买解毒剂" unique_id=534115519]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 1.0
+offset_right = 48.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "购买"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="买绷带" type="Button" parent="." unique_id=2062879262]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 619.0
+offset_top = 423.0
+offset_right = 678.0
+offset_bottom = 448.0
+
+[node name="Sprite2D" type="Sprite2D" parent="买绷带" unique_id=1144579123]
+position = Vector2(30, 13)
+scale = Vector2(0.028801847, 0.028801845)
+texture = ExtResource("7_a4gqu")
+
+[node name="Label" type="Label" parent="买绷带" unique_id=1910813460]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 1.0
+offset_right = 48.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "购买"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="买子弹" type="Button" parent="." unique_id=1689559950]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 748.0
+offset_top = 423.0
+offset_right = 807.0
+offset_bottom = 448.0
+
+[node name="Sprite2D" type="Sprite2D" parent="买子弹" unique_id=472857836]
+position = Vector2(30, 13)
+scale = Vector2(0.028801847, 0.028801845)
+texture = ExtResource("7_a4gqu")
+
+[node name="Label" type="Label" parent="买子弹" unique_id=733701450]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 1.0
+offset_right = 48.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "购买"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="绷带2" type="Label" parent="." unique_id=685630412]
 layout_mode = 0

@@ -125,7 +125,7 @@ position = Vector2(36, 36)
 scale = Vector2(0.058090575, 0.054357592)
 texture = ExtResource("4_t1l7v")
 
-[node name="Label" type="Label" parent="button13" unique_id=1095911934]
+[node name="counter" type="Label" parent="button13" unique_id=1095911934]
 layout_mode = 0
 offset_left = 54.0
 offset_top = 42.0

@@ -36,9 +36,10 @@ public partial class Packsys : Control
 	private static readonly Vector2 DefaultIconScale = new(0.09466665f, 0.09466665f);
 	private static readonly Vector2 AntidoteIconScale = new(0.055f, 0.054357592f);
 
-	// 格子(按下要用的按钮)和格子上的图标,两个列表一一对应
+	// 格子(按下要用的按钮)、格子上的图标、格子上的数量文字,三个列表一一对应
 	private readonly List<Button> _slots = new();
 	private readonly List<Sprite2D> _slotIcons = new();
+	private readonly List<Label> _slotCounters = new();
 
 	// 道具 → 图标资源。只在 _Ready 里 Load 一次,之后换图只是换引用
 	private readonly Dictionary<SupplyKind, Texture2D> _textures = new();
@@ -98,19 +99,21 @@ public partial class Packsys : Control
 			_textures[kind] = LoadIcon(kind);
 		}
 
-		// 按钮和图标缺一不可:少了图标就没法显示,这一格直接放弃,免得两个列表错位
+		// 按钮、图标、数量文字缺一不可:少了哪个这一格就放弃,免得三个列表错位
 		foreach (string slotPath in SlotPaths)
 		{
 			Button slot = GetNodeOrNull<Button>(slotPath);
 			Sprite2D icon = slot?.GetNodeOrNull<Sprite2D>("image");
-			if (slot == null || icon == null)
+			Label counter = slot?.GetNodeOrNull<Label>("counter");
+			if (slot == null || icon == null || counter == null)
 			{
-				GD.PushWarning($"Packsys: {slotPath} 或它的 image 子节点找不到,这一格跳过。");
+				GD.PushWarning($"Packsys: {slotPath} 少了 image 或 counter 子节点,这一格跳过。");
 				continue;
 			}
 
 			_slots.Add(slot);
 			_slotIcons.Add(icon);
+			_slotCounters.Add(counter);
 
 			// 闭包捕获的是循环内这个 slot 变量,每一轮都是新的,不会串格
 			slot.Pressed += () => OnSlotPressed(slot);
@@ -185,12 +188,19 @@ public partial class Packsys : Control
 			bool filled = i < available.Count;
 
 			_slotIcons[i].Visible = filled;
+			// counter 也得跟着藏。它和 image 一样是 button 的子节点,
+			// 而 button 本身没被藏(只是把自己的框画成透明的),藏 button 带不走它
+			_slotCounters[i].Visible = filled;
+
 			if (filled)
 			{
 				SupplyKind kind = available[i];
 				_slotIcons[i].Texture = _textures[kind];
 				// 三张图大小不一,每格都按道具重新定缩放,不能沿用上一张留在那儿的
 				_slotIcons[i].Scale = ScaleFor(kind);
+
+				// 数量直接读 pack,不在这里缓存副本
+				_slotCounters[i].Text = _pack.GetCount(kind).ToString();
 
 				// 让这个按钮记住它现在代表哪样道具
 				_slotKind[_slots[i]] = kind;
