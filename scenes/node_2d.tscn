@@ -24,6 +24,14 @@
 [ext_resource type="Texture2D" uid="uid://d1is30ho6jsvj" path="res://host/侧跑/IMG_2907-11.png" id="18_7pfoh"]
 [ext_resource type="Texture2D" uid="uid://cmf56aq2dynj7" path="res://host/侧跑/IMG_2907-12.png" id="19_mchk4"]
 [ext_resource type="Texture2D" uid="uid://dgf2e0h7xjl5k" path="res://host/侧跑/IMG_2907-13.png" id="20_gmqbl"]
+[ext_resource type="Texture2D" uid="uid://d3ehn2qx227s6" path="res://host/正跑/IMG_2918-1.png" id="21_unr0g"]
+[ext_resource type="Texture2D" uid="uid://dmna157lwhx60" path="res://host/正跑/IMG_2918-2.png" id="22_jt3n0"]
+[ext_resource type="Texture2D" uid="uid://cb326vcsfudbf" path="res://host/正跑/IMG_2918-3.png" id="23_7pfoh"]
+[ext_resource type="Texture2D" uid="uid://b6j1jjxvwd1mk" path="res://host/背跑/IMG_2913-1.png" id="24_mchk4"]
+[ext_resource type="Texture2D" uid="uid://n10y1440twn4" path="res://host/背跑/IMG_2913-2.png" id="25_gmqbl"]
+[ext_resource type="Texture2D" uid="uid://1clndwvd2u7m" path="res://host/背跑/IMG_2913-3.png" id="26_qkxkb"]
+[ext_resource type="Texture2D" uid="uid://bx4s506o7sp6h" path="res://host/背跑/IMG_2913-4.png" id="27_k8pa6"]
+[ext_resource type="Script" uid="uid://bux2f7nc6t7m0" path="res://scenes/Run.cs" id="28_4bto7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 
@@ -72,6 +80,45 @@ animations = [{
 "loop": 1,
 "name": &"侧跑",
 "speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("21_unr0g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_jt3n0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_7pfoh")
+}],
+"loop": 1,
+"name": &"正跑",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("26_qkxkb")
+}],
+"loop": 1,
+"name": &"站立",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("24_mchk4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_gmqbl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_qkxkb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_k8pa6")
+}],
+"loop": 1,
+"name": &"背跑",
+"speed": 7.0
 }]
 
 [node name="Node2D" type="Node2D" unique_id=261450284]
@@ -134,12 +181,11 @@ bulletScene = ExtResource("1_4dvvg")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player" unique_id=705751674]
 shape = SubResource("RectangleShape2D_33age")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="player" unique_id=43979471]
+[node name="run" type="AnimatedSprite2D" parent="player" unique_id=43979471]
 scale = Vector2(0.06774194, 0.06774194)
 sprite_frames = SubResource("SpriteFrames_02hm2")
-animation = &"侧跑"
-autoplay = "侧跑"
-frame_progress = 0.7847263
+animation = &"站立"
+script = ExtResource("28_4bto7")
 
 [node name="state" type="Node" parent="player" unique_id=1575335001]
 script = ExtResource("8_dubn7")
