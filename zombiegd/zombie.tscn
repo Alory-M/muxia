@@ -12,6 +12,7 @@ height = 1235.294
 radius = 65.06919
 
 [node name="zombie" type="CharacterBody2D" unique_id=1172295772]
+motion_mode = 1
 script = ExtResource("1_dcs8h")
 
 [node name="normal" type="Sprite2D" parent="." unique_id=698874992]

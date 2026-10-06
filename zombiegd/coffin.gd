@@ -22,6 +22,16 @@ func _on_player_enter(body: Node2D) -> void:
 	if zombie_prefab == null:
 		push_warning("coffin: 没有设置 zombie_prefab，僵尸无法生成")
 		return
+	# 这里是物理碰撞回调,引擎此刻正在遍历碰撞查询,不能往场景树里加带 Area2D 的节点
+	# (zombie.tscn 里有 AttackHitbox),否则会报
+	# "Can't change this state while flushing queries"。
+	# 整段挪到空闲帧再做 —— global_position 也得等节点进树之后设才有意义
+	_spawn_zombie.call_deferred(body)
+	
+func _spawn_zombie(body: Node2D) -> void:
+	# 延迟了一帧,期间玩家可能已经没了
+	if not is_instance_valid(body):
+		return
 	var zombie := zombie_prefab.instantiate()
 	get_parent().add_child(zombie)
 	zombie.global_position = global_position
