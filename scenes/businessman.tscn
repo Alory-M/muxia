@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://x8qgje1ggp81"]
+
+[ext_resource type="Script" uid="uid://c3ebbci4fsl86" path="res://scenes/Businessman.cs" id="1_fkqpk"]
+[ext_resource type="Texture2D" uid="uid://7si4qktopgdw" path="res://ui/商人鬼.png" id="1_ilaqe"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
+size = Vector2(106, 138.375)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qxvy8"]
+size = Vector2(176, 142)
+
+[node name="Area2D" type="Area2D" unique_id=1648233843]
+script = ExtResource("1_fkqpk")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1181073944]
+scale = Vector2(0.1395486, 0.13954861)
+texture = ExtResource("1_ilaqe")
+
+[node name="re" type="CollisionShape2D" parent="." unique_id=1618805337]
+visible = false
+position = Vector2(2, -7.8125)
+shape = SubResource("RectangleShape2D_33age")
+
+[node name="im" type="CollisionShape2D" parent="." unique_id=1572414056]
+position = Vector2(0, -8)
+shape = SubResource("RectangleShape2D_qxvy8")

@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://d2u0f46gdxmmp" path="res://scenes/bullet.tscn" id="1_4dvvg"]
 [ext_resource type="Script" uid="uid://486vk5qb5yam" path="res://scenes/Therapy.cs" id="1_04qyp"]
 [ext_resource type="Script" uid="uid://cich5krm1wah0" path="res://scenes/Node2d.cs" id="1_fws66"]
+[ext_resource type="PackedScene" uid="uid://x8qgje1ggp81" path="res://scenes/businessman.tscn" id="2_7pfoh"]
 [ext_resource type="Script" uid="uid://dfwlwcftyrm0l" path="res://scenes/Player.cs" id="2_rnjyy"]
 [ext_resource type="Script" uid="uid://bwuqauq8l1axf" path="res://scenes/ColorRect.cs" id="3_3m5ht"]
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="4_4vge2"]
@@ -202,6 +203,9 @@ script = ExtResource("9_dubn7")
 script = ExtResource("32_jt3n0")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=405162670]
+
+[node name="Area2D" parent="." unique_id=1648233843 instance=ExtResource("2_7pfoh")]
+position = Vector2(246, -194)
 
 [node name="Treasure" parent="." unique_id=622065184 instance=ExtResource("4_4vge2")]
 position = Vector2(334, 2)
