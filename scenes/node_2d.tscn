@@ -99,7 +99,7 @@ script = ExtResource("8_dubn7")
 
 [node name="pack" type="Node" parent="player" unique_id=1990557265]
 script = ExtResource("9_08kqv")
-_drugCounter = 10
+_drugCounter = 2
 
 [node name="clear" type="Node" parent="player" unique_id=1813551384]
 script = ExtResource("9_dubn7")

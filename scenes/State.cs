@@ -43,6 +43,10 @@ public partial class State : Node
 
 	private PlayerState _current = PlayerState.Normal;
 
+	// 减益的扣血和倒计时都靠它们自己的 _Process 推进。背包这类模态界面打开时要停掉,
+	// 否则玩家盯着背包的时候还在流血、倒计时还在走
+	private bool _debuffsPaused;
+
 	// ChangeState 里主动 Clear() 也会触发 Finished,用这个标志把
 	// "我主动关掉的"和"自己到期结束的"区分开,否则会绕回 Normal 造成递归
 	private bool _switching;
@@ -67,6 +71,10 @@ public partial class State : Node
 		// 两个 debuff 先建好但不生效,ApplyOnReady=false 把时机交给状态机
 		_bleed = CreateDebuff("BleedDebuff", DebuffKind.Bleed, BleedPerSecond, 1f, BleedDuration);
 		_slow  = CreateDebuff("SlowDebuff",  DebuffKind.Slow,  0f, SlowMultiplier, SlowDuration);
+
+		// 刚建出来的节点默认是开着的。如果 SetDebuffsPaused 在本节点 _Ready 之前
+		// 就被调用过(背包挂在 HUD 下,_Ready 比 player 子树先跑),这里按标志补上
+		ApplyDebuffProcess();
 
 		// 自动到期:debuff 自己结束时发 Finished,状态机收到就切回正常
 		_bleed.Finished += () => OnDebuffFinished(PlayerState.Bleed);
@@ -125,6 +133,36 @@ public partial class State : Node
 	public void ResetToNormal()
 	{
 		ChangeState(PlayerState.Normal);
+	}
+
+	/// <summary>
+	/// 暂停/恢复所有减益的扣血和倒计时(背包这类模态界面打开时用)。
+	/// 已经在目标状态时重复调用没有副作用。
+	///
+	/// 只是"停表",不是 Clear():状态本身还在,恢复后从暂停处接着走,
+	/// 所以中途用道具解除减益也照常生效。
+	/// </summary>
+	public void SetDebuffsPaused(bool paused)
+	{
+		_debuffsPaused = paused;
+		ApplyDebuffProcess();
+	}
+
+	// 把 _debuffsPaused 落到两个 debuff 节点上。节点还没建出来时跳过,
+	// 等 _Ready 建完再按标志补一次
+	private void ApplyDebuffProcess()
+	{
+		bool running = !_debuffsPaused;
+
+		if (_bleed != null)
+		{
+			_bleed.SetProcess(running);
+		}
+
+		if (_slow != null)
+		{
+			_slow.SetProcess(running);
+		}
 	}
 
 	private void OnDebuffFinished(PlayerState finished)

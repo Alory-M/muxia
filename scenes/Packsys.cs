@@ -5,7 +5,8 @@ using System.Collections.Generic;
 /// 背包界面,挂在 packsys.tscn 的根 Control 上。
 ///
 /// 按 B 开关:开着的时候控件可交互,关掉之后既不可见也不吃鼠标事件。
-/// 道具数量统一从 player/pack(Pack.cs)读,不在界面里另存一份。
+/// 道具数量统一从 player/pack(Pack.cs)读,不在界面里另存一份;
+/// 真正"用掉"道具的动作交给 player/clear(Clear.cs),这里只负责问一句。
 /// </summary>
 public partial class Packsys : Control
 {
@@ -16,7 +17,7 @@ public partial class Packsys : Control
 	private static readonly string[] SlotPaths = { "button11", "button12", "button13" };
 
 	// 会出现在背包里的道具,顺序 = SupplyKind 的枚举顺序。
-	// 子弹排在枚举第一位,但 Bin/pack 下没给它准备图标,所以不参与显示
+	// 子弹排在枚举第一位,但 bin/pack 下没给它准备图标,所以不参与显示
 	private static readonly SupplyKind[] DisplayOrder =
 	{
 		SupplyKind.Drug,
@@ -42,15 +43,43 @@ public partial class Packsys : Control
 
 	private Pack _pack;
 
+	// 真正扣数量、产生效果的是 player/clear 上的 Clear.cs,这里只负责把请求转过去
+	private Clear _clear;
+
+	// 开背包时的暂停开关(冻结玩家、停掉减益),细节都封在子节点 stop 里
+	private Stop _stop;
+
+	// 确认框:面板、问题文字、是、否。ask 平时不可见也不可交互,弹出来才放行
+	private Sprite2D _ask;
+	private Label _askLabel;
+	private Button _yes;
+	private Button _no;
+	private bool _askReady;
+
+	// 确认框当前问的是哪样道具。空 = 没有待确认的问题
+	private SupplyKind? _pending;
+
 	// 开局强制收起。场景实例上本来就有 visible=false,这里再兜一次底,
 	// 免得以后谁在检查器里改了覆盖值,背包一进游戏就敞着
 	public override void _Ready()
 	{
-		// 背包是 HUD 下的实例,pack 挂在同级 player 下面
+		// 背包是 HUD 下的实例,pack 和 clear 都挂在同级 player 下面
 		_pack = GetNodeOrNull<Pack>("../../player/pack");
 		if (_pack == null)
 		{
 			GD.PushWarning("Packsys: 找不到 ../../player/pack,拿不到道具数量,图标不会显示。");
+		}
+
+		_clear = GetNodeOrNull<Clear>("../../player/clear");
+		if (_clear == null)
+		{
+			GD.PushWarning("Packsys: 找不到 ../../player/clear,点\"是\"不会真的用掉道具。");
+		}
+
+		_stop = GetNodeOrNull<Stop>("stop");
+		if (_stop == null)
+		{
+			GD.PushWarning("Packsys: 找不到子节点 stop,开背包时不会暂停任何东西。");
 		}
 
 		foreach (SupplyKind kind in DisplayOrder)
@@ -71,6 +100,24 @@ public partial class Packsys : Control
 
 			_slots.Add(slot);
 			_slotIcons.Add(icon);
+
+			// 闭包捕获的是循环内这个 slot 变量,每一轮都是新的,不会串格
+			slot.Pressed += () => OnSlotPressed(slot);
+		}
+
+		_ask = GetNodeOrNull<Sprite2D>("ask");
+		_askLabel = _ask?.GetNodeOrNull<Label>("Label");
+		_yes = _ask?.GetNodeOrNull<Button>("yes");
+		_no = _ask?.GetNodeOrNull<Button>("no");
+		_askReady = _ask != null && _askLabel != null && _yes != null && _no != null;
+		if (_askReady)
+		{
+			_yes.Pressed += OnYesPressed;
+			_no.Pressed += OnNoPressed;
+		}
+		else
+		{
+			GD.PushWarning("Packsys: ask 确认框的节点没找齐,点图标不会弹确认框。");
 		}
 
 		SetOpen(false);
@@ -132,7 +179,78 @@ public partial class Packsys : Control
 		}
 	}
 
-	/// <summary>开/关背包。关的时候顺手把里面所有展开的东西一起收掉,不留半开状态</summary>
+	/// <summary>点了某个格子的图标:把确认框弹出来,并记住问的是哪样道具</summary>
+	private void OnSlotPressed(Button slot)
+	{
+		if (!_askReady)
+		{
+			return;
+		}
+
+		// 空格子不吃点击,真走到这儿说明表里没它,忽略
+		if (!_slotKind.TryGetValue(slot, out SupplyKind kind))
+		{
+			return;
+		}
+
+		OpenAsk(kind);
+	}
+
+	/// <summary>弹确认框。ask 平时不可见也不可交互,到这一步才放出来,问题文字按道具来</summary>
+	private void OpenAsk(SupplyKind kind)
+	{
+		_pending = kind;
+		_askLabel.Text = $"是否使用{NameFor(kind)}";
+		_ask.Visible = true;
+	}
+
+	/// <summary>收起确认框,并清掉待确认的道具。没点"是"就什么都不会被消耗</summary>
+	private void CloseAsk()
+	{
+		_pending = null;
+		if (_ask != null)
+		{
+			_ask.Visible = false;
+		}
+	}
+
+	/// <summary>点了"是":真的用掉一份,然后重排列(用光了就消失,后面的往前补)</summary>
+	private void OnYesPressed()
+	{
+		// 先取出来再收框:CloseAsk 会把 _pending 清掉
+		SupplyKind? kind = _pending;
+		CloseAsk();
+
+		if (kind == null || _clear == null)
+		{
+			return;
+		}
+
+		// Clear 里这三个方法自己就会扣数量,而且"血满了/当前没中对应的减益"时会拒绝、不扣。
+		// 所以这里千万别再扣一次,否则一份道具会凭空少两份
+		switch (kind.Value)
+		{
+			case SupplyKind.Drug:
+				_clear.UseDrug();
+				break;
+			case SupplyKind.Bandage:
+				_clear.UseBandage();
+				break;
+			case SupplyKind.Antidote:
+				_clear.UseAntidote();
+				break;
+		}
+
+		RefreshItems();
+	}
+
+	/// <summary>点了"否":什么也不消耗,只把确认框收掉</summary>
+	private void OnNoPressed()
+	{
+		CloseAsk();
+	}
+
+	/// <summary>开/关背包。关的时候把确认框一起收掉,下次打开不该还挂着上一个问题</summary>
 	private void SetOpen(bool open)
 	{
 		Visible = open;
@@ -141,10 +259,20 @@ public partial class Packsys : Control
 		// 开着时挡住底下的世界点击和 HUD 按钮(模态),关掉时把事件让回去
 		MouseFilter = open ? MouseFilterEnum.Stop : MouseFilterEnum.Ignore;
 
+		// 背包是模态的:开着的时候把角色和减益一起停住,不然玩家盯着背包还在掉血、还能乱跑
+		if (_stop != null)
+		{
+			_stop.SetPaused(open);
+		}
+
 		if (open)
 		{
 			// 每次打开都按最新数量重排一遍,不沿用上次的摆放
 			RefreshItems();
+		}
+		else
+		{
+			CloseAsk();
 		}
 	}
 
@@ -163,6 +291,18 @@ public partial class Packsys : Control
 			SupplyKind.Bandage => GD.Load<Texture2D>("res://bin/pack/绷带.PNG"),
 			SupplyKind.Antidote => GD.Load<Texture2D>("res://bin/pack/解毒剂.png"),
 			_ => null,
+		};
+	}
+
+	/// <summary>确认框里用的中文名</summary>
+	private static string NameFor(SupplyKind kind)
+	{
+		return kind switch
+		{
+			SupplyKind.Drug => "药品",
+			SupplyKind.Bandage => "绷带",
+			SupplyKind.Antidote => "解毒剂",
+			_ => "道具",
 		};
 	}
 }
