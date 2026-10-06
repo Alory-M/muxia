@@ -16,6 +16,9 @@
 [ext_resource type="Texture2D" uid="uid://bk451302d7b5o" path="res://host/侧跑/IMG_2907-1.png" id="10_h3rex"]
 [ext_resource type="Texture2D" uid="uid://liyvst8aeiui" path="res://host/侧跑/IMG_2907-2.png" id="11_fedci"]
 [ext_resource type="Texture2D" uid="uid://c37tb7xw5t6yh" path="res://host/侧跑/IMG_2907-3.png" id="12_8qswn"]
+[ext_resource type="Texture2D" uid="uid://cv7du20gg5ihd" path="res://bin/item/item/item/角色血条框.png" id="13_0sl42"]
+[ext_resource type="Script" uid="uid://btw64lv421vju" path="res://scenes/ui_hp.gd" id="13_458eo"]
+[ext_resource type="Texture2D" uid="uid://bn8rc02qv0tw4" path="res://bin/item/item/item/角色血条.png" id="13_oaba0"]
 [ext_resource type="Texture2D" uid="uid://c3hyijnl51f3r" path="res://host/侧跑/IMG_2907-4.png" id="13_rm0al"]
 [ext_resource type="Texture2D" uid="uid://cqinihrxo55sh" path="res://host/侧跑/IMG_2907-5.png" id="14_i4re6"]
 [ext_resource type="Texture2D" uid="uid://cnjw6we7hqmqc" path="res://host/侧跑/IMG_2907-6.png" id="15_pf7vy"]
@@ -142,6 +145,7 @@ script = ExtResource("2_8ool0")
 
 [node name="background" parent="." unique_id=199233029 instance=ExtResource("2_m4url")]
 metadata/_edit_use_anchors_ = true
+metadata/_edit_lock_ = true
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1425987575]
 
@@ -205,6 +209,46 @@ visible = false
 
 [node name="win" type="Node" parent="HUD" unique_id=2007515232]
 script = ExtResource("7_0sl42")
+
+[node name="ui_hp" type="Control" parent="HUD" unique_id=1685839040]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("13_458eo")
+
+[node name="hp_bar" type="TextureProgressBar" parent="HUD/ui_hp" unique_id=15638759]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 567.0
+offset_right = 466.0
+offset_bottom = 585.0
+max_value = 1000.0
+value = 1000.0
+nine_patch_stretch = true
+texture_progress = ExtResource("13_oaba0")
+metadata/_edit_lock_ = true
+
+[node name="hp_png" type="TextureRect" parent="HUD/ui_hp" unique_id=29825756]
+layout_mode = 0
+offset_left = 34.0
+offset_top = 533.0
+offset_right = 468.0
+offset_bottom = 633.0
+texture = ExtResource("13_0sl42")
+expand_mode = 1
+stretch_mode = 5
+metadata/_edit_lock_ = true
+
+[node name="hp" type="Label" parent="HUD/ui_hp" unique_id=1841804313]
+layout_mode = 0
+offset_left = 251.0
+offset_top = 566.0
+offset_right = 331.0
+offset_bottom = 589.0
+text = "1000/1000"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="player" type="CharacterBody2D" parent="." unique_id=569109722 groups=["player"]]
 position = Vector2(243, 1250)
