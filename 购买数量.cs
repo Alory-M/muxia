@@ -8,8 +8,26 @@ using Godot;
 /// </summary>
 public partial class 购买数量 : Label
 {
-	// 现在要买几份。最低 0;没有上限——买不买得起由 Store 判断
+	// 现在要买几份。最低 0;上限由 Max 决定
 	public int Count { get; private set; } = 1;
+
+	// 上限。默认不限,由 Limit 按当前库存写进来
+	public int Max
+	{
+		get => _max;
+		set
+		{
+			_max = Mathf.Max(value, 0);
+
+			// 库存被买掉后可能比当前份数还小,当场夹回去
+			if (Count > _max)
+			{
+				SetCount(_max);
+			}
+		}
+	}
+
+	private int _max = int.MaxValue;
 
 	public override void _Ready()
 	{
@@ -29,10 +47,10 @@ public partial class 购买数量 : Label
 		minus.Pressed += () => SetCount(Count - 1);
 	}
 
-	/// <summary>设份数。负数一律夹到 0</summary>
+	/// <summary>设份数。夹到 [0, Max] 之间</summary>
 	private void SetCount(int value)
 	{
-		Count = Mathf.Max(value, 0);
+		Count = Mathf.Clamp(value, 0, _max);
 		RefreshText();
 	}
 

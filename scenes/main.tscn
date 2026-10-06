@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://biup1rqmtys3i"]
+
+[ext_resource type="Texture2D" uid="uid://b8clsya62c3xj" path="res://ui/开始界面.png" id="1_o5qli"]
+
+[node name="Node2D" type="Node2D" unique_id=2089587978]
+
+[node name="开始界面" type="Sprite2D" parent="." unique_id=356519733]
+texture = ExtResource("1_o5qli")

@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="4_4vge2"]
 [ext_resource type="PackedScene" uid="uid://c8dye4fcemnu0" path="res://scenes/packsys.tscn" id="5_f6ptj"]
 [ext_resource type="Texture2D" uid="uid://dtcnvnd7x2316" path="res://bin/OIP-C.webp" id="7_hh0fu"]
+[ext_resource type="Script" uid="uid://cwhg22pl5b6jq" path="res://scenes/Win.cs" id="7_k8pa6"]
 [ext_resource type="Texture2D" uid="uid://bk451302d7b5o" path="res://host/侧跑/IMG_2907-1.png" id="8_2sxpt"]
 [ext_resource type="Script" uid="uid://b1ynjrijdxkey" path="res://scenes/State.cs" id="8_dubn7"]
 [ext_resource type="Script" uid="uid://lcivnm5ognjd" path="res://scenes/Pack.cs" id="9_08kqv"]
@@ -180,6 +181,9 @@ text = "迟缓"
 
 [node name="packsys" parent="HUD" unique_id=1854951336 instance=ExtResource("5_f6ptj")]
 visible = false
+
+[node name="win" type="Node" parent="HUD" unique_id=2007515232]
+script = ExtResource("7_k8pa6")
 
 [node name="player" type="CharacterBody2D" parent="." unique_id=569109722 groups=["player"]]
 script = ExtResource("2_rnjyy")

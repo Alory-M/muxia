@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c3ebbci4fsl86" path="res://scenes/Businessman.cs" id="1_fkqpk"]
 [ext_resource type="Texture2D" uid="uid://7si4qktopgdw" path="res://ui/商人鬼.png" id="1_ilaqe"]
+[ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="3_fwhb0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qxvy8"]
 size = Vector2(176, 142)
@@ -26,3 +27,28 @@ shape = SubResource("RectangleShape2D_qxvy8")
 visible = false
 position = Vector2(2, -7.8125)
 shape = SubResource("RectangleShape2D_33age")
+
+[node name="get" type="Button" parent="." unique_id=1839336128]
+self_modulate = Color(1, 1, 1, 0)
+offset_left = -140.0
+offset_top = -61.0
+offset_right = -49.0
+offset_bottom = -22.0
+theme_override_font_sizes/font_size = 46
+
+[node name="Sprite2D" type="Sprite2D" parent="get" unique_id=1841397479]
+position = Vector2(45, 19)
+scale = Vector2(0.042, 0.042)
+texture = ExtResource("3_fwhb0")
+
+[node name="Label" type="Label" parent="get" unique_id=1207831269]
+layout_mode = 0
+offset_left = -52.999992
+offset_top = -10.0
+offset_right = 142.0
+offset_bottom = 49.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 15
+text = "F开启商店"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -308,8 +308,10 @@ public partial class Packsys : Control
 		}
 	}
 
-	/// <summary>开/关背包。关的时候把详情区一起收掉,下次打开不该还挂着上次选的道具</summary>
-	private void SetOpen(bool open)
+	/// <summary>开/关背包。关的时候把详情区一起收掉,下次打开不该还挂着上次选的道具。
+	/// 对外公开:Win 关别的窗口时要调这个方法而不是直接改 Visible ——
+	/// 只改 Visible 会漏掉 MouseFilter 和 stop 的暂停</summary>
+	public void SetOpen(bool open)
 	{
 		Visible = open;
 

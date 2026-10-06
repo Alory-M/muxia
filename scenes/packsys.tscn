@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://dsdpw46ay8klk" path="res://scenes/Stop.cs" id="5_80bua"]
 [ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="6_t1l7v"]
 
-[node name="Control" type="Control" unique_id=1854951336]
+[node name="Control" type="Control" unique_id=1854951336 groups=["modal_ui"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

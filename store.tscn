@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://btcqjwcubxnuv" path="res://Store.cs" id="2_fsgxa"]
 [ext_resource type="Texture2D" uid="uid://dpk5nf8gdukow" path="res://bin/pack/药品.png" id="2_jdgcu"]
 [ext_resource type="Texture2D" uid="uid://mcwx1ognce4p" path="res://bin/item/物品框.png" id="3_a4gqu"]
+[ext_resource type="Script" uid="uid://dsdpw46ay8klk" path="res://scenes/Stop.cs" id="3_hi8wy"]
 [ext_resource type="Texture2D" uid="uid://bg1d8ire2pdfx" path="res://bin/pack/解毒剂.png" id="3_sxxsk"]
 [ext_resource type="Texture2D" uid="uid://mtp6kfpn3d4v" path="res://bin/pack/子弹.png" id="4_a4gqu"]
 [ext_resource type="Texture2D" uid="uid://ct1qvp7h5unsi" path="res://bin/pack/绷带.PNG" id="5_mxlhg"]
@@ -16,8 +17,9 @@
 [ext_resource type="Script" uid="uid://bmfqfidb6pjyk" path="res://CloseButton.cs" id="14_afjsh"]
 [ext_resource type="Texture2D" uid="uid://bkpcrdr88flbs" path="res://ui/关闭按钮（未点击）.png" id="14_q7j3g"]
 [ext_resource type="Texture2D" uid="uid://dp28oifb2fisa" path="res://ui/关闭按钮（点击）.png" id="15_jdax8"]
+[ext_resource type="Script" uid="uid://csx7rapuub1vj" path="res://Limit.cs" id="18_pmeuj"]
 
-[node name="Control" type="Control" unique_id=1988767736]
+[node name="Control" type="Control" unique_id=1988767736 groups=["modal_ui", "store_ui"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,6 +34,9 @@ texture = ExtResource("1_c176v")
 
 [node name="store" type="Node" parent="." unique_id=1089208150]
 script = ExtResource("2_fsgxa")
+
+[node name="stop" type="Node" parent="store" unique_id=766937791]
+script = ExtResource("3_hi8wy")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1613464529]
 position = Vector2(388, 264)
@@ -430,3 +435,42 @@ texture = ExtResource("15_jdax8")
 position = Vector2(835.00006, 140)
 scale = Vector2(0.051411305, 0.0514113)
 texture = ExtResource("14_q7j3g")
+
+[node name="剩余药品" type="Label" parent="." unique_id=1844029716]
+layout_mode = 0
+offset_left = 402.0
+offset_top = 270.0
+offset_right = 442.0
+offset_bottom = 293.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "1"
+
+[node name="剩余解毒剂" type="Label" parent="." unique_id=1899581039]
+layout_mode = 0
+offset_left = 539.0
+offset_top = 274.0
+offset_right = 579.0
+offset_bottom = 297.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "1"
+
+[node name="剩余绷带" type="Label" parent="." unique_id=1897623485]
+layout_mode = 0
+offset_left = 670.0
+offset_top = 276.0
+offset_right = 710.0
+offset_bottom = 299.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "1"
+
+[node name="剩余子弹" type="Label" parent="." unique_id=84271779]
+layout_mode = 0
+offset_left = 803.0
+offset_top = 277.0
+offset_right = 843.0
+offset_bottom = 300.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "1"
+
+[node name="limit" type="Node" parent="." unique_id=323045052]
+script = ExtResource("18_pmeuj")
