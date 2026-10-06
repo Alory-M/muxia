@@ -42,6 +42,7 @@
 [ext_resource type="PackedScene" uid="uid://x8qgje1ggp81" path="res://scenes/businessman.tscn" id="36_2iuns"]
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="37_7gkqi"]
 [ext_resource type="PackedScene" uid="uid://cb68diu653yey" path="res://zombiegd/coffin.tscn" id="38_753oq"]
+[ext_resource type="PackedScene" uid="uid://cw2icyxh8v33y" path="res://scenes/end.tscn" id="43_05nbr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 size = Vector2(22, 88)
@@ -144,6 +145,9 @@ metadata/_edit_use_anchors_ = true
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1425987575]
 
+[node name="end" parent="HUD" unique_id=355917944 instance=ExtResource("43_05nbr")]
+visible = false
+
 [node name="store" parent="HUD" unique_id=1988767736 instance=ExtResource("2_7025r")]
 visible = false
 
@@ -170,7 +174,7 @@ scale = Vector2(0.09564212, 0.09564211)
 texture = ExtResource("7_m4url")
 script = ExtResource("8_pr1ej")
 
-[node name="Sprite2D" type="Sprite2D" parent="HUD/Map" unique_id=459464759]
+[node name="in" type="Sprite2D" parent="HUD/Map" unique_id=459464759]
 position = Vector2(-851.2278, 528.3968)
 scale = Vector2(0.1616222, 0.1616222)
 texture = ExtResource("8_8ool0")
@@ -243,4 +247,4 @@ position = Vector2(826, 206)
 position = Vector2(989, 659)
 
 [node name="coffin" parent="." unique_id=847161236 instance=ExtResource("38_753oq")]
-position = Vector2(-432, -14)
+position = Vector2(1085, 1256)

@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://cw2icyxh8v33y"]
+
+[ext_resource type="Texture2D" uid="uid://dlkgf8xtefc1t" path="res://ui/victory new.png" id="1_mwn6m"]
+
+[node name="Node2D" type="Node2D" unique_id=355917944]
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=2099511184]
+offset_right = 1155.0
+offset_bottom = 652.0
+texture = ExtResource("1_mwn6m")
+metadata/_edit_lock_ = true
+
+[node name="continue" type="Button" parent="." unique_id=423204591]
+offset_left = 496.0
+offset_top = 348.0
+offset_right = 666.0
+offset_bottom = 392.0
+
+[node name="tomain" type="Button" parent="." unique_id=568857420]
+offset_left = 488.0
+offset_top = 410.0
+offset_right = 670.0
+offset_bottom = 453.0
+
+[node name="exit" type="Button" parent="." unique_id=756283212]
+offset_left = 499.0
+offset_top = 473.0
+offset_right = 665.0
+offset_bottom = 517.0
