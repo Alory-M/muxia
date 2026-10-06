@@ -13,6 +13,9 @@
 [ext_resource type="Texture2D" uid="uid://cbe5kejgk2fqn" path="res://ui/减号&加号（点击加号）.png" id="11_hayl1"]
 [ext_resource type="Texture2D" uid="uid://bruobe6fhg8q0" path="res://ui/减号&加号（点击减号）.png" id="12_q7j3g"]
 [ext_resource type="Script" uid="uid://ceellgr546c8y" path="res://Animate.cs" id="13_hayl1"]
+[ext_resource type="Script" uid="uid://bmfqfidb6pjyk" path="res://CloseButton.cs" id="14_afjsh"]
+[ext_resource type="Texture2D" uid="uid://bkpcrdr88flbs" path="res://ui/关闭按钮（未点击）.png" id="14_q7j3g"]
+[ext_resource type="Texture2D" uid="uid://dp28oifb2fisa" path="res://ui/关闭按钮（点击）.png" id="15_jdax8"]
 
 [node name="Control" type="Control" unique_id=1988767736]
 layout_mode = 3
@@ -21,13 +24,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-metadata/_edit_lock_ = true
 
 [node name="background" type="Sprite2D" parent="." unique_id=1675147224]
 position = Vector2(552.99994, 316)
 scale = Vector2(0.4876665, 0.48766637)
 texture = ExtResource("1_c176v")
-metadata/_edit_lock_ = true
 
 [node name="store" type="Node" parent="." unique_id=1089208150]
 script = ExtResource("2_fsgxa")
@@ -36,53 +37,45 @@ script = ExtResource("2_fsgxa")
 position = Vector2(388, 264)
 scale = Vector2(0.0554301, 0.05587875)
 texture = ExtResource("3_a4gqu")
-metadata/_edit_lock_ = true
 
 [node name="Sprite2D2" type="Sprite2D" parent="." unique_id=25892959]
 position = Vector2(521, 265)
 scale = Vector2(0.0554301, 0.05587875)
 texture = ExtResource("3_a4gqu")
-metadata/_edit_lock_ = true
 
 [node name="Sprite2D3" type="Sprite2D" parent="." unique_id=2058758159]
 position = Vector2(650, 265)
 scale = Vector2(0.0554301, 0.05587875)
 texture = ExtResource("3_a4gqu")
-metadata/_edit_lock_ = true
 
 [node name="Sprite2D4" type="Sprite2D" parent="." unique_id=1853461170]
 position = Vector2(784.00006, 266)
 scale = Vector2(0.0554301, 0.05587875)
 texture = ExtResource("3_a4gqu")
-metadata/_edit_lock_ = true
 
 [node name="drug" type="Sprite2D" parent="." unique_id=1009408977]
 z_index = 1
 position = Vector2(388.00003, 264.00003)
 scale = Vector2(0.10466667, 0.10466667)
 texture = ExtResource("2_jdgcu")
-metadata/_edit_lock_ = true
 
 [node name="Antidote" type="Sprite2D" parent="." unique_id=655972296]
 z_index = 1
 position = Vector2(517.00006, 264)
 scale = Vector2(0.058695644, 0.058695655)
 texture = ExtResource("3_sxxsk")
-metadata/_edit_lock_ = true
 
 [node name="Bullet" type="Sprite2D" parent="." unique_id=2102952933]
 z_index = 1
 position = Vector2(784, 263.00003)
 scale = Vector2(0.034986153, 0.034986142)
 texture = ExtResource("4_a4gqu")
-metadata/_edit_lock_ = true
 
 [node name="绷带" type="Sprite2D" parent="." unique_id=447946765]
 z_index = 1
 position = Vector2(647, 265.00003)
 scale = Vector2(0.10133337, 0.10133337)
 texture = ExtResource("5_mxlhg")
-metadata/_edit_lock_ = true
 
 [node name="药品" type="Label" parent="." unique_id=174401125]
 layout_mode = 0
@@ -95,7 +88,6 @@ theme_override_font_sizes/font_size = 32
 text = "药品"
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_lock_ = true
 
 [node name="买药" type="Button" parent="." unique_id=115090077]
 self_modulate = Color(1, 1, 1, 0)
@@ -104,7 +96,6 @@ offset_left = 358.0
 offset_top = 422.0
 offset_right = 417.0
 offset_bottom = 447.0
-metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="买药" unique_id=319673588]
 position = Vector2(30, 13)
@@ -129,7 +120,6 @@ offset_left = 486.0
 offset_top = 424.0
 offset_right = 545.0
 offset_bottom = 449.0
-metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="买解毒剂" unique_id=1270999592]
 position = Vector2(30, 13)
@@ -154,7 +144,6 @@ offset_left = 619.0
 offset_top = 423.0
 offset_right = 678.0
 offset_bottom = 448.0
-metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="买绷带" unique_id=1144579123]
 position = Vector2(30, 13)
@@ -179,7 +168,6 @@ offset_left = 748.0
 offset_top = 423.0
 offset_right = 807.0
 offset_bottom = 448.0
-metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="买子弹" unique_id=472857836]
 position = Vector2(30, 13)
@@ -208,7 +196,6 @@ theme_override_font_sizes/font_size = 32
 text = "绷带"
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_lock_ = true
 
 [node name="子弹" type="Label" parent="." unique_id=204865595]
 layout_mode = 0
@@ -221,7 +208,6 @@ theme_override_font_sizes/font_size = 32
 text = "子弹"
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_lock_ = true
 
 [node name="解毒剂" type="Label" parent="." unique_id=1912541322]
 layout_mode = 0
@@ -234,7 +220,6 @@ theme_override_font_sizes/font_size = 29
 text = "解毒剂"
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_lock_ = true
 
 [node name="购买药品数量" type="Label" parent="." unique_id=421168739]
 layout_mode = 0
@@ -423,3 +408,25 @@ offset_bottom = 18.399994
 
 [node name="animate" type="Node" parent="购买子弹数量" unique_id=1327506414]
 script = ExtResource("13_hayl1")
+
+[node name="close" type="Node" parent="." unique_id=2093975888]
+script = ExtResource("14_afjsh")
+
+[node name="close2" type="Button" parent="." unique_id=1687777691]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 811.0
+offset_top = 118.0
+offset_right = 858.0
+offset_bottom = 165.0
+
+[node name="点击" type="Sprite2D" parent="." unique_id=709426618]
+visible = false
+position = Vector2(835, 140)
+scale = Vector2(0.051, 0.051)
+texture = ExtResource("15_jdax8")
+
+[node name="未点击" type="Sprite2D" parent="." unique_id=1631785893]
+position = Vector2(835.00006, 140)
+scale = Vector2(0.051411305, 0.0514113)
+texture = ExtResource("14_q7j3g")

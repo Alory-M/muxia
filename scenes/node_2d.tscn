@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://x8qgje1ggp81" path="res://scenes/businessman.tscn" id="2_7pfoh"]
 [ext_resource type="Script" uid="uid://dfwlwcftyrm0l" path="res://scenes/Player.cs" id="2_rnjyy"]
 [ext_resource type="Script" uid="uid://bwuqauq8l1axf" path="res://scenes/ColorRect.cs" id="3_3m5ht"]
+[ext_resource type="PackedScene" uid="uid://bipb1owg5xw2i" path="res://store.tscn" id="3_qkxkb"]
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="4_4vge2"]
 [ext_resource type="PackedScene" uid="uid://c8dye4fcemnu0" path="res://scenes/packsys.tscn" id="5_f6ptj"]
 [ext_resource type="Texture2D" uid="uid://dtcnvnd7x2316" path="res://bin/OIP-C.webp" id="7_hh0fu"]
@@ -36,6 +37,7 @@
 [ext_resource type="Script" uid="uid://dtli2yu6qnt7w" path="res://scenes/Gold.cs" id="32_jt3n0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
+size = Vector2(22, 88)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_02hm2"]
 animations = [{
@@ -128,6 +130,9 @@ script = ExtResource("1_fws66")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1425987575]
 
+[node name="store" parent="HUD" unique_id=1988767736 instance=ExtResource("3_qkxkb")]
+visible = false
+
 [node name="therapy" type="Button" parent="HUD" unique_id=289548059]
 offset_left = 954.0
 offset_top = 58.0
@@ -181,6 +186,8 @@ hp = 50.0
 bulletScene = ExtResource("1_4dvvg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player" unique_id=705751674]
+visible = false
+position = Vector2(1, -2)
 shape = SubResource("RectangleShape2D_33age")
 
 [node name="run" type="AnimatedSprite2D" parent="player" unique_id=43979471]
@@ -204,7 +211,7 @@ script = ExtResource("32_jt3n0")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=405162670]
 
-[node name="Area2D" parent="." unique_id=1648233843 instance=ExtResource("2_7pfoh")]
+[node name="businessman" parent="." unique_id=1648233843 instance=ExtResource("2_7pfoh")]
 position = Vector2(246, -194)
 
 [node name="Treasure" parent="." unique_id=622065184 instance=ExtResource("4_4vge2")]
