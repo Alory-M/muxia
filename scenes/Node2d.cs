@@ -5,12 +5,12 @@ public partial class Node2d : Node2D
 {	
 	private Sprite2D _Map;
 	private bool _MapVisible = false;
-	private Player _player;
+	private Pack _pack;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		_Map = GetNode<Sprite2D>("HUD/Map");
-		_player =GetNode<Player>("player");
+		_pack = GetNode<Pack>("player/pack");
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -23,7 +23,8 @@ public partial class Node2d : Node2D
 		}
 		if (Input.IsActionJustPressed("R"))
 		{
-			_player._BulletCounter=6;
+			// 补弹 = 回到检查器里设的初始值,数值只在 pack 上维护一份
+			_pack.Refill(SupplyKind.Bullet);
 		}
 	}
 }

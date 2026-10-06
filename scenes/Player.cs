@@ -5,20 +5,7 @@ public partial class Player : CharacterBody2D
 	// 移动速度(像素/秒)
 	[Export]
 	private float moveSpeed = 100f;
-	
-	[Export]
-	public int _BulletCounter = 6;
-	[Export]
-	public int _drugCounter = 1;
 
-	// 绷带:按 Q 用来止血的消耗品,数量为 0 时按 Q 无效
-	[Export]
-	public int _bandageCounter = 3;
-
-	// 解毒剂:按 Z 用来解除迟缓的消耗品,数量为 0 时按 Z 无效
-	[Export]
-	public int _antidoteCounter = 3;
-	
 	// 改成 public 供 Therapy / ColorRect 读写
 	[Export]
 	public float hp = 100f;
@@ -43,10 +30,23 @@ public partial class Player : CharacterBody2D
 	private Vector2 _dashDirection = Vector2.Zero;
 	private float _dashRemaining = 0f;         // 本次冲刺还剩多少像素
 
+	// 背包。子弹 / 药 / 绷带 / 解毒剂的数量都在子节点 pack(Pack.cs)里,
+	// 这里不再自己存一份,要用就走 _pack
+	private Pack _pack;
+
 	private bool IsDashing => _dashRemaining > 0f;
 
 	// 冲刺速度由"距离 / 时间"推出来
 	private float DashSpeed => dashDistance / Mathf.Max(dashDuration, 0.0001f);
+
+	public override void _Ready()
+	{
+		_pack = GetNodeOrNull<Pack>("pack");
+		if (_pack == null)
+		{
+			GD.PushWarning("Player: 找不到子节点 pack,拿不到子弹数量,开不了枪。");
+		}
+	}
 
 	public override void _PhysicsProcess(double delta)
 	{
@@ -93,11 +93,7 @@ public partial class Player : CharacterBody2D
 	{
 		if (@event.IsActionPressed("mouse_press"))
 		{
-			if(_BulletCounter>0)
-			{
-				Shoot();
-				_BulletCounter-=1;
-			}
+			TryShoot();
 		}
 		else if (@event.IsActionPressed("mouse_press2"))
 		{
@@ -117,6 +113,17 @@ public partial class Player : CharacterBody2D
 		_dashDirection = input != Vector2.Zero ? input.Normalized() : _facing;
 
 		_dashRemaining = dashDistance;
+	}
+
+	/// <summary>有子弹就打一发、扣一发;没子弹时什么都不做(和以前一样,不提示)</summary>
+	private void TryShoot()
+	{
+		if (_pack == null || !_pack.TryConsume(SupplyKind.Bullet))
+		{
+			return;
+		}
+
+		Shoot();
 	}
 
 	private void Shoot()

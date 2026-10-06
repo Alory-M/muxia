@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="4_4vge2"]
 [ext_resource type="Texture2D" uid="uid://dtcnvnd7x2316" path="res://bin/OIP-C.webp" id="7_hh0fu"]
 [ext_resource type="Script" uid="uid://b1ynjrijdxkey" path="res://scenes/State.cs" id="8_dubn7"]
+[ext_resource type="Script" uid="uid://lcivnm5ognjd" path="res://scenes/Pack.cs" id="9_08kqv"]
 [ext_resource type="Script" uid="uid://cstg74fd6wd14" path="res://scenes/Clear.cs" id="9_dubn7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
@@ -79,7 +80,6 @@ text = "迟缓"
 [node name="player" type="CharacterBody2D" parent="." unique_id=569109722 groups=["player"]]
 script = ExtResource("2_rnjyy")
 moveSpeed = 500.0
-_drugCounter = 10
 hp = 50.0
 bulletScene = ExtResource("1_4dvvg")
 
@@ -94,6 +94,8 @@ sprite_frames = SubResource("SpriteFrames_02hm2")
 script = ExtResource("8_dubn7")
 
 [node name="pack" type="Node" parent="player" unique_id=1990557265]
+script = ExtResource("9_08kqv")
+_drugCounter = 10
 
 [node name="clear" type="Node" parent="player" unique_id=1813551384]
 script = ExtResource("9_dubn7")
