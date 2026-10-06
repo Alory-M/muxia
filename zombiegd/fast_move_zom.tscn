@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://dhavg2j8swuox"]
+
+[ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/zombie.tscn" id="1_8ylib"]
+[ext_resource type="Script" uid="uid://b4bbxscafrldb" path="res://zombiegd/fast_move_zom.gd" id="2_dj5wx"]
+
+[node name="fast_moveZom" unique_id=1172295772 instance=ExtResource("1_8ylib")]
+script = ExtResource("2_dj5wx")
+max_hp = 30
+attack_damage = 30
+move_speed = 2.0
+attack_cd = 2.0
+attack_range = null
+teleport_trigger_range = null
+teleport_offset = null

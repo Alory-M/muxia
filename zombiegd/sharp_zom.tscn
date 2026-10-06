@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://dtoyej8f13wux"]
+
+[ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/zombie.tscn" id="1_kvmt0"]
+
+[node name="sharpZom" unique_id=1172295772 instance=ExtResource("1_kvmt0")]
+max_hp = 30
+attack_damage = 40
+move_speed = 6.0
+attack_cd = 1.0
+attack_range = 2.0
