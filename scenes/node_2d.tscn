@@ -33,6 +33,8 @@
 [ext_resource type="Texture2D" uid="uid://bx4s506o7sp6h" path="res://host/背跑/IMG_2913-4.png" id="27_k8pa6"]
 [ext_resource type="Script" uid="uid://bux2f7nc6t7m0" path="res://scenes/Run.cs" id="28_4bto7"]
 [ext_resource type="Script" uid="uid://dtli2yu6qnt7w" path="res://scenes/Gold.cs" id="32_jt3n0"]
+[ext_resource type="Script" uid="uid://crecd8f4say6s" path="res://scenes/soulpiece.cs" id="32_7pfoh"]
+[ext_resource type="PackedScene" uid="uid://cb68diu653yey" path="res://zombiegd/coffin.tscn" id="34_mchk4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 
@@ -201,7 +203,12 @@ script = ExtResource("9_dubn7")
 [node name="gold" type="Node" parent="player" unique_id=1689734521]
 script = ExtResource("32_jt3n0")
 
+[node name="soulpiece" type="Node" parent="player" unique_id=998877665]
+script = ExtResource("32_7pfoh")
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=405162670]
 
 [node name="Treasure" parent="." unique_id=622065184 instance=ExtResource("4_4vge2")]
 position = Vector2(334, 2)
+
+[node name="coffin" parent="." unique_id=847161236 instance=ExtResource("34_mchk4")]
