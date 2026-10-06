@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://fudsjd8ipn8n"]
+
+[ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/zombie.tscn" id="1_ho86e"]
+
+[node name="arrowZom" unique_id=1172295772 instance=ExtResource("1_ho86e")]
+max_hp = 30
+attack_damage = 30
+move_speed = 4.0
+attack_cd = 2.0
+attack_range = 10.0
