@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dbmp8rbpxpfrd"
-path="res://.godot/imported/迷你僵尸..png-018af9a735717c45784deb0da799e161.ctex"
+uid="uid://bdw0b74sj8t2"
+path="res://.godot/imported/大巨僵尸（居中.png-ac961ae523aa8b1f50e5334c8fc13ca4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bin/sprites/迷你僵尸..png"
-dest_files=["res://.godot/imported/迷你僵尸..png-018af9a735717c45784deb0da799e161.ctex"]
+source_file="res://bin/sprites/大巨僵尸（居中.png"
+dest_files=["res://.godot/imported/大巨僵尸（居中.png-ac961ae523aa8b1f50e5334c8fc13ca4.ctex"]
 
 [params]
 

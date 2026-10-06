@@ -36,7 +36,7 @@
 [ext_resource type="Script" uid="uid://bux2f7nc6t7m0" path="res://scenes/Run.cs" id="28_4bto7"]
 [ext_resource type="Script" uid="uid://crecd8f4say6s" path="res://scenes/soulpiece.cs" id="32_7pfoh"]
 [ext_resource type="Script" uid="uid://dtli2yu6qnt7w" path="res://scenes/Gold.cs" id="32_jt3n0"]
-[ext_resource type="PackedScene" uid="uid://cb68diu653yey" path="res://zombiegd/coffin.tscn" id="34_mchk4"]
+[ext_resource type="PackedScene" uid="uid://h5sdaqivuae0" path="res://zombiegd/mini_zom.tscn" id="37_qkxkb"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 size = Vector2(22, 88)
@@ -222,5 +222,4 @@ position = Vector2(246, -194)
 [node name="Treasure" parent="." unique_id=622065184 instance=ExtResource("4_4vge2")]
 position = Vector2(334, 2)
 
-[node name="coffin" parent="." unique_id=847161236 instance=ExtResource("34_mchk4")]
-position = Vector2(-432, -14)
+[node name="miniZom" parent="." unique_id=1172295772 instance=ExtResource("37_qkxkb")]

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cljmkajaxlv08"
-path="res://.godot/imported/利爪僵尸.png-d9879a25c0ad155612aaf5558d6ffc1c.ctex"
+uid="uid://6iaofuedeg5"
+path="res://.godot/imported/利爪僵尸（居中.png-f833497b3140044dc575bb06d78b28d7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bin/sprites/利爪僵尸.png"
-dest_files=["res://.godot/imported/利爪僵尸.png-d9879a25c0ad155612aaf5558d6ffc1c.ctex"]
+source_file="res://bin/sprites/利爪僵尸（居中.png"
+dest_files=["res://.godot/imported/利爪僵尸（居中.png-f833497b3140044dc575bb06d78b28d7.ctex"]
 
 [params]
 

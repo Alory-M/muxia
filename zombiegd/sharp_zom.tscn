@@ -1,31 +1,28 @@
 [gd_scene format=3 uid="uid://dtoyej8f13wux"]
 
 [ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/zombie.tscn" id="1_kvmt0"]
-[ext_resource type="Texture2D" uid="uid://cljmkajaxlv08" path="res://bin/sprites/利爪僵尸.png" id="2_hhau8"]
+[ext_resource type="Texture2D" uid="uid://6iaofuedeg5" path="res://bin/sprites/利爪僵尸（居中.png" id="2_36pp6"]
 
 [node name="sharpZom" unique_id=1172295772 instance=ExtResource("1_kvmt0")]
 max_hp = 30
 attack_damage = 40
-move_speed = 6.0
-attack_cd = 1.0
-attack_range = 2.0
 
-[node name="Sprite2D" parent="." index="0" unique_id=698874992]
-visible = false
-position = Vector2(59.99994, 5.999954)
-texture = ExtResource("2_hhau8")
+[node name="normal" parent="." index="0" unique_id=698874992]
+position = Vector2(3.8146973e-06, 1.0000005)
+scale = Vector2(0.058, 0.058)
+texture = ExtResource("2_36pp6")
 
-[node name="ColorRect" parent="." index="1" unique_id=1176879974]
+[node name="attack" parent="." index="1" unique_id=951558578]
+visible = true
+scale = Vector2(0.098, 0.098)
+
+[node name="ColorRect" parent="." index="2" unique_id=1176879974]
 offset_left = -1397.0593
 offset_top = -1264.7063
 offset_right = -397.05933
 offset_bottom = -1084.7063
 
-[node name="CollisionShape2D" parent="." index="2" unique_id=630990669]
-visible = false
-
-[node name="AttackHitbox" parent="." index="3" unique_id=1099513601]
-visible = false
+[node name="AttackHitbox" parent="." index="4" unique_id=1099513601]
 position = Vector2(59, 150)
 
 [node name="CollisionShape2D" parent="AttackHitbox" index="0" unique_id=1548455069]

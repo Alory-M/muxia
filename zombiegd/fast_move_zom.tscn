@@ -2,13 +2,25 @@
 
 [ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/zombie.tscn" id="1_8ylib"]
 [ext_resource type="Script" uid="uid://b4bbxscafrldb" path="res://zombiegd/fast_move_zom.gd" id="2_dj5wx"]
+[ext_resource type="Texture2D" uid="uid://compclij5ury2" path="res://bin/sprites/瞬移僵尸（居中.png" id="3_eg5oc"]
+[ext_resource type="Texture2D" uid="uid://dfyly2unijars" path="res://bin/sprites/shunyi.png" id="4_y6b6c"]
 
 [node name="fast_moveZom" unique_id=1172295772 instance=ExtResource("1_8ylib")]
 script = ExtResource("2_dj5wx")
+teleport_trigger_range = 300.0
+teleport_distance = 40.0
 max_hp = 30
 attack_damage = 30
 move_speed = 2.0
 attack_cd = 2.0
 attack_range = 60.0
-teleport_trigger_range = 300.0
-teleport_distance = 40.0
+drop_item = null
+spawn_offset = Vector2(64, 0)
+
+[node name="normal" parent="." index="0" unique_id=698874992]
+visible = false
+scale = Vector2(0.058, 0.058)
+texture = ExtResource("3_eg5oc")
+
+[node name="attack" parent="." index="1" unique_id=951558578]
+texture = ExtResource("4_y6b6c")

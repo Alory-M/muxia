@@ -9,17 +9,18 @@
 radius = 226.0553
 
 [node name="coffin" type="Area2D" unique_id=847161236]
+position = Vector2(-550, -3)
 script = ExtResource("1_vj7j3")
 zombie_prefab = ExtResource("4_uwkas")
-
-[node name="closed" type="Sprite2D" parent="." unique_id=728807093]
-scale = Vector2(0.068, 0.068)
-texture = ExtResource("2_v6yxq")
 
 [node name="open" type="Sprite2D" parent="." unique_id=1210568537]
 visible = false
 scale = Vector2(0.068, 0.068)
 texture = ExtResource("3_fkfil")
+
+[node name="closed" type="Sprite2D" parent="." unique_id=728807093]
+scale = Vector2(0.06800001, 0.06800001)
+texture = ExtResource("2_v6yxq")
 
 [node name="detect_area" type="Area2D" parent="." unique_id=581605356]
 

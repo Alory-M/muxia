@@ -112,3 +112,5 @@ esc={
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+rendering_device/fallback_to_vulkan=false
+rendering_device/fallback_to_d3d12=false

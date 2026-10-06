@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://evqjs80d3y4x"
-path="res://.godot/imported/重量级僵尸.png-669b5891c6ba3679ef90c303114733b1.ctex"
+uid="uid://dn1d2jy3t8us6"
+path="res://.godot/imported/毒箭僵尸（居中.png-e6121a00a7d4623cf52cd11076e81409.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bin/sprites/重量级僵尸.png"
-dest_files=["res://.godot/imported/重量级僵尸.png-669b5891c6ba3679ef90c303114733b1.ctex"]
+source_file="res://bin/sprites/毒箭僵尸（居中.png"
+dest_files=["res://.godot/imported/毒箭僵尸（居中.png-e6121a00a7d4623cf52cd11076e81409.ctex"]
 
 [params]
 
