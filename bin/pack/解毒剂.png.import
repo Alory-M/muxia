@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b21my6fdbie5v"
-path="res://.godot/imported/解毒剂.jpeg-aecb7b8b1a345efa9b154334d656dc6a.ctex"
+uid="uid://bg1d8ire2pdfx"
+path="res://.godot/imported/解毒剂.png-49b4c2a2bedfc25b9d228f4a24cd5709.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bin/item/解毒剂.jpeg"
-dest_files=["res://.godot/imported/解毒剂.jpeg-aecb7b8b1a345efa9b154334d656dc6a.ctex"]
+source_file="res://bin/pack/解毒剂.png"
+dest_files=["res://.godot/imported/解毒剂.png-49b4c2a2bedfc25b9d228f4a24cd5709.ctex"]
 
 [params]
 

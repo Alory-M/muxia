@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpk5nf8gdukow"
-path="res://.godot/imported/药品.png-5c5d1a43ad4e043fcb3721fd362e44aa.ctex"
+path="res://.godot/imported/药品.png-be8ed21e211c7ddfba58b767afd15dd9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bin/item/item/item/药品.png"
-dest_files=["res://.godot/imported/药品.png-5c5d1a43ad4e043fcb3721fd362e44aa.ctex"]
+source_file="res://bin/pack/药品.png"
+dest_files=["res://.godot/imported/药品.png-be8ed21e211c7ddfba58b767afd15dd9.ctex"]
 
 [params]
 

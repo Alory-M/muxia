@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ct1qvp7h5unsi"
-path="res://.godot/imported/绷带.PNG-19e34bb8e57807a6636b9fa918da1b1f.ctex"
+path="res://.godot/imported/绷带.PNG-ab481b2d9609bcc38ffe7e3bd76d2b3c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bin/item/item/item/绷带.PNG"
-dest_files=["res://.godot/imported/绷带.PNG-19e34bb8e57807a6636b9fa918da1b1f.ctex"]
+source_file="res://bin/pack/绷带.PNG"
+dest_files=["res://.godot/imported/绷带.PNG-ab481b2d9609bcc38ffe7e3bd76d2b3c.ctex"]
 
 [params]
 

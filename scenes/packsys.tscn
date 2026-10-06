@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://c8dye4fcemnu0"]
 
 [ext_resource type="Texture2D" uid="uid://boo6kjp34ftnb" path="res://bin/pack/背包.jpeg" id="1_0fbet"]
-[ext_resource type="Texture2D" uid="uid://dpk5nf8gdukow" path="res://bin/item/item/item/药品.png" id="2_62e2m"]
+[ext_resource type="Script" uid="uid://e3us3pbiqrug" path="res://scenes/Packsys.cs" id="1_80bua"]
+[ext_resource type="Texture2D" uid="uid://dpk5nf8gdukow" path="res://bin/pack/药品.png" id="2_famm7"]
+[ext_resource type="Texture2D" uid="uid://bg1d8ire2pdfx" path="res://bin/pack/解毒剂.png" id="4_t1l7v"]
 
 [sub_resource type="Gradient" id="Gradient_62e2m"]
 offsets = PackedFloat32Array(1)
@@ -17,6 +19,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_80bua")
 
 [node name="background" type="Sprite2D" parent="." unique_id=1981008163]
 position = Vector2(552.99994, 316)
@@ -34,39 +37,34 @@ offset_bottom = 208.0
 [node name="image" type="Sprite2D" parent="button11" unique_id=211467918]
 position = Vector2(36, 36)
 scale = Vector2(0.09466665, 0.09466665)
-texture = ExtResource("2_62e2m")
+texture = ExtResource("2_famm7")
 
 [node name="button12" type="Button" parent="." unique_id=486045204]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.066
-anchor_bottom = 0.142
 offset_left = 349.0
 offset_top = 136.0
-offset_right = 343.96802
-offset_bottom = 115.98399
+offset_right = 420.0
+offset_bottom = 208.0
 
 [node name="image" type="Sprite2D" parent="button12" unique_id=1408463122]
 position = Vector2(36, 36)
-scale = Vector2(0.09466665, 0.09466665)
-texture = ExtResource("2_62e2m")
+scale = Vector2(0.055, 0.055)
+texture = ExtResource("4_t1l7v")
 
 [node name="button13" type="Button" parent="." unique_id=1023860168]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 0.066
-anchor_bottom = 0.142
 offset_left = 447.0
 offset_top = 136.0
-offset_right = 441.96802
-offset_bottom = 115.98399
+offset_right = 518.0
+offset_bottom = 208.0
 
 [node name="image" type="Sprite2D" parent="button13" unique_id=945238380]
 position = Vector2(36, 36)
-scale = Vector2(0.09466665, 0.09466665)
-texture = ExtResource("2_62e2m")
+scale = Vector2(0.058090575, 0.054357592)
+texture = ExtResource("4_t1l7v")
 
 [node name="ask" type="Sprite2D" parent="." unique_id=1689471043]
 visible = false
