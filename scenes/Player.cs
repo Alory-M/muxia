@@ -26,7 +26,6 @@ public partial class Player : CharacterBody2D
 	[Export]
 	private float dashDuration = 0.15f;
 
-	private Vector2 _facing = Vector2.Right;   // 最后一次的移动方向
 	private Vector2 _dashDirection = Vector2.Zero;
 	private float _dashRemaining = 0f;         // 本次冲刺还剩多少像素
 
@@ -34,7 +33,9 @@ public partial class Player : CharacterBody2D
 	// 这里不再自己存一份,要用就走 _pack
 	private Pack _pack;
 
-	private bool IsDashing => _dashRemaining > 0f;
+	// 冲刺中?Run 之类的子节点要据此换表现(比如把跑步动画放快),
+	// 所以对外公开,不让人去反射读 _dashRemaining
+	public bool IsDashing => _dashRemaining > 0f;
 
 	// 冲刺速度由"距离 / 时间"推出来
 	private float DashSpeed => dashDistance / Mathf.Max(dashDuration, 0.0001f);
@@ -78,11 +79,6 @@ public partial class Player : CharacterBody2D
 		// GetVector 会自动把长度裁到 1,所以斜向移动不会比直线更快
 		Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 
-		if (direction != Vector2.Zero)
-		{
-			_facing = direction.Normalized();   // 记住最后一次的移动方向
-		}
-
 		Velocity = direction * moveSpeed;
 		MoveAndSlide();
 	}
@@ -108,10 +104,15 @@ public partial class Player : CharacterBody2D
 			return;   // 冲刺途中不能再冲
 		}
 
-		// 方向 = 当前正在按的移动方向;如果站着不动,就用最后一次的移动方向
+		// 冲刺方向由玩家当前按着的方向决定。一个方向键都没按(站着不动)就不给冲——
+		// 方向总得由玩家给出来,不能拿"上次朝哪"凑合
 		Vector2 input = Input.GetVector("move_left", "move_right", "move_up", "move_down");
-		_dashDirection = input != Vector2.Zero ? input.Normalized() : _facing;
+		if (input.LengthSquared() < 0.0001f)
+		{
+			return;
+		}
 
+		_dashDirection = input.Normalized();
 		_dashRemaining = dashDistance;
 	}
 

@@ -23,10 +23,32 @@ public partial class Run : AnimatedSprite2D
 	// 上一次明确朝左还是朝右。A/D 同时按时用它兜底
 	private bool _facingLeft;
 
+	/// <summary>冲刺时动画的播放倍率。1 = 不变,2 = 两倍速</summary>
+	[Export] public float DashSpeedMultiplier { get; set; } = 2.0f;
+
+	// 不冲刺时的倍率。拎出来是为了不给 1.0 到处散落的机会
+	private const float NormalSpeedScale = 1.0f;
+
+	// 父节点,用来问"现在是不是在冲刺"
+	private Player _player;
+
+	public override void _Ready()
+	{
+		_player = GetParent() as Player;
+		if (_player == null)
+		{
+			GD.PushWarning("Run: 父节点不是 Player,冲刺时动画不会加速。");
+		}
+	}
+
 	// 方向键是"按住持续生效"的状态,不是一次性触发,所以在 _Process 里轮询。
 	// 对比:开枪那种一次性动作才用 _UnhandledInput + IsActionPressed
 	public override void _Process(double delta)
 	{
+		// 冲刺就把动画放快。SpeedScale 是节点级倍率,不动共享的 SpriteFrames,
+		// 所以四个动画各自的基础速度(站立5 / 背跑7 / 侧跑正跑10)照样保留
+		SpeedScale = _player != null && _player.IsDashing ? DashSpeedMultiplier : NormalSpeedScale;
+
 		bool left = Input.IsActionPressed("move_left");
 		bool right = Input.IsActionPressed("move_right");
 
