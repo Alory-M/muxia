@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://mtp6kfpn3d4v" path="res://bin/pack/子弹.png" id="4_a4gqu"]
 [ext_resource type="Texture2D" uid="uid://ct1qvp7h5unsi" path="res://bin/pack/绷带.PNG" id="5_mxlhg"]
 [ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="7_a4gqu"]
+[ext_resource type="Script" uid="uid://ci0fwvnaey6ju" path="res://购买数量.cs" id="8_mxlhg"]
 
 [node name="Control" type="Control" unique_id=1988767736]
 layout_mode = 3
@@ -97,6 +98,7 @@ offset_left = 358.0
 offset_top = 422.0
 offset_right = 417.0
 offset_bottom = 447.0
+metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="买药" unique_id=319673588]
 position = Vector2(30, 13)
@@ -121,6 +123,7 @@ offset_left = 486.0
 offset_top = 424.0
 offset_right = 545.0
 offset_bottom = 449.0
+metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="买解毒剂" unique_id=1270999592]
 position = Vector2(30, 13)
@@ -145,6 +148,7 @@ offset_left = 619.0
 offset_top = 423.0
 offset_right = 678.0
 offset_bottom = 448.0
+metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="买绷带" unique_id=1144579123]
 position = Vector2(30, 13)
@@ -169,6 +173,7 @@ offset_left = 748.0
 offset_top = 423.0
 offset_right = 807.0
 offset_bottom = 448.0
+metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="买子弹" unique_id=472857836]
 position = Vector2(30, 13)
@@ -224,3 +229,99 @@ text = "解毒剂"
 horizontal_alignment = 1
 vertical_alignment = 1
 metadata/_edit_lock_ = true
+
+[node name="购买数量" type="Label" parent="." unique_id=421168739]
+layout_mode = 0
+offset_left = 368.0
+offset_top = 395.0
+offset_right = 408.0
+offset_bottom = 418.0
+text = "1"
+horizontal_alignment = 1
+script = ExtResource("8_mxlhg")
+
+[node name="增" type="Button" parent="购买数量" unique_id=1024433323]
+layout_mode = 0
+offset_left = 43.0
+offset_top = 7.0
+offset_right = 59.75
+offset_bottom = 20.399994
+
+[node name="减" type="Button" parent="购买数量" unique_id=1502062684]
+layout_mode = 0
+offset_left = -19.0
+offset_top = 7.0
+offset_right = -2.25
+offset_bottom = 20.399994
+
+[node name="购买数量2" type="Label" parent="." unique_id=2009017783]
+layout_mode = 0
+offset_left = 497.0
+offset_top = 396.0
+offset_right = 537.0
+offset_bottom = 419.0
+text = "1"
+horizontal_alignment = 1
+script = ExtResource("8_mxlhg")
+
+[node name="增" type="Button" parent="购买数量2" unique_id=817966959]
+layout_mode = 0
+offset_left = 43.0
+offset_top = 7.0
+offset_right = 59.75
+offset_bottom = 20.399994
+
+[node name="减" type="Button" parent="购买数量2" unique_id=583069686]
+layout_mode = 0
+offset_left = -19.0
+offset_top = 7.0
+offset_right = -2.25
+offset_bottom = 20.399994
+
+[node name="购买数量3" type="Label" parent="." unique_id=1330597090]
+layout_mode = 0
+offset_left = 627.0
+offset_top = 396.0
+offset_right = 667.0
+offset_bottom = 419.0
+text = "1"
+horizontal_alignment = 1
+script = ExtResource("8_mxlhg")
+
+[node name="增" type="Button" parent="购买数量3" unique_id=1745103331]
+layout_mode = 0
+offset_left = 43.0
+offset_top = 7.0
+offset_right = 59.75
+offset_bottom = 20.399994
+
+[node name="减" type="Button" parent="购买数量3" unique_id=796896645]
+layout_mode = 0
+offset_left = -19.0
+offset_top = 7.0
+offset_right = -2.25
+offset_bottom = 20.399994
+
+[node name="购买数量4" type="Label" parent="." unique_id=1045725191]
+layout_mode = 0
+offset_left = 758.0
+offset_top = 396.0
+offset_right = 798.0
+offset_bottom = 419.0
+text = "1"
+horizontal_alignment = 1
+script = ExtResource("8_mxlhg")
+
+[node name="增" type="Button" parent="购买数量4" unique_id=1635293937]
+layout_mode = 0
+offset_left = 43.0
+offset_top = 7.0
+offset_right = 59.75
+offset_bottom = 20.399994
+
+[node name="减" type="Button" parent="购买数量4" unique_id=1908352807]
+layout_mode = 0
+offset_left = -19.0
+offset_top = 7.0
+offset_right = -2.25
+offset_bottom = 20.399994
