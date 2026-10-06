@@ -8,8 +8,8 @@ using System.Collections.Generic;
 /// 那一行当前的份数结算:库存不够 → 提示;钱不够 → 提示;都够才
 /// 扣钱、扣库存、往 player 的背包里加货。
 ///
-/// 金币目前是脚本里的一个字段(初值 1000)。Player 上还没有金币系统,
-/// 等它有了,把 _gold 的读写换成 Player 的即可,别处不用动。
+/// 金币不在这儿存 —— 钱在玩家身上的 Gold 节点(player/gold)里,
+/// 商店结算时去那里查余额、扣钱。
 /// </summary>
 public partial class Store : Node
 {
@@ -25,8 +25,8 @@ public partial class Store : Node
 	[Export] public int StockBandage { get; set; } = 10;
 	[Export] public int StockBullet { get; set; } = 10;
 
-	// 玩家的钱。Player 上还没有这个字段,先在这里顶着
-	private int _gold = 1000;
+	// 玩家的钱,挂在 player/gold 上的 Gold。找不到就什么都不卖,不然会白发货
+	private Gold _gold;
 
 	// 每种商品对应的"买几份"控件,结算时读它的 Count
 	private readonly Dictionary<SupplyKind, 购买数量> _counters = new();
@@ -43,6 +43,13 @@ public partial class Store : Node
 		if (_pack == null)
 		{
 			GD.PushWarning("Store: 找不到玩家身上的 pack,买到的货没地方放,一律不卖。");
+		}
+
+		// 钱也挂在玩家身上(player/gold 上的 Gold)
+		_gold = player?.GetNodeOrNull<Gold>("gold");
+		if (_gold == null)
+		{
+			GD.PushWarning("Store: 找不到玩家身上的 Gold(player/gold),不知道有多少钱,一律不卖。");
 		}
 
 		// 四行的对应关系。路径都从 store 出发:按钮和数量框都是 store 的兄弟节点,
@@ -77,10 +84,16 @@ public partial class Store : Node
 	/// <summary>买 kind 一样东西,份数取那一行当前的值</summary>
 	private void Buy(SupplyKind kind)
 	{
-		// 收货的地方都没有就别开张,不然扣了钱东西进不了背包
+		// 收货的地方和收钱的地方都得在,不然会扣了钱没货、或者白发货
 		if (_pack == null)
 		{
 			GD.Print($"Store: 找不到玩家的背包,{ItemName(kind)}买不了。");
+			return;
+		}
+
+		if (_gold == null)
+		{
+			GD.Print($"Store: 找不到玩家的金币,{ItemName(kind)}买不了。");
 			return;
 		}
 
@@ -104,20 +117,21 @@ public partial class Store : Node
 		}
 
 		int cost = GetPrice(kind) * amount;
-		if (_gold < cost)
+
+		// TrySpend 自己既判断又扣钱,所以不用先查余额再减 —— 那种写法中间容易出错
+		if (!_gold.TrySpend(cost))
 		{
-			GD.Print($"Store: 买 {amount} 份{ItemName(kind)}要 {cost} 金币,只有 {_gold},钱不够。");
+			GD.Print($"Store: 买 {amount} 份{ItemName(kind)}要 {cost} 金币,只有 {_gold.Amount},钱不够。");
 			return;
 		}
 
-		// 到这儿库存和钱都够了,才开始动账:
-		// 扣钱 → 扣库存 → 发货。三件事要么都做,要么前面就 return 掉了
-		_gold -= cost;
+		// 钱已经扣了。剩下两步都不会失败:SetStock 只做夹取,
+		// _pack 上面判过空,所以不会出现"扣了钱没发货"
 		SetStock(kind, stock - amount);
 		_pack.Add(kind, amount);
 
 		GD.Print($"Store: 买了 {amount} 份{ItemName(kind)},花掉 {cost},"
-			+ $"还剩 {_gold} 金币、{GetStock(kind)} 库存。");
+			+ $"还剩 {_gold.Amount} 金币、{GetStock(kind)} 库存。");
 	}
 
 	private int GetPrice(SupplyKind kind)

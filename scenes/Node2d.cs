@@ -23,8 +23,9 @@ public partial class Node2d : Node2D
 		}
 		if (Input.IsActionJustPressed("R"))
 		{
-			// 补弹 = 回到检查器里设的初始值,数值只在 pack 上维护一份
-			_pack.Refill(SupplyKind.Bullet);
+			// 换弹 = 补满弹匣,子弹从 pack 的备用数(_totalBullet)里扣,
+			// 具体补多少、够不够都由 pack 自己判断
+			_pack.ReloadBullets();
 		}
 	}
 }

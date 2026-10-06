@@ -32,7 +32,7 @@
 [ext_resource type="Texture2D" uid="uid://1clndwvd2u7m" path="res://host/背跑/IMG_2913-3.png" id="26_qkxkb"]
 [ext_resource type="Texture2D" uid="uid://bx4s506o7sp6h" path="res://host/背跑/IMG_2913-4.png" id="27_k8pa6"]
 [ext_resource type="Script" uid="uid://bux2f7nc6t7m0" path="res://scenes/Run.cs" id="28_4bto7"]
-[ext_resource type="Script" path="res://scenes/Store.cs" id="29_store"]
+[ext_resource type="Script" uid="uid://dtli2yu6qnt7w" path="res://scenes/Gold.cs" id="32_jt3n0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 
@@ -198,8 +198,8 @@ _drugCounter = 2
 [node name="clear" type="Node" parent="player" unique_id=1813551384]
 script = ExtResource("9_dubn7")
 
-[node name="store" type="Node" parent="player" unique_id=1689734521]
-script = ExtResource("29_store")
+[node name="gold" type="Node" parent="player" unique_id=1689734521]
+script = ExtResource("32_jt3n0")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=405162670]
 

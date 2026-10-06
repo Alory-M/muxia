@@ -21,6 +21,10 @@ public partial class Pack : Node
 {
 	// 数量在检查器里调。字段名和搬家前保持一致,场景里的覆盖值才好迁移
 	[Export] public int _BulletCounter = 6;
+
+	// 还没装进弹匣的备用子弹。换弹时从这里扣,不是凭空变出来的
+	[Export] public int _totalBullet = 20;
+
 	[Export] public int _drugCounter = 1;
 	[Export] public int _bandageCounter = 3;
 	[Export] public int _antidoteCounter = 3;
@@ -91,6 +95,43 @@ public partial class Pack : Node
 			case SupplyKind.Bandage: _bandageCounter = value; break;
 			case SupplyKind.Antidote: _antidoteCounter = value; break;
 		}
+	}
+
+	/// <summary>
+	/// 换弹:把弹匣补满,补进去的子弹从 _totalBullet 里扣。
+	///
+	/// 补多少 = "弹匣还空多少" 和 "备用子弹还剩多少" 里小的那个。所以:
+	///   - 弹匣满着按 R → 补 0 发,也不扣备用子弹(不会白浪费)
+	///   - 备用子弹不够补满 → 有多少补多少
+	///   - 弹匣永远不会超过容量
+	/// </summary>
+	public void ReloadBullets()
+	{
+		// 弹匣容量 = 检查器里给 _BulletCounter 设的初始值(_Ready 时存进 _initial 了),
+		// 不在这儿再写死一个 6
+		if (!_initial.TryGetValue(SupplyKind.Bullet, out int capacity))
+		{
+			return;
+		}
+
+		int need = capacity - _BulletCounter;
+		if (need <= 0)
+		{
+			GD.Print("Pack: 弹匣是满的,不用换弹。");
+			return;
+		}
+
+		if (_totalBullet <= 0)
+		{
+			GD.Print("Pack: 没有备用子弹了。");
+			return;
+		}
+
+		int loaded = Mathf.Min(need, _totalBullet);
+		_BulletCounter += loaded;
+		_totalBullet -= loaded;
+
+		GD.Print($"Pack: 换弹补了 {loaded} 发,弹匣 {_BulletCounter}/{capacity},备用还剩 {_totalBullet}。");
 	}
 
 	/// <summary>把某种物资补回检查器里设置的初始值</summary>
