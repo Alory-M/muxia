@@ -270,9 +270,9 @@ metadata/_edit_lock_ = true
 
 [node name="E" type="Label" parent="HUD/base_yaopin" unique_id=1351197045]
 layout_mode = 0
-offset_left = 35.0
+offset_left = 37.0
 offset_top = 24.0
-offset_right = 46.0
+offset_right = 48.0
 offset_bottom = 47.0
 text = "E"
 
