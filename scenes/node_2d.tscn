@@ -8,10 +8,22 @@
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="4_4vge2"]
 [ext_resource type="PackedScene" uid="uid://c8dye4fcemnu0" path="res://scenes/packsys.tscn" id="5_f6ptj"]
 [ext_resource type="Texture2D" uid="uid://dtcnvnd7x2316" path="res://bin/OIP-C.webp" id="7_hh0fu"]
+[ext_resource type="Texture2D" uid="uid://bk451302d7b5o" path="res://host/侧跑/IMG_2907-1.png" id="8_2sxpt"]
 [ext_resource type="Script" uid="uid://b1ynjrijdxkey" path="res://scenes/State.cs" id="8_dubn7"]
-[ext_resource type="Texture2D" uid="uid://cu2ikgwh4syed" path="res://host/host gun back.png" id="8_f6ptj"]
 [ext_resource type="Script" uid="uid://lcivnm5ognjd" path="res://scenes/Pack.cs" id="9_08kqv"]
 [ext_resource type="Script" uid="uid://cstg74fd6wd14" path="res://scenes/Clear.cs" id="9_dubn7"]
+[ext_resource type="Texture2D" uid="uid://liyvst8aeiui" path="res://host/侧跑/IMG_2907-2.png" id="9_pblkq"]
+[ext_resource type="Texture2D" uid="uid://c37tb7xw5t6yh" path="res://host/侧跑/IMG_2907-3.png" id="10_22dhx"]
+[ext_resource type="Texture2D" uid="uid://c3hyijnl51f3r" path="res://host/侧跑/IMG_2907-4.png" id="11_diulx"]
+[ext_resource type="Texture2D" uid="uid://cqinihrxo55sh" path="res://host/侧跑/IMG_2907-5.png" id="12_nuk1v"]
+[ext_resource type="Texture2D" uid="uid://cnjw6we7hqmqc" path="res://host/侧跑/IMG_2907-6.png" id="13_l0qat"]
+[ext_resource type="Texture2D" uid="uid://bcrrisfcvpgyw" path="res://host/侧跑/IMG_2907-7.png" id="14_wpu3o"]
+[ext_resource type="Texture2D" uid="uid://1b65rwlwgv53" path="res://host/侧跑/IMG_2907-8.png" id="15_g3arh"]
+[ext_resource type="Texture2D" uid="uid://batylfq1ssfad" path="res://host/侧跑/IMG_2907-9.png" id="16_unr0g"]
+[ext_resource type="Texture2D" uid="uid://hiani86irss0" path="res://host/侧跑/IMG_2907-10.png" id="17_jt3n0"]
+[ext_resource type="Texture2D" uid="uid://d1is30ho6jsvj" path="res://host/侧跑/IMG_2907-11.png" id="18_7pfoh"]
+[ext_resource type="Texture2D" uid="uid://cmf56aq2dynj7" path="res://host/侧跑/IMG_2907-12.png" id="19_mchk4"]
+[ext_resource type="Texture2D" uid="uid://dgf2e0h7xjl5k" path="res://host/侧跑/IMG_2907-13.png" id="20_gmqbl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 
@@ -19,11 +31,47 @@
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("8_f6ptj")
+"texture": ExtResource("8_2sxpt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_pblkq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_22dhx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_diulx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_nuk1v")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_l0qat")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_wpu3o")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_g3arh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_unr0g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_jt3n0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_7pfoh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_mchk4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_gmqbl")
 }],
 "loop": 1,
-"name": &"run",
-"speed": 5.0
+"name": &"侧跑",
+"speed": 10.0
 }]
 
 [node name="Node2D" type="Node2D" unique_id=261450284]
@@ -89,7 +137,9 @@ shape = SubResource("RectangleShape2D_33age")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="player" unique_id=43979471]
 scale = Vector2(0.06774194, 0.06774194)
 sprite_frames = SubResource("SpriteFrames_02hm2")
-animation = &"run"
+animation = &"侧跑"
+autoplay = "侧跑"
+frame_progress = 0.7847263
 
 [node name="state" type="Node" parent="player" unique_id=1575335001]
 script = ExtResource("8_dubn7")
