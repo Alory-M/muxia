@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c5xx126tloqba"]
 
-[ext_resource type="Texture2D" uid="uid://b376xmcsuv2j6" path="res://界面/地图.png" id="1_bkp1e"]
+[ext_resource type="Texture2D" uid="uid://b072yavsy3ni" path="res://界面/map new.png" id="1_bkp1e"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_33age"]
 distance = 157.0
@@ -23,8 +23,8 @@ grow_vertical = 2
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=404716341]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 2169.0
+offset_bottom = 1446.0
 texture = ExtResource("1_bkp1e")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=434663305]
@@ -45,5 +45,5 @@ rotation = -1.5707964
 shape = SubResource("WorldBoundaryShape2D_hfknc")
 
 [node name="下" type="CollisionShape2D" parent="StaticBody2D" unique_id=244613789]
-position = Vector2(258, -116)
+position = Vector2(252, -130)
 shape = SubResource("WorldBoundaryShape2D_84rr7")

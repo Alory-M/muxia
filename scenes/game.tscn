@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://ckarjpaog4b0a"]
 
 [ext_resource type="Script" uid="uid://cich5krm1wah0" path="res://scenes/Node2d.cs" id="1_nepv3"]
+[ext_resource type="Script" uid="uid://dta44kp1a4jgn" path="res://scenes/Camera2d.cs" id="2_8ool0"]
 [ext_resource type="PackedScene" uid="uid://bipb1owg5xw2i" path="res://store.tscn" id="2_7025r"]
 [ext_resource type="PackedScene" uid="uid://c5xx126tloqba" path="res://scenes/background.tscn" id="2_m4url"]
 [ext_resource type="Script" uid="uid://486vk5qb5yam" path="res://scenes/Therapy.cs" id="3_m4url"]
@@ -134,6 +135,7 @@ script = ExtResource("1_nepv3")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=405162670]
 position = Vector2(577.205, 1132.325)
+script = ExtResource("2_8ool0")
 
 [node name="background" parent="." unique_id=199233029 instance=ExtResource("2_m4url")]
 metadata/_edit_use_anchors_ = true
