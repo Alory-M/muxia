@@ -1,40 +1,27 @@
 extends Area2D
 
-@export var zombie_prefab: PackedScene # 拖入你的 zombie.tscn
+# 棺材只负责：玩家进入碰撞箱后发一个信号，通知里面的僵尸"开门了"。
+# 生成/现身、追击、攻击、限范围等逻辑全部在僵尸脚本里，棺材不碰。
 
-var has_spawned := false
+## 玩家进入碰撞箱后发出。僵尸脚本连上它，收到后自行现身并开始追击。
+signal player_entered(player: Node2D)
 
 @onready var closed: Sprite2D = $closed
 @onready var open_sprite: Sprite2D = $open
 @onready var detect_area: Area2D = $detect_area
 
-func _ready():
+var _has_triggered := false
+
+func _ready() -> void:
+	closed.visible = true
 	detect_area.body_entered.connect(_on_player_enter)
 
 func _on_player_enter(body: Node2D) -> void:
-	if has_spawned or not body.is_in_group("player"):
+	if _has_triggered or not body.is_in_group("player"):
 		return
-	has_spawned = true
+	_has_triggered = true
 	# 开棺
 	closed.visible = false
 	open_sprite.visible = true
-	# 生成僵尸：挂到场景根节点，别做成棺材子节点(免得跟着棺材动)
-	if zombie_prefab == null:
-		push_warning("coffin: 没有设置 zombie_prefab，僵尸无法生成")
-		return
-	# 这里是物理碰撞回调,引擎此刻正在遍历碰撞查询,不能往场景树里加带 Area2D 的节点
-	# (zombie.tscn 里有 AttackHitbox),否则会报
-	# "Can't change this state while flushing queries"。
-	# 整段挪到空闲帧再做 —— global_position 也得等节点进树之后设才有意义
-	_spawn_zombie.call_deferred(body)
-	
-func _spawn_zombie(body: Node2D) -> void:
-	# 延迟了一帧,期间玩家可能已经没了
-	if not is_instance_valid(body):
-		return
-	var zombie := zombie_prefab.instantiate()
-	get_parent().add_child(zombie)
-	zombie.global_position = global_position
-	# 把棺材和玩家交给僵尸，让它开始追击
-	zombie.set("coffin", self)
-	zombie.set("player", body)
+	# 只发信号，其余交给僵尸脚本
+	player_entered.emit(body)

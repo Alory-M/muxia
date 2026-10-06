@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://djiqymlvmtmdq"]
+
+[ext_resource type="PackedScene" uid="uid://dtoyej8f13wux" path="res://zombiegd/sharp_zom.tscn" id="2_nmvhb"]
+[ext_resource type="PackedScene" uid="uid://cb68diu653yey" path="res://zombiegd/coffin.tscn" id="2_plqgq"]
+
+[node name="coffin" unique_id=847161236 instance=ExtResource("2_plqgq")]
+
+[node name="sharpZom" parent="." index="3" unique_id=1172295772 instance=ExtResource("2_nmvhb")]
+position = Vector2(273, -288)

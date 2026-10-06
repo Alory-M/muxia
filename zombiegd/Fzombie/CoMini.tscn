@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://cw8p6eidllgc7"]
+
+[ext_resource type="PackedScene" uid="uid://cb68diu653yey" path="res://zombiegd/coffin.tscn" id="1_kmjyv"]
+[ext_resource type="PackedScene" uid="uid://h5sdaqivuae0" path="res://zombiegd/mini_zom.tscn" id="2_3fopa"]
+
+[node name="coffin" unique_id=847161236 instance=ExtResource("1_kmjyv")]
+
+[node name="miniZom" parent="." index="3" unique_id=1172295772 instance=ExtResource("2_3fopa")]

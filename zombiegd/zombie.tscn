@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ctoe37kfmw4k0"]
 
-[ext_resource type="Script" uid="uid://d0t1odn8thvod" path="res://zombiegd/zombie_area.gd" id="1_dcs8h"]
+[ext_resource type="Script" uid="uid://cpidibj5ldxq7" path="res://zombiegd/Fzombie/Zombie.cs" id="1_dcs8h"]
 [ext_resource type="Texture2D" uid="uid://bdw0b74sj8t2" path="res://bin/sprites/大巨僵尸（居中.png" id="2_02rw5"]
 [ext_resource type="Texture2D" uid="uid://nxckb52ln662" path="res://bin/sprites/jianzhua.png" id="3_02rw5"]
 
@@ -12,7 +12,7 @@ height = 1235.294
 radius = 65.06919
 
 [node name="zombie" type="CharacterBody2D" unique_id=1172295772]
-position = Vector2(-513, 2)
+position = Vector2(-532, 3)
 motion_mode = 1
 script = ExtResource("1_dcs8h")
 

@@ -5,8 +5,8 @@
 [ext_resource type="Texture2D" uid="uid://c32xjukcnprak" path="res://bin/sprites/mini.png" id="3_8q5i8"]
 
 [node name="miniZom" unique_id=1172295772 instance=ExtResource("1_7nene")]
-max_hp = 15
-attack_damage = 20
+MaxHp = 15
+AttackDamage = 20
 
 [node name="normal" parent="." index="0" unique_id=698874992]
 scale = Vector2(0.038, 0.038)

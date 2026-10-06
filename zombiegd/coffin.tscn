@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://bu4122shcj31s" path="res://zombiegd/coffin.gd" id="1_vj7j3"]
 [ext_resource type="Texture2D" uid="uid://b5o7cthk7n1c1" path="res://bin/item/guancai close.png" id="2_v6yxq"]
 [ext_resource type="Texture2D" uid="uid://c8g56ulxjkhfm" path="res://bin/item/guancai open.png" id="3_fkfil"]
-[ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/zombie.tscn" id="4_uwkas"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_h1dxn"]
 radius = 226.0553
@@ -11,7 +10,6 @@ radius = 226.0553
 [node name="coffin" type="Area2D" unique_id=847161236]
 position = Vector2(-550, -3)
 script = ExtResource("1_vj7j3")
-zombie_prefab = ExtResource("4_uwkas")
 
 [node name="open" type="Sprite2D" parent="." unique_id=1210568537]
 visible = false

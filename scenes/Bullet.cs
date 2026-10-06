@@ -11,6 +11,9 @@ public partial class Bullet : Area2D
 	// 命中目标时造成的伤害
 	[Export] public int Damage { get; set; } = 25;
 
+	// 谁发射的：false=玩家(只打僵尸)；true=僵尸(只打玩家)。由发射方在 Launch 前设置
+	public bool HitsPlayer { get; set; } = false;
+
 	private Vector2 _direction = Vector2.Zero;   // 由 Launch() 传入,之后不再改变
 	private float _traveled = 0.0f;              // 已经飞了多远
 	private bool _isMoving = false;
@@ -33,7 +36,23 @@ public partial class Bullet : Area2D
 	/// <summary>子弹撞到东西时的处理:对可受伤目标扣血,然后销毁子弹</summary>
 	private void OnBodyEntered(Node2D body)
 	{
-		// 子弹从玩家身上出生,会立刻和玩家重叠;玩家不算目标,直接放过
+		// 僵尸射的箭（HitsPlayer=true）：打玩家，别打自己人（僵尸有 take_damage）
+		if (HitsPlayer)
+		{
+			if (body is Player player)
+			{
+				player.TakeDamage(Damage);
+				QueueFree();
+			}
+			else if (!body.HasMethod("take_damage"))
+			{
+				// 不是玩家、也不是僵尸：撞墙等障碍，直接消失
+				QueueFree();
+			}
+			return; // 是僵尸（有 take_damage）：友方，穿过不处理
+		}
+
+		// 玩家射的子弹：出生瞬间和玩家重叠，玩家不算目标，直接放过
 		if (body.IsInGroup("player"))
 		{
 			return;

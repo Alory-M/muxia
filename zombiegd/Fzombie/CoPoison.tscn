@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://pg8l7kvnu057"]
+
+[ext_resource type="PackedScene" uid="uid://cb68diu653yey" path="res://zombiegd/coffin.tscn" id="1_70j1w"]
+[ext_resource type="PackedScene" uid="uid://b53cs0cl18yyy" path="res://zombiegd/poison_zom.tscn" id="2_ljvti"]
+
+[node name="coffin" unique_id=847161236 instance=ExtResource("1_70j1w")]
+
+[node name="poisonZom" parent="." index="3" unique_id=1172295772 instance=ExtResource("2_ljvti")]
+PoisonDps = 5.0
+PoisonDuration = 3.0

@@ -2,10 +2,10 @@
 
 [ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/zombie.tscn" id="1_kvmt0"]
 [ext_resource type="Texture2D" uid="uid://6iaofuedeg5" path="res://bin/sprites/利爪僵尸（居中.png" id="2_36pp6"]
+[ext_resource type="Script" uid="uid://d2pi0ic473q46" path="res://zombiegd/Fzombie/SharpZom.cs" id="2_ou05y"]
 
 [node name="sharpZom" unique_id=1172295772 instance=ExtResource("1_kvmt0")]
-max_hp = 30
-attack_damage = 40
+script = ExtResource("2_ou05y")
 
 [node name="normal" parent="." index="0" unique_id=698874992]
 position = Vector2(3.8146973e-06, 1.0000005)
@@ -17,10 +17,10 @@ visible = true
 scale = Vector2(0.098, 0.098)
 
 [node name="ColorRect" parent="." index="2" unique_id=1176879974]
-offset_left = -1397.0593
-offset_top = -1264.7063
-offset_right = -397.05933
-offset_bottom = -1084.7063
+offset_left = -39.0
+offset_top = -86.0
+offset_right = 41.0
+offset_bottom = -71.0
 
 [node name="AttackHitbox" parent="." index="4" unique_id=1099513601]
 position = Vector2(59, 150)
