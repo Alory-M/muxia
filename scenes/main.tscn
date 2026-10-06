@@ -1,8 +1,34 @@
 [gd_scene format=3 uid="uid://biup1rqmtys3i"]
 
 [ext_resource type="Texture2D" uid="uid://b8clsya62c3xj" path="res://ui/开始界面.png" id="1_o5qli"]
+[ext_resource type="Script" uid="uid://dugsyvwcfwxeb" path="res://scenes/Main.cs" id="1_tbgi4"]
+[ext_resource type="Texture2D" uid="uid://bleuocx7uuu8d" path="res://ui/tuichu.png" id="2_jyhfs"]
+[ext_resource type="Texture2D" uid="uid://b18ng3p3xcswk" path="res://ui/start.png" id="3_tbgi4"]
 
 [node name="Node2D" type="Node2D" unique_id=2089587978]
+script = ExtResource("1_tbgi4")
 
-[node name="开始界面" type="Sprite2D" parent="." unique_id=356519733]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=104275843]
+
+[node name="开始界面" type="Sprite2D" parent="HUD" unique_id=356519733]
+position = Vector2(575.915, 324.99997)
+scale = Vector2(0.69128585, 0.6971307)
 texture = ExtResource("1_o5qli")
+metadata/_edit_lock_ = true
+
+[node name="Tuichu" type="Sprite2D" parent="HUD" unique_id=1062928415]
+position = Vector2(256, 387.99997)
+scale = Vector2(0.20879538, 0.20879537)
+texture = ExtResource("2_jyhfs")
+
+[node name="Start" type="Sprite2D" parent="HUD" unique_id=1034342426]
+position = Vector2(258, 354)
+scale = Vector2(0.22056454, 0.22056454)
+texture = ExtResource("3_tbgi4")
+
+[node name="start" type="Button" parent="HUD/Start" unique_id=1329134508]
+self_modulate = Color(1, 1, 1, 0)
+offset_left = -285.63068
+offset_top = -117.87933
+offset_right = 317.66913
+offset_bottom = 55.38669
