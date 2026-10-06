@@ -16,6 +16,9 @@ public partial class Packsys : Control
 	// 开关背包的键。单独拎出来,以后改键不用翻代码
 	private const string ToggleKey = "B";
 
+	// 关背包的备用键。和 ToggleKey 分开放:它只负责关,不负责开
+	private const string EscapeKey = "esc";
+
 	// 背包里摆道具的格子,按从左到右的顺序排。数量>0 的道具就顺着往这里填
 	private static readonly string[] SlotPaths = { "button11", "button12", "button13" };
 
@@ -144,6 +147,14 @@ public partial class Packsys : Control
 		if (@event.IsActionPressed(ToggleKey))
 		{
 			SetOpen(!Visible);
+			return;
+		}
+
+		// Esc 只在背包开着时有效,等同于"再按一次 B"。关着的时候什么都不做——
+		// 不然它就成了第二个打开键,以后别的界面想用 Esc 返回也会被它抢
+		if (Visible && @event.IsActionPressed(EscapeKey))
+		{
+			SetOpen(false);
 		}
 	}
 
@@ -222,7 +233,11 @@ public partial class Packsys : Control
 		_item.Texture = _textures[kind];
 		_item.Scale = PreviewScaleFor(kind);
 		_itemName.Text = NameFor(kind);
+
+		// 这三个必须一起开关。itemname 现在是根 Control 的子节点、不再是 item 的子节点,
+		// 藏 item 已经带不走它了,漏一个就会出现"图没了字还在"
 		_item.Visible = true;
+		_itemName.Visible = true;
 		_ensureButton.Visible = true;
 	}
 
@@ -236,7 +251,9 @@ public partial class Packsys : Control
 			return;
 		}
 
+		// 和 Select 对着来,三个一起收
 		_item.Visible = false;
+		_itemName.Visible = false;
 		_ensureButton.Visible = false;
 	}
 
