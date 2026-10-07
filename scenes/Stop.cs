@@ -3,10 +3,14 @@ using Godot;
 /// <summary>
 /// 模态界面的暂停开关,挂在 packsys 的 stop 节点上。
 ///
-/// 背包打开时把该停的东西一起停住:玩家整个冻上(不能移动、射击、冲刺、按道具热键),
-/// 流血和迟缓的扣血与倒计时也停。背包关掉后原样恢复。
+/// 背包打开时把该停的东西一起停住:
+///   玩家整个冻上(不能移动、射击、冲刺、按道具热键)
+///   流血和迟缓的扣血与倒计时
+///   场上所有僵尸(按 "zombie" 组找)
+///   飞在半空的子弹和箭(按 "bullet" 组找)
+/// 背包关掉后原样恢复。
 ///
-/// 以后要停别的实体(敌人、陷阱、计时器……),往 SetPaused 里加一条就行,
+/// 以后要停别的实体(陷阱、计时器……),往 SetPaused 里加一条就行,
 /// 调用方永远只认 SetPaused 这一个入口。
 /// </summary>
 public partial class Stop : Node
@@ -40,6 +44,13 @@ public partial class Stop : Node
 	private static int _openCount;
 
 	/// <summary>
+	/// 现在有没有模态界面开着。
+	/// SetPaused 只在开关界面的那一刻扫一遍组,暂停期间才生成的东西扫不到 ——
+	/// 它自己在 _Ready 里问一句这个,就能决定要不要一出生就冻上
+	/// </summary>
+	public static bool IsPaused => _openCount > 0;
+
+	/// <summary>
 	/// 暂停 / 恢复。paused=true 记一次"开",false 记一次"关";
 	/// 只要有界面还开着就一直冻着,全关完才恢复。
 	/// </summary>
@@ -63,11 +74,30 @@ public partial class Stop : Node
 			_player.ProcessMode = frozen ? ProcessModeEnum.Disabled : ProcessModeEnum.Inherit;
 		}
 
+		// 僵尸和飞在半空的子弹也得停。它们都不在 player 子树里(僵尸挂在棺材下面,
+		// 子弹挂在场景根),上面那行管不到 —— 不冻的话界面开着僵尸照样追你、砍你、射箭,
+		// 已经出膛的箭也照样飞过来,而你被冻着躲都躲不掉。
+		// 按组找而不是按路径:有几只僵尸、哪只刚从棺材里出来、有几颗子弹在飞,这里都不用管
+		PauseGroup(Zombie.GroupName, frozen);
+		PauseGroup(Bullet.GroupName, frozen);
+
 		// 显式再停一次减益。debuff 是 player 的后代,上面那行其实已经会让它们停,
 		// 但这里写明白,读代码时不用去推"子节点会继承 ProcessMode"这层关系
 		if (_state != null)
 		{
 			_state.SetDebuffsPaused(frozen);
+		}
+	}
+
+	/// <summary>
+	/// 把某个组里的节点一起冻住 / 恢复。
+	/// 每次现查组,不缓存列表 —— 子弹是打一发生成一颗的,场上的数量一直在变
+	/// </summary>
+	private void PauseGroup(string group, bool frozen)
+	{
+		foreach (Node node in GetTree().GetNodesInGroup(group))
+		{
+			node.ProcessMode = frozen ? ProcessModeEnum.Disabled : ProcessModeEnum.Inherit;
 		}
 	}
 }

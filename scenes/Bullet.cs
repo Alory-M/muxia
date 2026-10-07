@@ -2,6 +2,12 @@ using Godot;
 
 public partial class Bullet : Area2D
 {
+	/// <summary>
+	/// 所有子弹都进这个组。模态界面(背包 / 商店)打开时,Stop 靠它把飞在半空的子弹也冻住 ——
+	/// 不冻的话箭已经出膛了,你开背包躲不掉,它照样飞过来打中你
+	/// </summary>
+	public const string GroupName = "bullet";
+
 	// 飞行速度(像素/秒)
 	[Export] public float Speed { get; set; } = 800.0f;
 
@@ -26,6 +32,17 @@ public partial class Bullet : Area2D
 
 	public override void _Ready()
 	{
+		// 先报名,让模态界面的 Stop 找得到自己
+		AddToGroup(GroupName);
+
+		// 万一是在暂停期间出膛的,自己先冻上再飞。
+		// 正常不会发生(那会儿玩家和僵尸都被冻着,没人能开火),但这句能让"暂停"
+		// 这件事对子弹来说永远是完整的,不用去推"谁会在暂停时开火"
+		if (Stop.IsPaused)
+		{
+			ProcessMode = ProcessModeEnum.Disabled;
+		}
+
 		_rotate = GetNodeOrNull<Rotate>("rotate");
 		if (_rotate == null)
 		{

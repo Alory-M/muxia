@@ -7,6 +7,12 @@ using Godot;
 /// </summary>
 public partial class Zombie : CharacterBody2D
 {
+	/// <summary>
+	/// 所有僵尸都进这个组。背包 / 商店这类模态界面打开时,Stop 靠它把场上的僵尸全冻住 ——
+	/// 不这么找的话就得去猜僵尸挂在哪:可能是场景根的子节点,也可能是棺材的子节点
+	/// </summary>
+	public const string GroupName = "zombie";
+
 	// ========== 全部僵尸可配置属性（Inspector 面板直接改） ==========
 	[Export] public int MaxHp { get; set; } = 100;          // 血量
 	[Export] public int AttackDamage { get; set; } = 10;    // 伤害
@@ -29,6 +35,9 @@ public partial class Zombie : CharacterBody2D
 
 	public override void _Ready()
 	{
+		// 先报名,让模态界面的 Stop 找得到自己
+		AddToGroup(GroupName);
+
 		_hp = MaxHp;
 		_attackTimer = 0f;
 

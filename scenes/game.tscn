@@ -61,9 +61,14 @@
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="37_7gkqi"]
 [ext_resource type="PackedScene" uid="uid://cw2icyxh8v33y" path="res://scenes/end.tscn" id="43_05nbr"]
 [ext_resource type="Script" uid="uid://ca5hw3s11tftj" path="res://scenes/Endarea.cs" id="56_ms3bu"]
+[ext_resource type="Script" uid="uid://bi1snv8407xbk" path="res://scenes/Die.cs" id="59_uxocx"]
 [ext_resource type="Script" uid="uid://cjv73bbp7d3yt" path="res://scenes/开门机关.cs" id="61_xbak0"]
 [ext_resource type="Texture2D" uid="uid://lhdumcs5387t" path="res://ui/开门机关.png" id="62_3x28f"]
 [ext_resource type="Texture2D" uid="uid://dxobj5m71e8vt" path="res://ui/终点大门.png" id="63_l6q63"]
+[ext_resource type="PackedScene" uid="uid://cw8p6eidllgc7" path="res://zombiegd/Fzombie/CoMini.tscn" id="65_3x28f"]
+[ext_resource type="PackedScene" uid="uid://dejj8okgfbs6g" path="res://zombiegd/Fzombie/CoFast.tscn" id="66_weeiq"]
+[ext_resource type="PackedScene" uid="uid://djiqymlvmtmdq" path="res://zombiegd/Fzombie/CoSharp.tscn" id="67_uxocx"]
+[ext_resource type="PackedScene" uid="uid://pg8l7kvnu057" path="res://zombiegd/Fzombie/CoPoison.tscn" id="68_7nv0b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 size = Vector2(22, 88)
@@ -520,7 +525,7 @@ visible = false
 position = Vector2(243, 1250)
 script = ExtResource("8_oaba0")
 moveSpeed = 500.0
-hp = 1000.0
+hp = 50.0
 MaxHp = 1000.0
 bulletScene = ExtResource("9_458eo")
 
@@ -551,6 +556,9 @@ script = ExtResource("34_o8oq8")
 [node name="soulpiece" type="Node" parent="player" unique_id=998877665]
 script = ExtResource("35_sxt1d")
 
+[node name="die" type="Node" parent="player" unique_id=1239713201]
+script = ExtResource("59_uxocx")
+
 [node name="businessman" parent="." unique_id=1648233843 instance=ExtResource("36_2iuns")]
 position = Vector2(1568, 453)
 metadata/_edit_lock_ = true
@@ -563,6 +571,9 @@ position = Vector2(429, 1081)
 
 [node name="Treasure3" parent="." unique_id=505965370 instance=ExtResource("37_7gkqi")]
 position = Vector2(591, 728.99994)
+
+[node name="Treasure4" parent="." unique_id=949335601 instance=ExtResource("37_7gkqi")]
+position = Vector2(1537, 848.99994)
 
 [node name="开门机关" type="Area2D" parent="." unique_id=134149694]
 script = ExtResource("61_xbak0")
@@ -588,3 +599,27 @@ script = ExtResource("56_ms3bu")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="endarea" unique_id=5794379]
 position = Vector2(1981.5, 269)
 shape = SubResource("RectangleShape2D_qxvy8")
+
+[node name="coffin" parent="." unique_id=847161236 instance=ExtResource("65_3x28f")]
+position = Vector2(219, 1009)
+
+[node name="coffin2" parent="." unique_id=779695516 instance=ExtResource("66_weeiq")]
+position = Vector2(227, 473)
+
+[node name="coffin3" parent="." unique_id=2093551399 instance=ExtResource("67_uxocx")]
+position = Vector2(1027, 665)
+
+[node name="coffin4" parent="." unique_id=23912900 instance=ExtResource("68_7nv0b")]
+position = Vector2(1012, 267)
+
+[node name="coffin5" parent="." unique_id=985798119 instance=ExtResource("66_weeiq")]
+position = Vector2(1314, 1065)
+
+[node name="coffin6" parent="." unique_id=1076626579 instance=ExtResource("68_7nv0b")]
+position = Vector2(797, 1274)
+
+[node name="coffin7" parent="." unique_id=1580140913 instance=ExtResource("68_7nv0b")]
+position = Vector2(1929, 1028)
+
+[node name="coffin8" parent="." unique_id=1148105144 instance=ExtResource("67_uxocx")]
+position = Vector2(1738, 452)

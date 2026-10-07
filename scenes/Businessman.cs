@@ -44,8 +44,17 @@ public partial class Businessman : Area2D
 	// 按键是逐个事件投递的,不会漏掉连按(Player / Clear / Packsys 都是这个写法)
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		// 只有玩家站在旁边时 F 才有用
-		if (_storeUi == null || !_playerInRange || !@event.IsActionPressed("interact"))
+		if (_storeUi == null || !@event.IsActionPressed("interact"))
+		{
+			return;
+		}
+
+		// 开店要求站在旁边;关店不要求。
+		// 因为开店会把玩家冻住(Stop 里设 ProcessMode.Disabled),而一冻上,
+		// 玩家就从 Area2D 的重叠列表里掉出去了 —— 商人收到 body_exited、
+		// _playerInRange 变 false。这时候要是还要求"在范围内",那"再按一次 F 关掉"
+		// 就永远按不动了(玩家被冻着,也走不回来)
+		if (!_storeUi.Visible && !_playerInRange)
 		{
 			return;
 		}

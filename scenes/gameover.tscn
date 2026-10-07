@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://r63bpckpid4w"]
+
+[ext_resource type="Script" uid="uid://cnd8rn1ls4cyx" path="res://scenes/Gameover.cs" id="1_dy3ie"]
+[ext_resource type="Texture2D" uid="uid://bm2phrlj7i3iv" path="res://ui/gameover.png" id="1_ncp31"]
+
+[node name="Node2D" type="Node2D" unique_id=1788357106]
+script = ExtResource("1_dy3ie")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1472400179]
+offset_right = 1155.0
+offset_bottom = 652.0
+texture = ExtResource("1_ncp31")
+metadata/_edit_lock_ = true
+
+[node name="again" type="Button" parent="." unique_id=1592323550]
+self_modulate = Color(1, 1, 1, 0)
+offset_left = 501.0
+offset_top = 358.0
+offset_right = 671.0
+offset_bottom = 402.0
+metadata/_edit_use_anchors_ = true
+
+[node name="tomain" type="Button" parent="." unique_id=816743335]
+self_modulate = Color(1, 1, 1, 0)
+offset_left = 502.0
+offset_top = 417.0
+offset_right = 684.0
+offset_bottom = 460.0
+metadata/_edit_use_anchors_ = true
+
+[node name="exit" type="Button" parent="." unique_id=1788586913]
+self_modulate = Color(1, 1, 1, 0)
+offset_left = 506.0
+offset_top = 469.0
+offset_right = 672.0
+offset_bottom = 513.0
+metadata/_edit_use_anchors_ = true

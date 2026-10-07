@@ -70,13 +70,26 @@ public partial class CloseButton : Node
 		CloseStore();
 	}
 
-	/// <summary>关商店:把整个界面藏起来</summary>
+	/// <summary>关掉这个界面</summary>
 	private void CloseStore()
 	{
-		if (_ui != null)
+		if (_ui == null)
 		{
-			_ui.Visible = false;
+			return;
 		}
+
+		// 有 SetOpen 就必须走它 —— 直接改 Visible 会把"开合时要做的收尾工作"整段跳过。
+		// 背包就是这么漏的:它的暂停挂在 Packsys.SetOpen 里,这儿直接 Visible = false
+		// 的结果是"背包关了,玩家还冻着",而且再也解不开(暂停计数还停在 1)。
+		// 和 Win.CloseWindow 是同一个约定
+		if (_ui.HasMethod("SetOpen"))
+		{
+			_ui.Call("SetOpen", false);
+			return;
+		}
+
+		// 没提供 SetOpen 的界面(比如商店)自己盯着可见性做收尾,直接改 Visible 才是对的
+		_ui.Visible = false;
 	}
 
 	/// <summary>按住时把 点击 叠上去,松开撤掉</summary>
