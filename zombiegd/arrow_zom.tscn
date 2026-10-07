@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://bfby3tf04rwod" path="res://zombiegd/Fzombie/ArrowZom.cs" id="2_gk3af"]
 [ext_resource type="Texture2D" uid="uid://xcwajcukyura" path="res://bin/sprites/shejian.png" id="3_gk3af"]
 [ext_resource type="PackedScene" uid="uid://d2u0f46gdxmmp" path="res://scenes/bullet.tscn" id="4_bullet"]
+[ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="5_gift"]
 
 [node name="arrowZom" unique_id=1172295772 instance=ExtResource("1_ho86e")]
 script = ExtResource("2_gk3af")
@@ -20,3 +21,7 @@ visible = true
 position = Vector2(6, -29)
 scale = Vector2(0.23, 0.23)
 texture = ExtResource("3_gk3af")
+
+[node name="gift" type="Node" parent="."]
+script = ExtResource("5_gift")
+DropId = 2002

@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/zombie.tscn" id="1_kvmt0"]
 [ext_resource type="Texture2D" uid="uid://6iaofuedeg5" path="res://bin/sprites/利爪僵尸（居中.png" id="2_36pp6"]
 [ext_resource type="Script" uid="uid://d2pi0ic473q46" path="res://zombiegd/Fzombie/SharpZom.cs" id="2_ou05y"]
+[ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="3_gift"]
 
 [node name="sharpZom" unique_id=1172295772 instance=ExtResource("1_kvmt0")]
 script = ExtResource("2_ou05y")
@@ -27,3 +28,7 @@ position = Vector2(59, 150)
 
 [node name="CollisionShape2D" parent="AttackHitbox" index="0" unique_id=1548455069]
 position = Vector2(-58, -149)
+
+[node name="gift" type="Node" parent="."]
+script = ExtResource("3_gift")
+DropId = 2003

@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/zombie.tscn" id="1_1ldkc"]
 [ext_resource type="Texture2D" uid="uid://dd1qpydm2xh74" path="res://bin/sprites/daju.png" id="2_k7dkb"]
+[ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="3_gift"]
 
 [node name="heavyZom" unique_id=1172295772 instance=ExtResource("1_1ldkc")]
 MaxHp = 60
@@ -12,3 +13,7 @@ AttackCd = 2.0
 visible = true
 scale = Vector2(0.13, 0.13)
 texture = ExtResource("2_k7dkb")
+
+[node name="gift" type="Node" parent="."]
+script = ExtResource("3_gift")
+DropId = 2003

@@ -4,6 +4,9 @@ using Godot;
 /// 僵尸基类（C# 版）。对应原来的 zombiegd/zombie_area.gd，功能一一保留：
 /// 追击、近战、受伤、死亡掉落、棺材信号绑定、把活动范围限制在棺材碰撞箱内。
 /// 放进棺材里的僵尸自己连棺材的 player_entered 信号，收到信号后现身并开始追击。
+///
+/// 死亡掉落走 gift 子节点（见 DropLoot）：每个僵尸场景自己挂一个、填自己的 DropId，
+/// 具体掉什么由 data/drop.json 决定。所以加新僵尸不用改这个基类。
 /// </summary>
 public partial class Zombie : CharacterBody2D
 {
@@ -19,8 +22,6 @@ public partial class Zombie : CharacterBody2D
 	[Export] public float MoveSpeed { get; set; } = 80f;    // 移速
 	[Export] public float AttackCd { get; set; } = 1.2f;    // 攻击冷却
 	[Export] public float AttackRange { get; set; } = 60f;  // 攻击距离
-	[Export] public PackedScene DropItem { get; set; }      // 死亡掉落物（拖入场景资源）
-	[Export] public int SoulDrop { get; set; } = 1;         // 死亡掉落的灵魂碎片数量
 	[Export] public Vector2 SpawnOffset { get; set; } = new Vector2(64, 0); // 预留：出棺位置（暂未使用）
 
 	// 内部状态
@@ -308,45 +309,27 @@ public partial class Zombie : CharacterBody2D
 		}
 	}
 
-	// 死亡函数：灵魂碎片直接进背包，可选的 drop_item 场景仍会在地上生成
+	// 死亡函数:掉什么交给 gift 子节点结算,然后自己消失
 	private void Die()
 	{
-		DropSoul();
-		if (DropItem != null)
-		{
-			Node item = DropItem.Instantiate();
-			GetParent().AddChild(item);
-			if (item is Node2D item2D)
-			{
-				item2D.GlobalPosition = GlobalPosition;
-			}
-		}
+		DropLoot();
 		QueueFree();
 	}
 
-	// 掉落灵魂碎片：直接加进玩家背包，不用玩家走过去捡
-	private void DropSoul()
+	/// <summary>
+	/// 死亡掉落。掉什么、掉多少由 gift 子节点读 data/drop.json 决定 ——
+	/// 每个僵尸场景自己挂一个 gift 填上对应的 DropId:
+	///   mini_zom 2001 / fast_move_zom + arrow_zom 2002 / sharp_zom + heavy_zom + poison_zom 2003
+	/// 没挂 gift 的就是不掉(比如基础大巨 zombie.tscn),这里静默跳过,不刷警告
+	/// </summary>
+	private void DropLoot()
 	{
-		if (SoulDrop <= 0)
+		Gift gift = GetNodeOrNull<Gift>("gift");
+		if (gift == null)
 		{
 			return;
 		}
 
-		Node playerNode = GetTree().GetFirstNodeInGroup("player");
-		if (playerNode == null)
-		{
-			GD.PushWarning("Zombie: 找不到 player 分组节点，灵魂碎片丢失");
-			return;
-		}
-
-		// 灵魂仓库是 player/soulpiece（soulpiece.cs），方法叫 AddSoul
-		var soul = playerNode.GetNodeOrNull<soulpiece>("soulpiece");
-		if (soul == null)
-		{
-			GD.PushWarning("Zombie: 找不到灵魂仓库(player/soulpiece)，灵魂碎片丢失");
-			return;
-		}
-		soul.AddSoul(SoulDrop);
-		GD.Print($"掉落灵魂碎片 x{SoulDrop}");
+		gift.Drop();
 	}
 }

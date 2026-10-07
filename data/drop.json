@@ -3,7 +3,8 @@
     "ID": 2001,
     "item": "1001,2",
     "basewight": 200.0,
-    "note": "绿色僵尸掉落"
+    "note": "mini僵尸掉落",
+    "filename":"mini_zom"
   },
   {
     "ID": 2001,
@@ -27,7 +28,8 @@
     "ID": 2002,
     "item": "1001,4",
     "basewight": 200.0,
-    "note": "黄色僵尸掉落"
+    "note": "瞬移僵尸与弓箭僵尸掉落",
+    "filename":"fast_zom,arrow_zom"
   },
   {
     "ID": 2002,
@@ -51,7 +53,8 @@
     "ID": 2003,
     "item": "1001,5",
     "basewight": 200.0,
-    "note": "红色僵尸掉落"
+    "note": "利爪僵尸,大巨僵尸与毒箭僵尸掉落",
+    "filename":"sharp_zom,heavy_zom,poison_zom"
   },
   {
     "ID": 2003,

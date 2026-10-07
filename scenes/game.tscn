@@ -577,6 +577,7 @@ position = Vector2(1537, 848.99994)
 
 [node name="开门机关" type="Area2D" parent="." unique_id=134149694]
 script = ExtResource("61_xbak0")
+metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="开门机关" unique_id=1842100519]
 position = Vector2(1952, 1277)
@@ -591,10 +592,12 @@ shape = SubResource("RectangleShape2D_hfknc")
 position = Vector2(2042.1874, 272.20822)
 scale = Vector2(0.22711685, 0.22106203)
 texture = ExtResource("63_l6q63")
+metadata/_edit_lock_ = true
 
 [node name="endarea" type="Area2D" parent="." unique_id=991660067]
 visible = false
 script = ExtResource("56_ms3bu")
+metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="endarea" unique_id=5794379]
 position = Vector2(1981.5, 269)
