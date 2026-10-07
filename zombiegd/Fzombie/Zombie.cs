@@ -34,6 +34,11 @@ public partial class Zombie : CharacterBody2D
 	private Godot.ColorRect _healthBar;   // 头顶血条
 	private float _healthBarFullWidth;    // 血条满血宽度，_Ready 里记录
 
+	// 音效播放器：现身 / 受伤 / 攻击各一个，_Ready 里创建并加载音频
+	private AudioStreamPlayer _sfxShout;   // 僵尸现身（ready_shout）
+	private AudioStreamPlayer _sfxHurt;    // 僵尸被子弹击中（zom_hurted）
+	private AudioStreamPlayer _sfxAttack;  // 僵尸击中玩家（zom_attack）
+
 	public override void _Ready()
 	{
 		// 先报名,让模态界面的 Stop 找得到自己
@@ -51,8 +56,47 @@ public partial class Zombie : CharacterBody2D
 
 		SetSpriteState(false); // 初始为 normal 状态，等玩家进入碰撞箱再切 attack
 
+		SetupAudio();
+
 		BindCoffin();
 		EnsurePlayer();
+	}
+
+	// ========== 音效：现身 / 受伤 / 攻击 ==========
+	// 三个 AudioStreamPlayer 都在 _Ready 里创建，音频用 res:// 路径硬编码加载。
+	// 文件找不到时只打警告、不崩——音频还没提交到仓库时也能正常跑。
+	private void SetupAudio()
+	{
+		_sfxShout = CreateSfxPlayer("zombie_shout.wav");
+		_sfxHurt = CreateSfxPlayer("zombie_be_attacked_or_die.wav");
+		_sfxAttack = CreateSfxPlayer("zombie_attack_near.wav");
+	}
+
+	// 创建一个挂在僵尸身上的音效播放器，并加载音频文件
+	private AudioStreamPlayer CreateSfxPlayer(string fileName)
+	{
+		AudioStreamPlayer player = new AudioStreamPlayer();
+		AddChild(player);
+
+		AudioStream stream = GD.Load<AudioStream>($"res://music/{fileName}");
+		if (stream == null)
+		{
+			GD.PushWarning($"Zombie: 找不到音频 res://music/{fileName}");
+		}
+		else
+		{
+			player.Stream = stream;
+		}
+		return player;
+	}
+
+	// 播放指定音效；没加载到流（文件缺失）时静默跳过
+	private void PlaySfx(AudioStreamPlayer player)
+	{
+		if (player != null && player.Stream != null)
+		{
+			player.Play();
+		}
 	}
 
 	// 棺材开门信号回调：现身并锁定进入棺材的玩家，然后开始活动
@@ -60,6 +104,7 @@ public partial class Zombie : CharacterBody2D
 	{
 		Visible = true;
 		_active = true;
+		PlaySfx(_sfxShout); // 僵尸现身，播放 ready_shout
 		if (playerNode != null)
 		{
 			_player = playerNode;
@@ -252,6 +297,7 @@ public partial class Zombie : CharacterBody2D
 			_player.Call("take_damage", AttackDamage);
 		}
 		GD.Print($"僵尸攻击，伤害：{AttackDamage}");
+		PlaySfx(_sfxAttack); // 这一下打到了玩家，播放 zom_attack
 	}
 
 	// 受伤函数。方法名故意用 snake_case：Bullet.cs 里是 body.Call("take_damage", ...)，
@@ -259,6 +305,7 @@ public partial class Zombie : CharacterBody2D
 	public void take_damage(int dmg)
 	{
 		_hp -= dmg;
+		PlaySfx(_sfxHurt); // 被玩家子弹击中，播放 zom_hurted
 		UpdateHealthBar();
 		if (_hp <= 0)
 		{

@@ -44,12 +44,97 @@ public partial class Player : CharacterBody2D
 	// 而不是"贴着墙滑"。0.5 表示被吃掉一半以上才算撞墙。
 	private const float BlockedStepFactor = 0.5f;
 
+	// 走路音效:玩家真的在动(坐标变化)就循环放,停下就停
+	private AudioStreamPlayer _walkPlayer;
+	private Vector2 _lastPosition; // 上一帧位置,用来判断玩家是否真的移动了
+
+	// 枪声 / 受伤音效:射击和受击时各播一次(单次,不循环)
+	private AudioStreamPlayer _gunShotPlayer;
+	private AudioStreamPlayer _hurtPlayer;
+
 	public override void _Ready()
 	{
 		_pack = GetNodeOrNull<Pack>("pack");
 		if (_pack == null)
 		{
 			GD.PushWarning("Player: 找不到子节点 pack,拿不到子弹数量,开不了枪。");
+		}
+
+		SetupWalkAudio();
+		SetupCombatAudio();
+		_lastPosition = GlobalPosition;
+	}
+
+	// 创建走路音效播放器并加载 walk.wav,设成循环
+	private void SetupWalkAudio()
+	{
+		_walkPlayer = new AudioStreamPlayer();
+		AddChild(_walkPlayer);
+
+		AudioStreamWav stream = GD.Load<AudioStreamWav>("res://music/walk.wav");
+		if (stream == null)
+		{
+			GD.PushWarning("Player: 找不到音频 res://music/walk.wav");
+			return;
+		}
+		stream.LoopMode = AudioStreamWav.LoopModeEnum.Forward;
+		_walkPlayer.Stream = stream;
+	}
+
+	// 创建枪声 / 受伤音效播放器并加载音频
+	private void SetupCombatAudio()
+	{
+		_gunShotPlayer = CreateSfxPlayer("gun_shot.wav");
+		_hurtPlayer = CreateSfxPlayer("host_be_attacked.wav");
+	}
+
+	// 创建一个挂在玩家身上的音效播放器,加载 music/ 下的音频文件
+	private AudioStreamPlayer CreateSfxPlayer(string fileName)
+	{
+		AudioStreamPlayer player = new AudioStreamPlayer();
+		AddChild(player);
+
+		AudioStream stream = GD.Load<AudioStream>($"res://music/{fileName}");
+		if (stream == null)
+		{
+			GD.PushWarning($"Player: 找不到音频 res://music/{fileName}");
+			return player;
+		}
+		player.Stream = stream;
+		return player;
+	}
+
+	// 播放指定音效;音频没加载到就静默跳过
+	private void PlaySfx(AudioStreamPlayer player)
+	{
+		if (player != null && player.Stream != null)
+		{
+			player.Play();
+		}
+	}
+
+	// 根据玩家这帧有没有真的移动(坐标变化),决定走路音效要不要继续放
+	private void UpdateWalkSound()
+	{
+		if (_walkPlayer.Stream == null)
+		{
+			return; // 音频没加载到,什么都不放
+		}
+
+		Vector2 now = GlobalPosition;
+		bool moved = (now - _lastPosition).LengthSquared() > 0.0001f;
+		_lastPosition = now;
+
+		if (moved)
+		{
+			if (!_walkPlayer.Playing)
+			{
+				_walkPlayer.Play();
+			}
+		}
+		else if (_walkPlayer.Playing)
+		{
+			_walkPlayer.Stop();
 		}
 	}
 
@@ -84,6 +169,7 @@ public partial class Player : CharacterBody2D
 			{
 				_dashRemaining = 0f;
 			}
+			UpdateWalkSound();
 			return;
 		}
 
@@ -93,6 +179,8 @@ public partial class Player : CharacterBody2D
 
 		Velocity = direction * moveSpeed;
 		MoveAndSlide();
+
+		UpdateWalkSound();
 	}
 
 	// 用 _UnhandledInput 而不是 _Process + IsActionJustPressed:
@@ -160,6 +248,8 @@ public partial class Player : CharacterBody2D
 		GetParent().AddChild(bullet);
 		bullet.GlobalPosition = GlobalPosition;
 		bullet.Launch(toMouse);
+
+		PlaySfx(_gunShotPlayer); // 开枪,播放枪声
 	}
 
 	/// <summary>
@@ -173,5 +263,6 @@ public partial class Player : CharacterBody2D
 			return;
 		}
 		hp = Mathf.Max(hp - amount, 0f);
+		PlaySfx(_hurtPlayer); // 受伤,播放受击音效
 	}
 }

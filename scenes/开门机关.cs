@@ -23,6 +23,9 @@ public partial class 开门机关 : Area2D
 
 	private bool _triggered;
 
+	// 开门音效播放器:机关被触发、门打开时播放一次 stone_door_open.wav
+	private AudioStreamPlayer _openPlayer;
+
 	public override void _Ready()
 	{
 		// 机关、终点大门、endarea 都是场景根的子节点,同一个爹,往上一层就行
@@ -48,6 +51,32 @@ public partial class 开门机关 : Area2D
 		}
 
 		BodyEntered += OnBodyEntered;
+
+		SetupOpenAudio();
+	}
+
+	// 创建开门音效播放器并加载 stone_door_open.wav
+	private void SetupOpenAudio()
+	{
+		_openPlayer = new AudioStreamPlayer();
+		AddChild(_openPlayer);
+
+		AudioStream stream = GD.Load<AudioStream>("res://music/stone_door_open.wav");
+		if (stream == null)
+		{
+			GD.PushWarning("开门机关: 找不到音频 res://music/stone_door_open.wav");
+			return;
+		}
+		_openPlayer.Stream = stream;
+	}
+
+	// 播放开门音效;音频没加载到就静默跳过
+	private void PlayOpenSound()
+	{
+		if (_openPlayer != null && _openPlayer.Stream != null)
+		{
+			_openPlayer.Play();
+		}
 	}
 
 	private void OnBodyEntered(Node2D body)
@@ -66,6 +95,8 @@ public partial class 开门机关 : Area2D
 		{
 			_gate.Visible = false;   // 门开了
 		}
+
+		PlayOpenSound(); // 门开了,播放 stone_door_open
 
 		GD.Print("开门机关: 玩家拉下机关,终点大门打开,endarea 变成可交互");
 	}

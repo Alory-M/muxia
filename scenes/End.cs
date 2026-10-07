@@ -17,12 +17,52 @@ public partial class End : Node2D
 	// 和 Main.GameScenePath 一样拎出来,以后改名不用翻代码
 	private const string MainScenePath = "res://scenes/main.tscn";
 
+	// 通关音效播放器:界面显示(玩家到达终点)时播放一次 win.wav
+	private AudioStreamPlayer _winPlayer;
+
 	public override void _Ready()
 	{
 		// 三个按钮都是本节点的直接子节点,和背景那张 victory new 图同级
 		Hook("continue", OnContinue);
 		Hook("tomain", OnToMain);
 		Hook("exit", OnExit);
+
+		SetupWinAudio();
+		// 界面从隐藏变成显示就是"通关"的瞬间,靠这个信号触发 win 音效
+		VisibilityChanged += OnVisibilityChanged;
+	}
+
+	/// <summary>创建通关音效播放器并加载 win.wav(只播一次,不循环)</summary>
+	private void SetupWinAudio()
+	{
+		_winPlayer = new AudioStreamPlayer();
+		AddChild(_winPlayer);
+
+		AudioStream stream = GD.Load<AudioStream>("res://music/win.wav");
+		if (stream == null)
+		{
+			GD.PushWarning("End: 找不到音频 res://music/win.wav");
+			return;
+		}
+		_winPlayer.Stream = stream;
+	}
+
+	/// <summary>界面从隐藏变成显示的那一瞬间,播放通关音效</summary>
+	private void OnVisibilityChanged()
+	{
+		if (Visible)
+		{
+			PlayWin();
+		}
+	}
+
+	/// <summary>播放 win 音效;音频没加载到就静默跳过</summary>
+	private void PlayWin()
+	{
+		if (_winPlayer != null && _winPlayer.Stream != null)
+		{
+			_winPlayer.Play();
+		}
 	}
 
 	/// <summary>

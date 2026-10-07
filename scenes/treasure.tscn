@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="2_wqbho"]
 [ext_resource type="Texture2D" uid="uid://v4r5wuxjt35m" path="res://bin/treasure/QQ图片20261005185635(1).png" id="3_wqbho"]
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="5_wsoap"]
+[ext_resource type="AudioStream" uid="uid://u6equrkwrcr1" path="res://music/treasure_box_open.wav" id="6_h5oxq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 size = Vector2(800, 136)
@@ -72,3 +73,6 @@ one_shot = true
 
 [node name="gift" type="Node" parent="." unique_id=531349419]
 script = ExtResource("5_wsoap")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=316139129]
+stream = ExtResource("6_h5oxq")
