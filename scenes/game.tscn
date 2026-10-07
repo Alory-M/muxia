@@ -558,6 +558,9 @@ position = Vector2(429, 1081)
 [node name="Treasure3" parent="." unique_id=505965370 instance=ExtResource("37_7gkqi")]
 position = Vector2(591, 728.99994)
 
+[node name="Treasure4" parent="." unique_id=1826830460 instance=ExtResource("37_7gkqi")]
+position = Vector2(1528, 847.99994)
+
 [node name="endarea" type="Area2D" parent="." unique_id=991660067]
 script = ExtResource("56_ms3bu")
 
