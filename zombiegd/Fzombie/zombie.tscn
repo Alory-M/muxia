@@ -1,8 +1,11 @@
 [gd_scene format=3 uid="uid://ctoe37kfmw4k0"]
 
-[ext_resource type="Script" uid="uid://cpidibj5ldxq7" path="res://zombiegd/Fzombie/Zombie.cs" id="1_dcs8h"]
-[ext_resource type="Texture2D" uid="uid://bdw0b74sj8t2" path="res://bin/sprites/大巨僵尸（居中.png" id="2_02rw5"]
-[ext_resource type="Texture2D" uid="uid://nxckb52ln662" path="res://bin/sprites/jianzhua.png" id="3_02rw5"]
+[ext_resource type="Script" uid="uid://cpidibj5ldxq7" path="res://zombiegd/Fzombie/Zombie.cs" id="1_flpyv"]
+[ext_resource type="Texture2D" uid="uid://bdw0b74sj8t2" path="res://bin/sprites/大巨僵尸（居中.png" id="2_5sqnc"]
+[ext_resource type="Texture2D" uid="uid://nxckb52ln662" path="res://bin/sprites/jianzhua.png" id="3_b6iy7"]
+[ext_resource type="AudioStream" uid="uid://b8hkj1objwwv4" path="res://music/zombie_shout.wav" id="4_5lqy2"]
+[ext_resource type="AudioStream" uid="uid://cx70gl3ktnfr" path="res://music/zombie_be_attacked_or_die.wav" id="5_uxjps"]
+[ext_resource type="AudioStream" uid="uid://e0p4ljg1medl" path="res://music/zombie_attack_near.wav" id="6_wgk48"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_02rw5"]
 radius = 323.5293
@@ -14,17 +17,17 @@ radius = 65.06919
 [node name="zombie" type="CharacterBody2D" unique_id=1172295772]
 position = Vector2(-532, 3)
 motion_mode = 1
-script = ExtResource("1_dcs8h")
+script = ExtResource("1_flpyv")
 
 [node name="normal" type="Sprite2D" parent="." unique_id=698874992]
 position = Vector2(7.6293945e-06, 2.000001)
 scale = Vector2(0.06763637, 0.068)
-texture = ExtResource("2_02rw5")
+texture = ExtResource("2_5sqnc")
 
 [node name="attack" type="Sprite2D" parent="." unique_id=951558578]
 visible = false
 scale = Vector2(0.068, 0.068)
-texture = ExtResource("3_02rw5")
+texture = ExtResource("3_b6iy7")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1176879974]
 offset_left = -40.0
@@ -44,3 +47,12 @@ shape = SubResource("CapsuleShape2D_02rw5")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox" unique_id=1548455069]
 position = Vector2(1, 1)
 shape = SubResource("CircleShape2D_xkwan")
+
+[node name="ready_shout" type="AudioStreamPlayer2D" parent="." unique_id=486947194]
+stream = ExtResource("4_5lqy2")
+
+[node name="zom_hurted" type="AudioStreamPlayer2D" parent="." unique_id=1331594614]
+stream = ExtResource("5_uxjps")
+
+[node name="zom_attack" type="AudioStreamPlayer2D" parent="." unique_id=1609816852]
+stream = ExtResource("6_wgk48")

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dxiq237il7jmq"]
 
-[ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/zombie.tscn" id="1_1ldkc"]
+[ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/Fzombie/zombie.tscn" id="1_1ldkc"]
 [ext_resource type="Texture2D" uid="uid://dd1qpydm2xh74" path="res://bin/sprites/daju.png" id="2_k7dkb"]
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="3_gift"]
 

@@ -44,12 +44,60 @@ public partial class Player : CharacterBody2D
 	// 而不是"贴着墙滑"。0.5 表示被吃掉一半以上才算撞墙。
 	private const float BlockedStepFactor = 0.5f;
 
+	// 走路音效:玩家真的在动(坐标变化)就循环放,停下就停
+	private AudioStreamPlayer _walkPlayer;
+	private Vector2 _lastPosition; // 上一帧位置,用来判断玩家是否真的移动了
+
 	public override void _Ready()
 	{
 		_pack = GetNodeOrNull<Pack>("pack");
 		if (_pack == null)
 		{
 			GD.PushWarning("Player: 找不到子节点 pack,拿不到子弹数量,开不了枪。");
+		}
+
+		SetupWalkAudio();
+		_lastPosition = GlobalPosition;
+	}
+
+	// 创建走路音效播放器并加载 walk.wav,设成循环
+	private void SetupWalkAudio()
+	{
+		_walkPlayer = new AudioStreamPlayer();
+		AddChild(_walkPlayer);
+
+		AudioStreamWav stream = GD.Load<AudioStreamWav>("res://music/walk.wav");
+		if (stream == null)
+		{
+			GD.PushWarning("Player: 找不到音频 res://music/walk.wav");
+			return;
+		}
+		stream.LoopMode = AudioStreamWav.LoopModeEnum.Forward;
+		_walkPlayer.Stream = stream;
+	}
+
+	// 根据玩家这帧有没有真的移动(坐标变化),决定走路音效要不要继续放
+	private void UpdateWalkSound()
+	{
+		if (_walkPlayer.Stream == null)
+		{
+			return; // 音频没加载到,什么都不放
+		}
+
+		Vector2 now = GlobalPosition;
+		bool moved = (now - _lastPosition).LengthSquared() > 0.0001f;
+		_lastPosition = now;
+
+		if (moved)
+		{
+			if (!_walkPlayer.Playing)
+			{
+				_walkPlayer.Play();
+			}
+		}
+		else if (_walkPlayer.Playing)
+		{
+			_walkPlayer.Stop();
 		}
 	}
 
@@ -84,6 +132,7 @@ public partial class Player : CharacterBody2D
 			{
 				_dashRemaining = 0f;
 			}
+			UpdateWalkSound();
 			return;
 		}
 
@@ -93,6 +142,8 @@ public partial class Player : CharacterBody2D
 
 		Velocity = direction * moveSpeed;
 		MoveAndSlide();
+
+		UpdateWalkSound();
 	}
 
 	// 用 _UnhandledInput 而不是 _Process + IsActionJustPressed:

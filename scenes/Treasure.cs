@@ -11,6 +11,9 @@ public partial class Treasure : Area2D
 	// 掉落组件,挂在 gift 子节点上。宝箱掉什么是它在管(读 data/drop.json)
 	private Gift _gift;
 
+	// 开箱音效播放器:玩家按 F 开箱时播放一次 treasure_box_open.wav
+	private AudioStreamPlayer _openPlayer;
+
 	public override void _Ready()
 	{
 		_getButton = GetNode<Button>("get");
@@ -30,6 +33,32 @@ public partial class Treasure : Area2D
 		BodyEntered += OnBodyEntered;
 		BodyExited  += OnBodyExited;
 		_freeTimer.Timeout += OnFreeTimerTimeout;
+
+		SetupOpenAudio();
+	}
+
+	// 创建开箱音效播放器并加载 treasure_box_open.wav
+	private void SetupOpenAudio()
+	{
+		_openPlayer = new AudioStreamPlayer();
+		AddChild(_openPlayer);
+
+		AudioStream stream = GD.Load<AudioStream>("res://music/treasure_box_open.wav");
+		if (stream == null)
+		{
+			GD.PushWarning("Treasure: 找不到音频 res://music/treasure_box_open.wav");
+			return;
+		}
+		_openPlayer.Stream = stream;
+	}
+
+	// 播放开箱音效;音频没加载到就静默跳过
+	private void PlayOpenSound()
+	{
+		if (_openPlayer != null && _openPlayer.Stream != null)
+		{
+			_openPlayer.Play();
+		}
 	}
 
 	// 每帧检测 F 键
@@ -78,7 +107,7 @@ public partial class Treasure : Area2D
 
 		_collected = true;
 		_animatedSprite.Animation = "open";   // 属性，设置当前动画
-		
+		PlayOpenSound();   // 开箱音效
 		_freeTimer.Start();
 		
 		GD.Print("您已获得宝箱");
