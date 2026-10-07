@@ -20,7 +20,7 @@
 [ext_resource type="Script" uid="uid://csx7rapuub1vj" path="res://Limit.cs" id="18_pmeuj"]
 [ext_resource type="Script" uid="uid://oltneue5vsbt" path="res://ShowPrice.cs" id="19_xbkst"]
 
-[node name="Control" type="Control" unique_id=1988767736 groups=["modal_ui", "store_ui"]]
+[node name="Control2" type="Control" unique_id=1988767736 groups=["modal_ui", "store_ui"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -160,11 +160,12 @@ texture = ExtResource("7_a4gqu")
 
 [node name="Label" type="Label" parent="买药" unique_id=1692322264]
 layout_mode = 0
-offset_left = 8.0
+offset_left = 10.0
 offset_top = 1.0
-offset_right = 48.0
+offset_right = 50.0
 offset_bottom = 24.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "600"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -183,12 +184,12 @@ texture = ExtResource("7_a4gqu")
 
 [node name="Label" type="Label" parent="买解毒剂" unique_id=534115519]
 layout_mode = 0
-offset_left = 8.0
+offset_left = 11.0
 offset_top = 1.0
-offset_right = 48.0
+offset_right = 51.0
 offset_bottom = 24.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "购买"
+text = "600"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -207,12 +208,12 @@ texture = ExtResource("7_a4gqu")
 
 [node name="Label" type="Label" parent="买绷带" unique_id=1910813460]
 layout_mode = 0
-offset_left = 8.0
+offset_left = 11.0
 offset_top = 1.0
-offset_right = 48.0
+offset_right = 51.0
 offset_bottom = 24.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "购买"
+text = "600"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -231,12 +232,12 @@ texture = ExtResource("7_a4gqu")
 
 [node name="Label" type="Label" parent="买子弹" unique_id=733701450]
 layout_mode = 0
-offset_left = 8.0
+offset_left = 22.0
 offset_top = 1.0
-offset_right = 48.0
+offset_right = 41.0
 offset_bottom = 24.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "购买"
+text = "20"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -470,10 +471,10 @@ script = ExtResource("14_afjsh")
 [node name="close2" type="Button" parent="." unique_id=1687777691]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 0
-offset_left = 811.0
-offset_top = 118.0
-offset_right = 858.0
-offset_bottom = 165.0
+offset_left = 834.0
+offset_top = 100.0
+offset_right = 881.0
+offset_bottom = 147.0
 
 [node name="点击" type="Sprite2D" parent="." unique_id=709426618]
 position = Vector2(858.5, 125)
