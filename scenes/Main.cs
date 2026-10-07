@@ -3,21 +3,18 @@ using Godot;
 /// <summary>
 /// 开始界面,挂在 main.tscn 的根节点上。
 ///
-/// 目前只做一件事:按下 start 就换成游戏场景。
+/// 按下 start 立刻换成游戏场景:不等开场音效、不做过渡、不留尾巴。
 ///
 /// 换场景用 ChangeSceneToFile —— 它会先把当前场景(也就是本场景)整个释放掉,
-/// 再加载新的。所以不用自己 QueueFree,也不会出现两个场景同时挂在树上。
+/// 再加载新的。所以不用自己 QueueFree,也不会出现两个场景同时挂在树上,
+/// 本场景的画面节点和音频节点(begin / bgm)跟着一起被释放,声音不会带到游戏里。
 /// </summary>
 public partial class Main : Node2D
 {
 	// 要加载的场景。拎出来是为了以后改名/换场景不用翻代码
 	private const string GameScenePath = "res://scenes/game.tscn";
 
-	// 开场音效,挂在根节点下、名字叫 begin 的场景节点(玩家自己加的)。
-	// 点开始时先播它,播完再进游戏。
-	private AudioStreamPlayer2D _begin;
-
-	// 防止开场音效没播完时连点 start,重复触发
+	// 防止连点:ChangeSceneToFile 是延迟到本帧末尾才执行的,这中间再点一下会排进第二次换场景
 	private bool _starting;
 
 	public override void _Ready()
@@ -32,39 +29,43 @@ public partial class Main : Node2D
 
 		// 和项目里其它按钮一致:接 Pressed,一次点击只触发一次
 		start.Pressed += OnStartPressed;
-
-		_begin = GetNodeOrNull<AudioStreamPlayer2D>("begin");
 	}
 
 	private void OnStartPressed()
 	{
 		if (_starting)
 		{
-			return; // 开场音效还在播,忽略连点
+			return;
 		}
 		_starting = true;
 
-		if (_begin != null && _begin.Stream != null)
-		{
-			_begin.Play();
-			// 等开场音效播完再换场景 —— ChangeSceneToFile 会把本场景整个释放掉,
-			// 现在就换的话声音刚响一声就被一起清了
-			_begin.Finished += OnBeginFinished;
-		}
-		else
-		{
-			GoToGame();
-		}
-	}
+		// 先掐掉声音再换场景。ChangeSceneToFile 是延迟执行的,而它开头那句
+		// ResourceLoader.load(game.tscn) 是同步的、要花时间;这中间老场景还活着,
+		// 声音也还在响。显式停一下,才能保证"点下去那一刻"音乐就断,
+		// 而不是等新场景加载完才被连带释放掉
+		StopSceneAudio(this);
 
-	// 开场音效播完,进游戏
-	private void OnBeginFinished()
-	{
-		GoToGame();
-	}
-
-	private void GoToGame()
-	{
 		GetTree().ChangeSceneToFile(GameScenePath);
+	}
+
+	/// <summary>
+	/// 停掉本场景里所有音频(目前是根节点下的 begin 开场音效和 bgm)。
+	/// 按类型递归找而不是写死节点名:以后改名字、把音频挪进子树都不用回来改这里
+	/// </summary>
+	private static void StopSceneAudio(Node node)
+	{
+		foreach (Node child in node.GetChildren())
+		{
+			if (child is AudioStreamPlayer streamPlayer)
+			{
+				streamPlayer.Stop();
+			}
+			else if (child is AudioStreamPlayer2D positionalPlayer)
+			{
+				positionalPlayer.Stop();
+			}
+
+			StopSceneAudio(child);
+		}
 	}
 }
