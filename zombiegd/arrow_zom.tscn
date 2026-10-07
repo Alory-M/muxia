@@ -9,6 +9,7 @@
 [node name="arrowZom" unique_id=1172295772 instance=ExtResource("1_ho86e")]
 script = ExtResource("2_gk3af")
 BulletScene = ExtResource("4_bullet")
+AttackDamage = 25
 
 [node name="normal" parent="." index="0" unique_id=698874992]
 scale = Vector2(0.048, 0.048)

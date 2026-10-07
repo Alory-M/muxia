@@ -11,6 +11,10 @@ public partial class Bullet : Area2D
 	// 谁发射的：false=玩家(只打僵尸)；true=僵尸(只打玩家)。由发射方在 Launch 前设置
 	public bool HitsPlayer { get; set; } = false;
 
+	// 打中玩家时顺便给玩家上"迟缓"。毒僵尸的箭会置 true,同样由发射方在发射前设置。
+	// 效果标记跟着箭走,而不是挂在僵尸身上 —— 箭可能飞很久才命中,那会儿僵尸未必还在
+	public bool AppliesSlow { get; set; } = false;
+
 	private Vector2 _direction = Vector2.Zero;   // 由 Launch() 传入,之后不再改变
 	private bool _isMoving = false;
 
@@ -37,7 +41,8 @@ public partial class Bullet : Area2D
 
 	/// <summary>
 	/// 结算伤害。由 disappear 组件在判定"这一下会让子弹消失"时调用 ——
-	/// 该不该打(玩家自己 / 友方僵尸 / 墙)由组件负责判,这儿只管打多少
+	/// 该不该打(玩家自己 / 友方僵尸 / 墙)由组件负责判,这儿只管打多少、
+	/// 以及带不带附加效果(目前只有毒箭的迟缓)
 	/// </summary>
 	public void ApplyDamage(Node target)
 	{
@@ -46,6 +51,11 @@ public partial class Bullet : Area2D
 			if (target is Player player)
 			{
 				player.TakeDamage(Damage);
+
+				if (AppliesSlow)
+				{
+					SlowPlayer(player);
+				}
 			}
 			return;
 		}
@@ -55,6 +65,23 @@ public partial class Bullet : Area2D
 		{
 			target.Call("take_damage", Damage);
 		}
+	}
+
+	/// <summary>
+	/// 给玩家上迟缓。走玩家身上的状态机(player/state),由它驱动 debuff 组件 ——
+	/// 和 SharpZom 上流血是同一套写法
+	/// </summary>
+	private static void SlowPlayer(Player player)
+	{
+		State state = player.GetNodeOrNull<State>("state");
+		if (state == null)
+		{
+			GD.PushWarning("Bullet: 找不到 player/state,迟缓没上成。");
+			return;
+		}
+
+		state.ChangeState(PlayerState.Slow);
+		GD.Print("Bullet: 毒箭命中,玩家中了迟缓");
 	}
 
 	// 由发射者调用:给它一个方向,它就开始飞

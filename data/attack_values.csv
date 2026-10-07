@@ -1,0 +1,32 @@
+﻿分类,对象,项目,当前值,改哪个文件,改哪一项,说明
+玩家→僵尸,玩家射出的子弹,伤害,25,scenes/Bullet.cs,Damage（第 9 行）,玩家子弹和僵尸箭共用 bullet.tscn；没有任何场景覆盖过它，玩家伤害就靠这个默认值
+玩家→僵尸,玩家,子弹场景,res://scenes/bullet.tscn,scenes/game.tscn,player 节点的 bulletScene,换成别的子弹场景，伤害也跟着换
+玩家→僵尸,重装僵尸 heavyZom,血量,60,zombiegd/heavy_zom.tscn,MaxHp,一枪 25，3 枪死
+玩家→僵尸,快速僵尸 fast_moveZom,血量,30,zombiegd/fast_move_zom.tscn,MaxHp,一枪 25，2 枪死
+玩家→僵尸,小僵尸 miniZom,血量,15,zombiegd/mini_zom.tscn,MaxHp,一枪 25，1 枪死
+玩家→僵尸,其他僵尸,血量,100（基类默认）,zombiegd/Fzombie/Zombie.cs,MaxHp（第 11 行）,场景里没填过血量的僵尸都用这个
+僵尸→玩家·近战,所有僵尸,伤害,10（基类默认）,zombiegd/Fzombie/Zombie.cs,AttackDamage（第 12 行）,实际数值看各僵尸场景有没有覆盖，见下面几行
+僵尸→玩家·近战,重装僵尸 heavyZom,伤害,40,zombiegd/heavy_zom.tscn,AttackDamage,
+僵尸→玩家·近战,快速僵尸 fast_moveZom,伤害,30,zombiegd/fast_move_zom.tscn,AttackDamage,
+僵尸→玩家·近战,小僵尸 miniZom,伤害,20,zombiegd/mini_zom.tscn,AttackDamage,
+僵尸→玩家·近战,弓箭僵尸 arrowZom,伤害,25,zombiegd/arrow_zom.tscn,AttackDamage,本轮新填（原先是空的，等于 10）。它对玩家只有远程箭，用不到近战
+僵尸→玩家·近战,毒僵尸 poisonZom,伤害,25,zombiegd/poison_zom.tscn,AttackDamage,本轮新填
+僵尸→玩家·近战,利爪/普通僵尸等,伤害,10,zombiegd/sharp_zom.tscn、zombie.tscn 等,AttackDamage,这些场景没填，用基类默认 10
+僵尸→玩家·远程箭,弓箭/毒僵尸,箭伤,＝该僵尸自己的 AttackDamage,zombiegd/Fzombie/ArrowZom.cs,bullet.Damage = AttackDamage,本轮改的：以前固定用子弹的 25，现在跟僵尸的 AttackDamage 走
+僵尸→玩家·远程箭,毒僵尸,中毒（迟缓）,命中才中,scenes/Bullet.cs ＋ zombiegd/Fzombie/PoisonZom.cs,AppliesSlow / ConfigureBullet,本轮改的：以前是玩家靠近就中毒，跟箭没射中无关
+僵尸→玩家·远程箭,弓箭/毒僵尸,射程,500,zombiegd/Fzombie/ArrowZom.cs,FireRange（第 16 行）,毒僵尸在场景里也覆盖了一份
+僵尸→玩家·远程箭,弓箭/毒僵尸,射箭间隔,1.5,zombiegd/Fzombie/ArrowZom.cs,FireCd（第 19 行）,毒僵尸在场景里也覆盖了一份
+僵尸→玩家·通用,所有僵尸,攻击距离,60,zombiegd/Fzombie/Zombie.cs,AttackRange（第 15 行）,近战判定距离
+僵尸→玩家·通用,所有僵尸,攻击冷却,1.2,zombiegd/Fzombie/Zombie.cs,AttackCd（第 14 行）,重装、快速僵尸在各自场景里覆盖成 2.0
+僵尸→玩家·通用,所有僵尸,移动速度,80,zombiegd/Fzombie/Zombie.cs,MoveSpeed（第 13 行）,快速僵尸场景里覆盖成 2.0
+僵尸→玩家·通用,所有僵尸,死亡掉灵魂碎片,1,zombiegd/Fzombie/Zombie.cs,SoulDrop（第 17 行）,
+持续伤害,流血,每秒掉血,100,scenes/State.cs,BleedPerSecond（第 27 行）,改 debuff.cs 里的同名变量没用，那个是死值
+持续伤害,流血,持续时间,5,scenes/State.cs,BleedDuration（第 28 行）,
+持续伤害,迟缓,移速倍率,0.5,scenes/State.cs,SlowMultiplier（第 32 行）,0.5 ＝ 移速砍半
+持续伤害,迟缓,持续时间,5,scenes/State.cs,SlowDuration（第 33 行）,毒箭每中一次就刷新这个时长
+玩家自身,玩家,血量上限,1000,scenes/game.tscn,player 节点的 MaxHp,C# 默认值在 scenes/Player.cs（第 15 行）
+玩家自身,玩家,当前血量,1000,scenes/game.tscn,player 节点的 hp,
+玩家自身,玩家,受伤总入口,－,scenes/Player.cs,TakeDamage（第 169 行）,所有伤害最终都汇到这里。唯一例外是流血，它用反射直接改 hp，绕过了这里
+玩家自身,药（按 E）,一次回血,100,scenes/State.cs,HealAmount（第 38 行）,在 player/state 的检查器里也能调
+注意,僵尸受伤方法名,take_damage,snake_case,zombiegd/Fzombie/Zombie.cs,take_damage（第 249 行）,"名字是故意的小写加下划线，Bullet.cs 里靠 Call(""take_damage"") 调它，改名会直接打断命中"
+注意,场景覆盖 vs 代码默认,优先级,场景赢,各 .tscn,同名字段,场景里填过的值永远压过 C# 默认值；调完没反应就先看场景里有没有填过

@@ -54,6 +54,15 @@ public partial class Pack : Node
 		};
 	}
 
+	/// <summary>
+	/// 还没装进弹匣的备用子弹。换弹时从这里补进弹匣,所以它会跟着减少。
+	/// HUD 上子弹标签右边的数字就是它 —— 走这里读,别直接摸 _totalBullet
+	/// </summary>
+	public int GetReserveBullet()
+	{
+		return _totalBullet;
+	}
+
 	/// <summary>还有货吗(默认问"至少有一份吗")</summary>
 	public bool Has(SupplyKind kind, int amount = 1)
 	{
@@ -82,6 +91,15 @@ public partial class Pack : Node
 
 		SetCount(kind, GetCount(kind) + amount);
 	}
+
+	// ---- 给掉落表用的具名入口 ----
+	// item.json 里的 location 是 "player/pack:方法名" 这种通用形式,只传一个数量,
+	// 而 Add 还要一个 SupplyKind 枚举,没法从字符串传过来。所以每样货给一个同名方法,
+	// 掉落表就不用管枚举了。实现都转发到上面的 Add
+	public void AddBandage(int amount) => Add(SupplyKind.Bandage, amount);
+	public void AddDrug(int amount) => Add(SupplyKind.Drug, amount);
+	public void AddBullet(int amount) => Add(SupplyKind.Bullet, amount);
+	public void AddAntidote(int amount) => Add(SupplyKind.Antidote, amount);
 
 	/// <summary>直接改数量,负数会被夹到 0</summary>
 	public void SetCount(SupplyKind kind, int amount)
