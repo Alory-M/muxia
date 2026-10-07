@@ -603,7 +603,6 @@ stream = ExtResource("61_0rmfi")
 
 [node name="开门机关" type="Area2D" parent="." unique_id=134149694]
 script = ExtResource("61_xbak0")
-metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="开门机关" unique_id=1842100519]
 position = Vector2(1952, 1277)

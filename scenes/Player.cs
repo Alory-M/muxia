@@ -48,6 +48,10 @@ public partial class Player : CharacterBody2D
 	private AudioStreamPlayer _walkPlayer;
 	private Vector2 _lastPosition; // 上一帧位置,用来判断玩家是否真的移动了
 
+	// 枪声 / 受伤音效:射击和受击时各播一次(单次,不循环)
+	private AudioStreamPlayer _gunShotPlayer;
+	private AudioStreamPlayer _hurtPlayer;
+
 	public override void _Ready()
 	{
 		_pack = GetNodeOrNull<Pack>("pack");
@@ -57,6 +61,7 @@ public partial class Player : CharacterBody2D
 		}
 
 		SetupWalkAudio();
+		SetupCombatAudio();
 		_lastPosition = GlobalPosition;
 	}
 
@@ -74,6 +79,38 @@ public partial class Player : CharacterBody2D
 		}
 		stream.LoopMode = AudioStreamWav.LoopModeEnum.Forward;
 		_walkPlayer.Stream = stream;
+	}
+
+	// 创建枪声 / 受伤音效播放器并加载音频
+	private void SetupCombatAudio()
+	{
+		_gunShotPlayer = CreateSfxPlayer("gun_shot.wav");
+		_hurtPlayer = CreateSfxPlayer("host_be_attacked.wav");
+	}
+
+	// 创建一个挂在玩家身上的音效播放器,加载 music/ 下的音频文件
+	private AudioStreamPlayer CreateSfxPlayer(string fileName)
+	{
+		AudioStreamPlayer player = new AudioStreamPlayer();
+		AddChild(player);
+
+		AudioStream stream = GD.Load<AudioStream>($"res://music/{fileName}");
+		if (stream == null)
+		{
+			GD.PushWarning($"Player: 找不到音频 res://music/{fileName}");
+			return player;
+		}
+		player.Stream = stream;
+		return player;
+	}
+
+	// 播放指定音效;音频没加载到就静默跳过
+	private void PlaySfx(AudioStreamPlayer player)
+	{
+		if (player != null && player.Stream != null)
+		{
+			player.Play();
+		}
 	}
 
 	// 根据玩家这帧有没有真的移动(坐标变化),决定走路音效要不要继续放
@@ -211,6 +248,8 @@ public partial class Player : CharacterBody2D
 		GetParent().AddChild(bullet);
 		bullet.GlobalPosition = GlobalPosition;
 		bullet.Launch(toMouse);
+
+		PlaySfx(_gunShotPlayer); // 开枪,播放枪声
 	}
 
 	/// <summary>
@@ -224,5 +263,6 @@ public partial class Player : CharacterBody2D
 			return;
 		}
 		hp = Mathf.Max(hp - amount, 0f);
+		PlaySfx(_hurtPlayer); // 受伤,播放受击音效
 	}
 }
