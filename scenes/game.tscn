@@ -541,8 +541,8 @@ visible = false
 position = Vector2(243, 1250)
 script = ExtResource("8_oaba0")
 moveSpeed = 500.0
-hp = 50.0
-MaxHp = 1000.0
+hp = 500.0
+MaxHp = 500.0
 bulletScene = ExtResource("9_458eo")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player" unique_id=705751674]
