@@ -61,9 +61,14 @@
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="37_7gkqi"]
 [ext_resource type="PackedScene" uid="uid://cw2icyxh8v33y" path="res://scenes/end.tscn" id="43_05nbr"]
 [ext_resource type="Script" uid="uid://ca5hw3s11tftj" path="res://scenes/Endarea.cs" id="56_ms3bu"]
+[ext_resource type="AudioStream" uid="uid://imewbqboyiub" path="res://music/walk.wav" id="59_l6q63"]
 [ext_resource type="Script" uid="uid://bi1snv8407xbk" path="res://scenes/Die.cs" id="59_uxocx"]
+[ext_resource type="AudioStream" uid="uid://b7bmrovcweuwu" path="res://music/gun_shot.wav" id="60_mmvbu"]
+[ext_resource type="AudioStream" uid="uid://u6equrkwrcr1" path="res://music/treasure_box_open.wav" id="61_0rmfi"]
+[ext_resource type="AudioStream" uid="uid://bennwijhrbb12" path="res://music/host_be_attacked.wav" id="61_weeiq"]
 [ext_resource type="Script" uid="uid://cjv73bbp7d3yt" path="res://scenes/开门机关.cs" id="61_xbak0"]
 [ext_resource type="Texture2D" uid="uid://lhdumcs5387t" path="res://ui/开门机关.png" id="62_3x28f"]
+[ext_resource type="AudioStream" uid="uid://bre64od6rt07x" path="res://music/BGM.ogg" id="62_bnuda"]
 [ext_resource type="Texture2D" uid="uid://dxobj5m71e8vt" path="res://ui/终点大门.png" id="63_l6q63"]
 [ext_resource type="PackedScene" uid="uid://cw8p6eidllgc7" path="res://zombiegd/Fzombie/CoMini.tscn" id="65_3x28f"]
 [ext_resource type="PackedScene" uid="uid://dejj8okgfbs6g" path="res://zombiegd/Fzombie/CoFast.tscn" id="66_weeiq"]
@@ -559,6 +564,15 @@ script = ExtResource("35_sxt1d")
 [node name="die" type="Node" parent="player" unique_id=1239713201]
 script = ExtResource("59_uxocx")
 
+[node name="walk" type="AudioStreamPlayer" parent="player" unique_id=1745101970]
+stream = ExtResource("59_l6q63")
+
+[node name="attack" type="AudioStreamPlayer" parent="player" unique_id=114675477]
+stream = ExtResource("60_mmvbu")
+
+[node name="be_attack" type="AudioStreamPlayer" parent="player" unique_id=2034867600]
+stream = ExtResource("61_weeiq")
+
 [node name="businessman" parent="." unique_id=1648233843 instance=ExtResource("36_2iuns")]
 position = Vector2(1568, 453)
 metadata/_edit_lock_ = true
@@ -566,14 +580,26 @@ metadata/_edit_lock_ = true
 [node name="Treasure" parent="." unique_id=622065184 instance=ExtResource("37_7gkqi")]
 position = Vector2(805.99994, 196)
 
+[node name="OpenSound" type="AudioStreamPlayer2D" parent="Treasure" unique_id=1531440647]
+stream = ExtResource("61_0rmfi")
+
 [node name="Treasure2" parent="." unique_id=334792882 instance=ExtResource("37_7gkqi")]
 position = Vector2(429, 1081)
+
+[node name="OpenSound" type="AudioStreamPlayer2D" parent="Treasure2" unique_id=243477350]
+stream = ExtResource("61_0rmfi")
 
 [node name="Treasure3" parent="." unique_id=505965370 instance=ExtResource("37_7gkqi")]
 position = Vector2(591, 728.99994)
 
+[node name="OpenSound" type="AudioStreamPlayer2D" parent="Treasure3" unique_id=781416397]
+stream = ExtResource("61_0rmfi")
+
 [node name="Treasure4" parent="." unique_id=949335601 instance=ExtResource("37_7gkqi")]
 position = Vector2(1537, 848.99994)
+
+[node name="OpenSound" type="AudioStreamPlayer2D" parent="Treasure4" unique_id=2121362234]
+stream = ExtResource("61_0rmfi")
 
 [node name="开门机关" type="Area2D" parent="." unique_id=134149694]
 script = ExtResource("61_xbak0")
@@ -626,3 +652,7 @@ position = Vector2(1929, 1028)
 
 [node name="coffin8" parent="." unique_id=1148105144 instance=ExtResource("67_uxocx")]
 position = Vector2(1738, 452)
+
+[node name="bgm" type="AudioStreamPlayer" parent="." unique_id=1379898773]
+stream = ExtResource("62_bnuda")
+autoplay = true
