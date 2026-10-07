@@ -52,6 +52,7 @@
 [ext_resource type="Texture2D" uid="uid://n10y1440twn4" path="res://host/背跑/IMG_2913-2.png" id="28_3x28f"]
 [ext_resource type="Texture2D" uid="uid://bx4s506o7sp6h" path="res://host/背跑/IMG_2913-4.png" id="29_l6q63"]
 [ext_resource type="Script" uid="uid://bux2f7nc6t7m0" path="res://scenes/Run.cs" id="30_mmvbu"]
+[ext_resource type="PackedScene" uid="uid://bhvhucpjnebno" path="res://scenes/stop.tscn" id="31_3x338"]
 [ext_resource type="Script" uid="uid://b1ynjrijdxkey" path="res://scenes/State.cs" id="31_weeiq"]
 [ext_resource type="Script" uid="uid://lcivnm5ognjd" path="res://scenes/Pack.cs" id="32_uxocx"]
 [ext_resource type="Script" uid="uid://cstg74fd6wd14" path="res://scenes/Clear.cs" id="33_7nv0b"]
@@ -228,10 +229,10 @@ offset_bottom = -57.0
 text = "正常"
 
 [node name="btn_bleed" type="Button" parent="HUD" unique_id=2008822049]
-offset_left = 684.0
-offset_top = 29.0
-offset_right = 815.0
-offset_bottom = 92.0
+offset_left = 782.0
+offset_top = -120.0
+offset_right = 913.0
+offset_bottom = -57.0
 text = "流血"
 
 [node name="btn_slow" type="Button" parent="HUD" unique_id=664828366]
@@ -434,6 +435,13 @@ offset_right = 56.0
 offset_bottom = 59.0
 text = "Esc"
 
+[node name="escstop" type="Button" parent="HUD/base_set" unique_id=1499197095]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 12.0
+offset_right = 48.0
+offset_bottom = 57.0
+
 [node name="icon_gun" type="TextureRect" parent="HUD" unique_id=995021666]
 offset_left = 954.0
 offset_top = 477.0
@@ -524,6 +532,9 @@ offset_bottom = 72.0
 text = "B"
 
 [node name="end" parent="HUD" unique_id=355917944 instance=ExtResource("43_05nbr")]
+visible = false
+
+[node name="escstop" parent="HUD" unique_id=670858432 instance=ExtResource("31_3x338")]
 visible = false
 
 [node name="player" type="CharacterBody2D" parent="." unique_id=569109722 groups=["player"]]

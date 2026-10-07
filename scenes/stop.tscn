@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://bhvhucpjnebno"]
+
+[ext_resource type="Texture2D" uid="uid://bv8cbh5igdvqv" path="res://ui/暂停.jpeg" id="1_8ug1m"]
+[ext_resource type="Script" uid="uid://dx7jvpo0nilcv" path="res://scenes/EscStop.cs" id="1_pwsay"]
+[ext_resource type="Texture2D" uid="uid://bleuocx7uuu8d" path="res://ui/tuichu.png" id="3_s7723"]
+[ext_resource type="Script" uid="uid://dsdpw46ay8klk" path="res://scenes/Stop.cs" id="3_t0hx4"]
+[ext_resource type="Texture2D" uid="uid://dm3ut3ibc1rws" path="res://ui/继续游戏.png" id="4_6j171"]
+[ext_resource type="Texture2D" uid="uid://e7rshdrkinh6" path="res://ui/返回主菜单.png" id="5_hpj6q"]
+
+[node name="Node2D" type="Node2D" unique_id=670858432 groups=["modal_ui"]]
+script = ExtResource("1_pwsay")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=302952820]
+offset_left = -108.0
+offset_top = 789.0
+offset_right = 794.0
+offset_bottom = 2156.0
+rotation = -1.5707964
+texture = ExtResource("1_8ug1m")
+flip_h = true
+
+[node name="退出游戏" type="Button" parent="." unique_id=2080384118]
+offset_left = 358.0
+offset_top = 439.0
+offset_right = 815.0
+offset_bottom = 524.0
+
+[node name="Sprite2D" type="Sprite2D" parent="退出游戏" unique_id=7176515]
+position = Vector2(246, -88.00003)
+scale = Vector2(0.52903223, 0.52903223)
+texture = ExtResource("3_s7723")
+
+[node name="返回游戏" type="Button" parent="." unique_id=644164400]
+offset_left = 359.0
+offset_top = 286.0
+offset_right = 806.0
+offset_bottom = 376.0
+
+[node name="Sprite2D" type="Sprite2D" parent="返回游戏" unique_id=1785438384]
+position = Vector2(231.00002, 41.999992)
+scale = Vector2(0.31008285, 0.31008285)
+texture = ExtResource("4_6j171")
+
+[node name="回到主菜单" type="Button" parent="." unique_id=273496386]
+offset_left = 367.0
+offset_top = 108.0
+offset_right = 804.0
+offset_bottom = 199.0
+
+[node name="Sprite2D" type="Sprite2D" parent="回到主菜单" unique_id=1734825043]
+position = Vector2(202.99997, 42.999996)
+scale = Vector2(0.3418508, 0.3418508)
+texture = ExtResource("5_hpj6q")
+
+[node name="stop" type="Node" parent="." unique_id=1945824627]
+script = ExtResource("3_t0hx4")
