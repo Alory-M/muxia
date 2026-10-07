@@ -61,6 +61,7 @@
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="37_7gkqi"]
 [ext_resource type="PackedScene" uid="uid://cw2icyxh8v33y" path="res://scenes/end.tscn" id="43_05nbr"]
 [ext_resource type="Script" uid="uid://ca5hw3s11tftj" path="res://scenes/Endarea.cs" id="56_ms3bu"]
+[ext_resource type="AudioStream" uid="uid://u6equrkwrcr1" path="res://music/treasure_box_open.wav" id="61_0rmfi"]
 [ext_resource type="AudioStream" uid="uid://bre64od6rt07x" path="res://music/BGM.ogg" id="62_bnuda"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
@@ -553,14 +554,26 @@ metadata/_edit_lock_ = true
 [node name="Treasure" parent="." unique_id=622065184 instance=ExtResource("37_7gkqi")]
 position = Vector2(805.99994, 196)
 
+[node name="OpenSound" type="AudioStreamPlayer2D" parent="Treasure" unique_id=1531440647]
+stream = ExtResource("61_0rmfi")
+
 [node name="Treasure2" parent="." unique_id=334792882 instance=ExtResource("37_7gkqi")]
 position = Vector2(429, 1081)
+
+[node name="OpenSound" type="AudioStreamPlayer2D" parent="Treasure2" unique_id=243477350]
+stream = ExtResource("61_0rmfi")
 
 [node name="Treasure3" parent="." unique_id=505965370 instance=ExtResource("37_7gkqi")]
 position = Vector2(591, 728.99994)
 
+[node name="OpenSound" type="AudioStreamPlayer2D" parent="Treasure3" unique_id=781416397]
+stream = ExtResource("61_0rmfi")
+
 [node name="Treasure4" parent="." unique_id=1826830460 instance=ExtResource("37_7gkqi")]
 position = Vector2(1528, 847.99994)
+
+[node name="OpenSound" type="AudioStreamPlayer2D" parent="Treasure4" unique_id=2121362234]
+stream = ExtResource("61_0rmfi")
 
 [node name="endarea" type="Area2D" parent="." unique_id=991660067]
 script = ExtResource("56_ms3bu")
