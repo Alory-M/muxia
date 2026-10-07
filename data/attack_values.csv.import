@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://3gcoyvu850rb"
+
+[deps]
+
+files=["res://data/attack_values.对象.translation", "res://data/attack_values.项目.translation", "res://data/attack_values.当前值.translation", "res://data/attack_values.改哪个文件.translation", "res://data/attack_values.改哪一项.translation", "res://data/attack_values.说明.translation"]
+
+source_file="res://data/attack_values.csv"
+dest_files=["res://data/attack_values.对象.translation", "res://data/attack_values.项目.translation", "res://data/attack_values.当前值.translation", "res://data/attack_values.改哪个文件.translation", "res://data/attack_values.改哪一项.translation", "res://data/attack_values.说明.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

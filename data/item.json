@@ -3,36 +3,36 @@
     "ID": 1001,
     "name": "item_drop1",
     "note": "灵魂碎片",
-    "location":"scenes\soulpiece.cs"
+    "location": "player/soulpiece:AddSoul"
   },
   {
     "ID": 1002,
     "name": "item_drop2",
     "note": "财宝",
-    "location":"scenes\Gold.cs"
+    "location": "player/gold:Add"
   },
   {
     "ID": 1003,
     "name": "item_drop3",
-    "note": "绷带"
-    "location":"scenes\Pack.cs"
+    "note": "绷带",
+    "location": "player/pack:AddBandage"
   },
   {
     "ID": 1004,
     "name": "item_drop4",
     "note": "药品",
-    "location":"scenes\Pack.cs"
+    "location": "player/pack:AddDrug"
   },
   {
     "ID": 1005,
     "name": "item_drop5",
     "note": "子弹",
-    "location":"scenes\Pack.cs"
+    "location": "player/pack:AddBullet"
   },
   {
     "ID": 1006,
     "name": "item_drop6",
     "note": "解毒剂",
-    "location":"scenes\Pack.cs"
+    "location": "player/pack:AddAntidote"
   }
 ]

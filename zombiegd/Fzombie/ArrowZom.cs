@@ -3,6 +3,9 @@ using Godot;
 /// <summary>
 /// 弓箭僵尸（C# 版）：远程攻击僵尸。玩家进入射程后，站定并朝玩家中心自动发射子弹（箭）。
 /// 继承 Zombie 的全部基础行为（追击、掉落、棺材信号绑定等），只把「近战普攻」换成「远程射箭」。
+///
+/// 箭伤取本僵尸自己的 AttackDamage，不是子弹场景里的默认值(25) ——
+/// 想让某只弓箭僵尸更疼，改它的 AttackDamage 就行。
 /// </summary>
 public partial class ArrowZom : Zombie
 {
@@ -67,9 +70,19 @@ public partial class ArrowZom : Zombie
 		// 从僵尸位置出膛，朝玩家中心飞
 		Bullet bullet = BulletScene.Instantiate<Bullet>();
 		bullet.HitsPlayer = true;   // 这是僵尸射的箭，要打玩家（而不是打僵尸）
+		bullet.Damage = AttackDamage;   // 箭伤跟这只僵尸走，不再用子弹场景里的默认值
+		ConfigureBullet(bullet);        // 给子类一个改箭的机会(毒僵尸的箭就是在这儿被标成带毒的)
 		GetParent().AddChild(bullet);
 		bullet.GlobalPosition = GlobalPosition;
 		bullet.Launch(dir);
 		GD.Print("ArrowZom：朝玩家中心射出一箭");
+	}
+
+	/// <summary>
+	/// 发射前改箭的钩子。默认什么都不做,子类可以在这儿给箭加附加效果。
+	/// 效果标在箭上而不是僵尸身上:箭要飞一段才命中,那会儿僵尸未必还在
+	/// </summary>
+	protected virtual void ConfigureBullet(Bullet bullet)
+	{
 	}
 }

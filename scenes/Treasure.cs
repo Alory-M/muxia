@@ -8,11 +8,20 @@ public partial class Treasure : Area2D
 	private AnimatedSprite2D _animatedSprite;
 	private Timer _freeTimer;
 
+	// 掉落组件,挂在 gift 子节点上。宝箱掉什么是它在管(读 data/drop.json)
+	private Gift _gift;
+
 	public override void _Ready()
 	{
 		_getButton = GetNode<Button>("get");
 		_animatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		_freeTimer = GetNode<Timer>("Timer");   // ← 这行缺失
+
+		_gift = GetNodeOrNull<Gift>("gift");
+		if (_gift == null)
+		{
+			GD.PushWarning("Treasure: 找不到子节点 gift,开箱不会掉东西。");
+		}
 
 		// 初始状态:不可见、不可交互
 		SetGetAvailable(false);
@@ -77,6 +86,14 @@ public partial class Treasure : Area2D
 	private void OnFreeTimerTimeout()
 	{
 		SetGetAvailable(false);
+
+		// 开箱动画播完、宝箱要消失的这一刻才结算掉落 ——
+		// "宝箱消失"和"获得物品"是同一时刻
+		if (_gift != null)
+		{
+			_gift.Drop();
+		}
+
 		QueueFree();
 	}
 }

@@ -39,6 +39,7 @@
 [ext_resource type="Texture2D" uid="uid://bvpk006wsb8b3" path="res://bin/item/item/item/icon_coin.png" id="21_n8ral"]
 [ext_resource type="Script" uid="uid://dr5ijxkdgl6un" path="res://scenes/SoulCounter.cs" id="21_q8j3a"]
 [ext_resource type="Script" uid="uid://7lcx3gjlnnrb" path="res://scenes/Counter.cs" id="22_3hbvx"]
+[ext_resource type="Script" uid="uid://dc2mbdfq6u6e5" path="res://scenes/Yudan.cs" id="22_66xif"]
 [ext_resource type="Texture2D" uid="uid://dgf2e0h7xjl5k" path="res://host/侧跑/IMG_2907-13.png" id="22_n8ral"]
 [ext_resource type="Texture2D" uid="uid://dtd4hgk10hlp1" path="res://bin/item/item/item/背包.png" id="22_yd4ix"]
 [ext_resource type="Texture2D" uid="uid://d3ehn2qx227s6" path="res://host/正跑/IMG_2918-1.png" id="23_yd4ix"]
@@ -56,7 +57,6 @@
 [ext_resource type="Script" uid="uid://crecd8f4say6s" path="res://scenes/soulpiece.cs" id="35_sxt1d"]
 [ext_resource type="PackedScene" uid="uid://x8qgje1ggp81" path="res://scenes/businessman.tscn" id="36_2iuns"]
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="37_7gkqi"]
-[ext_resource type="PackedScene" uid="uid://cb68diu653yey" path="res://zombiegd/coffin.tscn" id="38_753oq"]
 [ext_resource type="PackedScene" uid="uid://cw2icyxh8v33y" path="res://scenes/end.tscn" id="43_05nbr"]
 [ext_resource type="Script" uid="uid://ca5hw3s11tftj" path="res://scenes/Endarea.cs" id="56_ms3bu"]
 
@@ -425,6 +425,7 @@ offset_top = 19.0
 offset_right = 11.0
 offset_bottom = 42.0
 text = "6/30"
+script = ExtResource("22_66xif")
 
 [node name="R" type="Label" parent="HUD/icon_zidan" unique_id=663886078]
 layout_mode = 0
@@ -537,9 +538,6 @@ position = Vector2(429, 1081)
 
 [node name="Treasure3" parent="." unique_id=505965370 instance=ExtResource("37_7gkqi")]
 position = Vector2(591, 728.99994)
-
-[node name="coffin" parent="." unique_id=847161236 instance=ExtResource("38_753oq")]
-position = Vector2(1085, 1256)
 
 [node name="endarea" type="Area2D" parent="." unique_id=991660067]
 script = ExtResource("56_ms3bu")
