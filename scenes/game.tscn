@@ -61,6 +61,9 @@
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="37_7gkqi"]
 [ext_resource type="PackedScene" uid="uid://cw2icyxh8v33y" path="res://scenes/end.tscn" id="43_05nbr"]
 [ext_resource type="Script" uid="uid://ca5hw3s11tftj" path="res://scenes/Endarea.cs" id="56_ms3bu"]
+[ext_resource type="Script" uid="uid://cjv73bbp7d3yt" path="res://scenes/开门机关.cs" id="61_xbak0"]
+[ext_resource type="Texture2D" uid="uid://lhdumcs5387t" path="res://ui/开门机关.png" id="62_3x28f"]
+[ext_resource type="Texture2D" uid="uid://dxobj5m71e8vt" path="res://ui/终点大门.png" id="63_l6q63"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 size = Vector2(22, 88)
@@ -150,6 +153,9 @@ animations = [{
 "name": &"背跑",
 "speed": 7.0
 }]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hfknc"]
+size = Vector2(85.5, 80)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qxvy8"]
 size = Vector2(71, 162)
@@ -558,7 +564,25 @@ position = Vector2(429, 1081)
 [node name="Treasure3" parent="." unique_id=505965370 instance=ExtResource("37_7gkqi")]
 position = Vector2(591, 728.99994)
 
+[node name="开门机关" type="Area2D" parent="." unique_id=134149694]
+script = ExtResource("61_xbak0")
+
+[node name="Sprite2D" type="Sprite2D" parent="开门机关" unique_id=1842100519]
+position = Vector2(1952, 1277)
+scale = Vector2(0.07429434, 0.074294336)
+texture = ExtResource("62_3x28f")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="开门机关" unique_id=1302678186]
+position = Vector2(1948.25, 1290)
+shape = SubResource("RectangleShape2D_hfknc")
+
+[node name="终点大门" type="Sprite2D" parent="." unique_id=453360046]
+position = Vector2(2042.1874, 272.20822)
+scale = Vector2(0.22711685, 0.22106203)
+texture = ExtResource("63_l6q63")
+
 [node name="endarea" type="Area2D" parent="." unique_id=991660067]
+visible = false
 script = ExtResource("56_ms3bu")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="endarea" unique_id=5794379]
