@@ -5,9 +5,6 @@ public partial class Bullet : Area2D
 	// 飞行速度(像素/秒)
 	[Export] public float Speed { get; set; } = 800.0f;
 
-	// 飞多少像素后自行销毁
-	[Export] public float MaxDistance { get; set; } = 800.0f;
-
 	// 命中目标时造成的伤害
 	[Export] public int Damage { get; set; } = 25;
 
@@ -15,11 +12,13 @@ public partial class Bullet : Area2D
 	public bool HitsPlayer { get; set; } = false;
 
 	private Vector2 _direction = Vector2.Zero;   // 由 Launch() 传入,之后不再改变
-	private float _traveled = 0.0f;              // 已经飞了多远
 	private bool _isMoving = false;
 
 	// 朝向组件,挂在 rotate 子节点上。缺了只是不转向,不影响飞行
 	private Rotate _rotate;
+
+	// 消失组件,挂在 disappear 子节点上。飞多远消失、撞到什么消失,判定都在它那儿
+	private Disappear _disappear;
 
 	public override void _Ready()
 	{
@@ -29,43 +28,33 @@ public partial class Bullet : Area2D
 			GD.PushWarning("Bullet: 找不到子节点 rotate,子弹不会跟着飞行方向转向。");
 		}
 
-		// 命中检测:子弹撞到任何物理体都会触发
-		BodyEntered += OnBodyEntered;
+		_disappear = GetNodeOrNull<Disappear>("disappear");
+		if (_disappear == null)
+		{
+			GD.PushWarning("Bullet: 找不到子节点 disappear,子弹既不会到距离消失、也不会撞东西消失。");
+		}
 	}
 
-	/// <summary>子弹撞到东西时的处理:对可受伤目标扣血,然后销毁子弹</summary>
-	private void OnBodyEntered(Node2D body)
+	/// <summary>
+	/// 结算伤害。由 disappear 组件在判定"这一下会让子弹消失"时调用 ——
+	/// 该不该打(玩家自己 / 友方僵尸 / 墙)由组件负责判,这儿只管打多少
+	/// </summary>
+	public void ApplyDamage(Node target)
 	{
-		// 僵尸射的箭（HitsPlayer=true）：打玩家，别打自己人（僵尸有 take_damage）
 		if (HitsPlayer)
 		{
-			if (body is Player player)
+			if (target is Player player)
 			{
 				player.TakeDamage(Damage);
-				QueueFree();
 			}
-			else if (!body.HasMethod("take_damage"))
-			{
-				// 不是玩家、也不是僵尸：撞墙等障碍，直接消失
-				QueueFree();
-			}
-			return; // 是僵尸（有 take_damage）：友方，穿过不处理
-		}
-
-		// 玩家射的子弹：出生瞬间和玩家重叠，玩家不算目标，直接放过
-		if (body.IsInGroup("player"))
-		{
 			return;
 		}
 
-		// 命中可受伤目标(僵尸有 take_damage 方法)就扣血
-		if (body.HasMethod("take_damage"))
+		// 僵尸的方法名故意是 snake_case 的 take_damage(见 Zombie.cs),墙没有这个方法
+		if (target.HasMethod("take_damage"))
 		{
-			body.Call("take_damage", Damage);
+			target.Call("take_damage", Damage);
 		}
-
-		// 子弹打中任何东西(除了玩家)就消失
-		QueueFree();
 	}
 
 	// 由发射者调用:给它一个方向,它就开始飞
@@ -79,7 +68,6 @@ public partial class Bullet : Area2D
 		}
 
 		_direction = direction.Normalized();
-		_traveled = 0.0f;
 		_isMoving = true;
 
 		// 转向交给 rotate 组件。子弹美术本来朝右,所以 0 度 = 朝右
@@ -98,11 +86,11 @@ public partial class Bullet : Area2D
 
 		float step = Speed * (float)delta;
 		GlobalPosition += _direction * step;
-		_traveled += step;
 
-		if (_traveled >= MaxDistance)
+		// 飞了多远、够不够 MaxDistance、撞没撞到东西,全交给组件
+		if (_disappear != null)
 		{
-			QueueFree();
+			_disappear.Advance(step);
 		}
 	}
 }

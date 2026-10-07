@@ -28,7 +28,7 @@ public partial class debuff : Node
 	[Export] public float Duration = 5f;
 
 	// 流血:每 1 秒扣多少点血
-	[Export] public float BleedPerSecond = 1f;
+	[Export] public float BleedPerSecond = 100f;
 
 	// 迟缓:移速乘数。0.5 = 移速减半
 	[Export(PropertyHint.Range, "0.05,1,0.05")]

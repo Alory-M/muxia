@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dugsyvwcfwxeb" path="res://scenes/Main.cs" id="1_tbgi4"]
 [ext_resource type="Texture2D" uid="uid://bleuocx7uuu8d" path="res://ui/tuichu.png" id="2_jyhfs"]
 [ext_resource type="Texture2D" uid="uid://b18ng3p3xcswk" path="res://ui/start.png" id="3_tbgi4"]
+[ext_resource type="Script" uid="uid://dxfbap4c70t25" path="res://scenes/Tuichu.cs" id="4_tbgi4"]
 
 [node name="Node2D" type="Node2D" unique_id=2089587978]
 script = ExtResource("1_tbgi4")
@@ -20,6 +21,14 @@ metadata/_edit_lock_ = true
 position = Vector2(256, 387.99997)
 scale = Vector2(0.20879538, 0.20879537)
 texture = ExtResource("2_jyhfs")
+script = ExtResource("4_tbgi4")
+
+[node name="tuichu" type="Button" parent="HUD/Tuichu" unique_id=1896467174]
+self_modulate = Color(1, 1, 1, 0)
+offset_left = -344.8352
+offset_top = 220.31152
+offset_right = 311.30957
+offset_bottom = 397.51855
 
 [node name="Start" type="Sprite2D" parent="HUD" unique_id=1034342426]
 position = Vector2(258, 354)

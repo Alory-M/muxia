@@ -67,9 +67,6 @@ size = Vector2(46, 420)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8efq7"]
 size = Vector2(46, 400)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_181r0"]
-size = Vector2(57.5, 193)
-
 [node name="Control" type="Control" unique_id=199233029]
 layout_mode = 3
 anchors_preset = 15
@@ -211,9 +208,3 @@ shape = SubResource("RectangleShape2D_ha1gd")
 position = Vector2(1646.0001, 530.00006)
 rotation = -0.017453292
 shape = SubResource("RectangleShape2D_8efq7")
-
-[node name="Area2D" type="Area2D" parent="." unique_id=1287835655]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=478447238]
-position = Vector2(1994.75, 270.5)
-shape = SubResource("RectangleShape2D_181r0")

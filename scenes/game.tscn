@@ -37,6 +37,8 @@
 [ext_resource type="Texture2D" uid="uid://bq0vwbweud1nh" path="res://bin/item/item/item/icon_soul.png" id="20_bk1p3"]
 [ext_resource type="Texture2D" uid="uid://cmf56aq2dynj7" path="res://host/侧跑/IMG_2907-12.png" id="21_bk1p3"]
 [ext_resource type="Texture2D" uid="uid://bvpk006wsb8b3" path="res://bin/item/item/item/icon_coin.png" id="21_n8ral"]
+[ext_resource type="Script" uid="uid://dr5ijxkdgl6un" path="res://scenes/SoulCounter.cs" id="21_q8j3a"]
+[ext_resource type="Script" uid="uid://7lcx3gjlnnrb" path="res://scenes/Counter.cs" id="22_3hbvx"]
 [ext_resource type="Texture2D" uid="uid://dgf2e0h7xjl5k" path="res://host/侧跑/IMG_2907-13.png" id="22_n8ral"]
 [ext_resource type="Texture2D" uid="uid://dtd4hgk10hlp1" path="res://bin/item/item/item/背包.png" id="22_yd4ix"]
 [ext_resource type="Texture2D" uid="uid://d3ehn2qx227s6" path="res://host/正跑/IMG_2918-1.png" id="23_yd4ix"]
@@ -56,6 +58,7 @@
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="37_7gkqi"]
 [ext_resource type="PackedScene" uid="uid://cb68diu653yey" path="res://zombiegd/coffin.tscn" id="38_753oq"]
 [ext_resource type="PackedScene" uid="uid://cw2icyxh8v33y" path="res://scenes/end.tscn" id="43_05nbr"]
+[ext_resource type="Script" uid="uid://ca5hw3s11tftj" path="res://scenes/Endarea.cs" id="56_ms3bu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 size = Vector2(22, 88)
@@ -146,6 +149,9 @@ animations = [{
 "speed": 7.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qxvy8"]
+size = Vector2(71, 162)
+
 [node name="Node2D" type="Node2D" unique_id=261450284]
 script = ExtResource("1_nepv3")
 
@@ -158,9 +164,6 @@ metadata/_edit_use_anchors_ = true
 metadata/_edit_lock_ = true
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1425987575]
-
-[node name="end" parent="HUD" unique_id=355917944 instance=ExtResource("43_05nbr")]
-visible = false
 
 [node name="store" parent="HUD" unique_id=1988767736 instance=ExtResource("2_7025r")]
 visible = false
@@ -182,8 +185,7 @@ color = Color(0.972549, 0.05882353, 0.03137255, 1)
 script = ExtResource("4_8ool0")
 
 [node name="Map" type="Sprite2D" parent="HUD" unique_id=552770142]
-visible = false
-position = Vector2(123, 559)
+position = Vector2(111.00001, 79)
 scale = Vector2(0.09564212, 0.09564211)
 texture = ExtResource("7_m4url")
 script = ExtResource("8_pr1ej")
@@ -201,10 +203,10 @@ offset_bottom = -57.0
 text = "正常"
 
 [node name="btn_bleed" type="Button" parent="HUD" unique_id=2008822049]
-offset_left = 781.0
-offset_top = -123.0
-offset_right = 912.0
-offset_bottom = -60.0
+offset_left = 684.0
+offset_top = 29.0
+offset_right = 815.0
+offset_bottom = 92.0
 text = "流血"
 
 [node name="btn_slow" type="Button" parent="HUD" unique_id=664828366]
@@ -346,6 +348,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="base_map" type="TextureRect" parent="HUD" unique_id=1597273760]
+visible = false
 offset_left = -4.0
 offset_right = 179.0
 offset_bottom = 179.0
@@ -380,10 +383,10 @@ offset_bottom = 145.0
 text = "J/左键"
 
 [node name="base_set" type="TextureRect" parent="HUD" unique_id=1647351057]
-offset_left = 157.0
-offset_top = 5.0
-offset_right = 206.0
-offset_bottom = 68.0
+offset_left = 224.0
+offset_top = 6.0
+offset_right = 273.0
+offset_bottom = 69.0
 texture = ExtResource("17_q8j3a")
 expand_mode = 1
 stretch_mode = 5
@@ -440,6 +443,15 @@ texture = ExtResource("20_bk1p3")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="counter" type="Label" parent="HUD/icon_soul" unique_id=1791059215]
+layout_mode = 0
+offset_left = 51.0
+offset_top = 7.0
+offset_right = 91.0
+offset_bottom = 30.0
+text = "100"
+script = ExtResource("21_q8j3a")
+
 [node name="icon_coin" type="TextureRect" parent="HUD" unique_id=948618288]
 offset_left = 956.0
 offset_top = 22.0
@@ -448,6 +460,15 @@ offset_bottom = 62.0
 texture = ExtResource("21_n8ral")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="counter" type="Label" parent="HUD/icon_coin" unique_id=289361543]
+layout_mode = 0
+offset_left = 53.0
+offset_top = 6.0
+offset_right = 93.0
+offset_bottom = 29.0
+text = "100"
+script = ExtResource("22_3hbvx")
 
 [node name="icon_bag" type="TextureRect" parent="HUD" unique_id=73955093]
 offset_left = 1063.0
@@ -466,11 +487,15 @@ offset_right = 57.0
 offset_bottom = 72.0
 text = "B"
 
+[node name="end" parent="HUD" unique_id=355917944 instance=ExtResource("43_05nbr")]
+visible = false
+
 [node name="player" type="CharacterBody2D" parent="." unique_id=569109722 groups=["player"]]
 position = Vector2(243, 1250)
 script = ExtResource("8_oaba0")
 moveSpeed = 500.0
-hp = 50.0
+hp = 1000.0
+MaxHp = 1000.0
 bulletScene = ExtResource("9_458eo")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player" unique_id=705751674]
@@ -501,11 +526,24 @@ script = ExtResource("34_o8oq8")
 script = ExtResource("35_sxt1d")
 
 [node name="businessman" parent="." unique_id=1648233843 instance=ExtResource("36_2iuns")]
-position = Vector2(826, 206)
+position = Vector2(1568, 453)
 metadata/_edit_lock_ = true
 
 [node name="Treasure" parent="." unique_id=622065184 instance=ExtResource("37_7gkqi")]
-position = Vector2(989, 659)
+position = Vector2(805.99994, 196)
+
+[node name="Treasure2" parent="." unique_id=334792882 instance=ExtResource("37_7gkqi")]
+position = Vector2(429, 1081)
+
+[node name="Treasure3" parent="." unique_id=505965370 instance=ExtResource("37_7gkqi")]
+position = Vector2(591, 728.99994)
 
 [node name="coffin" parent="." unique_id=847161236 instance=ExtResource("38_753oq")]
 position = Vector2(1085, 1256)
+
+[node name="endarea" type="Area2D" parent="." unique_id=991660067]
+script = ExtResource("56_ms3bu")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="endarea" unique_id=5794379]
+position = Vector2(1981.5, 269)
+shape = SubResource("RectangleShape2D_qxvy8")

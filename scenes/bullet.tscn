@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cooelx1j5tap6" path="res://scenes/Bullet.cs" id="1_y25gk"]
 [ext_resource type="Texture2D" uid="uid://mtp6kfpn3d4v" path="res://bin/pack/子弹.png" id="2_y25gk"]
 [ext_resource type="Script" uid="uid://b5msag1ymnejx" path="res://scenes/Rotate.cs" id="3_l5glv"]
+[ext_resource type="Script" uid="uid://7undbgswl053" path="res://scenes/Disappear.cs" id="4_eoqba"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_qxvy8"]
 animations = [{
@@ -33,3 +34,6 @@ shape = SubResource("CapsuleShape2D_33age")
 
 [node name="rotate" type="Node" parent="." unique_id=1259378352]
 script = ExtResource("3_l5glv")
+
+[node name="disappear" type="Node" parent="." unique_id=1828132273]
+script = ExtResource("4_eoqba")

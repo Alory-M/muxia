@@ -22,13 +22,20 @@ public partial class State : Node
 	public delegate void StateChangedEventHandler(int previous, int current);
 
 	// ---- 流血参数 ----
-	[Export] public float BleedPerSecond { get; set; } = 5f;
+	// 扣血用的是这里的值。State 在 _Ready 里 new 出 debuff 节点时会把 BleedPerSecond
+	// 传进去(CreateDebuff),把 debuff.cs 里的默认值覆盖掉 —— 改那边不起作用。
+	[Export] public float BleedPerSecond { get; set; } = 100f;
 	[Export] public float BleedDuration { get; set; } = 5f;
 
 	// ---- 迟缓参数。0.5 = 移速减半 ----
 	[Export(PropertyHint.Range, "0.05,1,0.05")]
 	public float SlowMultiplier { get; set; } = 0.5f;
 	[Export] public float SlowDuration { get; set; } = 5f;
+
+	// ---- 回血参数 ----
+	// 药(E 键 / HUD 的"治疗"按钮)一份回多少血。原来写死在 Clear.cs 里,
+	// 挪过来是为了跟流血强度摆在一起:一眼能对上"每秒流 100,一份药回多少"。
+	[Export] public int HealAmount { get; set; } = 100;
 
 	// 三种状态各给血条一种颜色,测试时一眼能看出当前处于哪个状态
 	[Export] public Color NormalColor { get; set; } = new Color(0.972549f, 0.05882353f, 0.03137255f);

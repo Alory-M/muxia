@@ -190,7 +190,8 @@ public partial class Store : Node
 			+ $"还剩 {_gold.Amount} 金币、{GetStock(kind)} 库存。");
 	}
 
-	private int GetPrice(SupplyKind kind)
+	/// <summary>某样货物的单价。ShowPrice 要拿它来显示在每个"购买"按钮上</summary>
+	public int GetPrice(SupplyKind kind)
 	{
 		return kind switch
 		{

@@ -1,0 +1,387 @@
+[
+  {
+    "key": "item_drop1",
+    "text": "灵魂碎片",
+    "note": ""
+  },
+  {
+    "key": "item_drop2",
+    "text": "财宝",
+    "note": ""
+  },
+  {
+    "key": "item_drop3",
+    "text": "绷带",
+    "note": ""
+  },
+  {
+    "key": "item_drop4",
+    "text": "药品",
+    "note": ""
+  },
+  {
+    "key": "item_drop5",
+    "text": "子弹",
+    "note": ""
+  },
+  {
+    "key": "item_drop6",
+    "text": "解毒剂",
+    "note": ""
+  },
+  {
+    "key": "name_host",
+    "text": "新人盗墓者",
+    "note": ""
+  },
+  {
+    "key": "monster_g",
+    "text": "迷你僵尸",
+    "note": ""
+  },
+  {
+    "key": "monster_y1",
+    "text": "瞬移僵尸",
+    "note": ""
+  },
+  {
+    "key": "monster_y2",
+    "text": "弓箭僵尸",
+    "note": ""
+  },
+  {
+    "key": "monster_r1",
+    "text": "利爪僵尸",
+    "note": ""
+  },
+  {
+    "key": "monster_r2",
+    "text": "大巨僵尸",
+    "note": ""
+  },
+  {
+    "key": "monster_r3",
+    "text": "毒箭僵尸",
+    "note": ""
+  },
+  {
+    "key": "monster_busin",
+    "text": "阴掌柜",
+    "note": ""
+  },
+  {
+    "key": "status_bleed",
+    "text": "流血",
+    "note": ""
+  },
+  {
+    "key": "status_poison",
+    "text": "中毒",
+    "note": ""
+  },
+  {
+    "key": "spikeweed",
+    "text": "地刺",
+    "note": ""
+  },
+  {
+    "key": "arrow",
+    "text": "暗箭",
+    "note": ""
+  },
+  {
+    "key": "text_1",
+    "text": "开始游戏",
+    "note": ""
+  },
+  {
+    "key": "text_2",
+    "text": "退出游戏",
+    "note": ""
+  },
+  {
+    "key": "text_3",
+    "text": "设置",
+    "note": ""
+  },
+  {
+    "key": "text_4",
+    "text": "物品介绍：",
+    "note": ""
+  },
+  {
+    "key": "text_5",
+    "text": "数量",
+    "note": ""
+  },
+  {
+    "key": "text_6",
+    "text": "确认",
+    "note": ""
+  },
+  {
+    "key": "text_7",
+    "text": "返回主菜单",
+    "note": ""
+  },
+  {
+    "key": "text_8",
+    "text": "重新开始",
+    "note": ""
+  },
+  {
+    "key": "text_9",
+    "text": "继续游戏",
+    "note": ""
+  },
+  {
+    "key": "text_10",
+    "text": "音效音量",
+    "note": ""
+  },
+  {
+    "key": "text_11",
+    "text": "音乐音量",
+    "note": ""
+  },
+  {
+    "key": "text_12",
+    "text": "继续探索",
+    "note": ""
+  },
+  {
+    "key": "text_13",
+    "text": "重新挑战",
+    "note": ""
+  },
+  {
+    "key": "text_14",
+    "text": "棺材",
+    "note": ""
+  },
+  {
+    "key": "text_15",
+    "text": "宝箱",
+    "note": ""
+  },
+  {
+    "key": "text_16",
+    "text": "摸棺",
+    "note": ""
+  },
+  {
+    "key": "text_item3",
+    "text": "带血的医用绷带，至少能用。缠紧伤口，可以先把血止住。",
+    "note": ""
+  },
+  {
+    "key": "text_item4",
+    "text": "试管上的字迹已经模糊，药效倒还在。服用后可恢复生命值。",
+    "note": ""
+  },
+  {
+    "key": "text_item5",
+    "text": "冰冷的黄铜子弹。墓里有什么东西怕枪，没人说得准。手枪最多装填 6 发。",
+    "note": ""
+  },
+  {
+    "key": "text_item6",
+    "text": "墓里的毒不能拖。喝下这瓶药，可解除中毒状态。",
+    "note": ""
+  },
+  {
+    "key": "text_buff1",
+    "text": "力透阴骨",
+    "note": "攻击buff"
+  },
+  {
+    "key": "text_buff2",
+    "text": "疾如鬼手",
+    "note": "攻速buff"
+  },
+  {
+    "key": "text_buff3",
+    "text": "鬼影疾行",
+    "note": "移速buff"
+  },
+  {
+    "key": "text_buff4",
+    "text": "索命一击",
+    "note": "暴击buff"
+  },
+  {
+    "key": "text_txtbuff1",
+    "text": "一股凶煞之气灌入双臂。攻击力提升。",
+    "note": ""
+  },
+  {
+    "key": "text_txtbuff2",
+    "text": "出手快上三分，莫等它们先动。攻击速度提升。",
+    "note": ""
+  },
+  {
+    "key": "text_txtbuff3",
+    "text": "身轻如鬼，墓道再险也拦不住你。移动速度提升。",
+    "note": ""
+  },
+  {
+    "key": "text_txtbuff4",
+    "text": "专挑要害下手，一击便要它半条命。暴击率提升。",
+    "note": ""
+  },
+  {
+    "key": "text_box1",
+    "text": "一口落满灰尘的旧箱子，打开看看？",
+    "note": ""
+  },
+  {
+    "key": "text_box2",
+    "text": "箱锁早已锈死，也许里面还有东西。",
+    "note": ""
+  },
+  {
+    "key": "text_box3",
+    "text": "墓主人留下的东西……拿走应该没事吧？",
+    "note": ""
+  },
+  {
+    "key": "text_box4",
+    "text": "箱子沉甸甸的，里面似乎装着不少东西。",
+    "note": ""
+  },
+  {
+    "key": "text_box5",
+    "text": "封了这么多年，也该见见光了。",
+    "note": ""
+  },
+  {
+    "key": "text_coffin1",
+    "text": "棺材里或许有陪葬品，也或许有别的东西。",
+    "note": ""
+  },
+  {
+    "key": "text_coffin2",
+    "text": "来都来了，总不能不看看里面躺的是谁。",
+    "note": ""
+  },
+  {
+    "key": "text_coffin3",
+    "text": "棺盖微微翘起，里面似乎有什么东西……",
+    "note": ""
+  },
+  {
+    "key": "text_coffin4",
+    "text": "棺材上没有灰，像是刚有人碰过。",
+    "note": ""
+  },
+  {
+    "key": "text_coffin5",
+    "text": "里面传来细微的响动……还要打开吗？",
+    "note": ""
+  },
+  {
+    "key": "text_coffin6",
+    "text": "一股阴冷从棺材缝里渗了出来。",
+    "note": ""
+  },
+  {
+    "key": "text_coffin7",
+    "text": "靠近时，你似乎听见棺材里有人敲了两下。",
+    "note": ""
+  },
+  {
+    "key": "text_coffin8",
+    "text": "这口棺材……刚才是不是动了一下？",
+    "note": ""
+  },
+  {
+    "key": "text_coffin9",
+    "text": "发财还是送命——开棺？",
+    "note": ""
+  },
+  {
+    "key": "text_coffin10",
+    "text": "棺可开，命只有一条。",
+    "note": ""
+  },
+  {
+    "key": "text_mo1",
+    "text": "正主都躺下了，该看看家底了。",
+    "note": ""
+  },
+  {
+    "key": "text_mo2",
+    "text": "打都打了，总不能空着手走。",
+    "note": ""
+  },
+  {
+    "key": "text_mo3",
+    "text": "墓主人都不吭声了，摸点东西不过分吧。",
+    "note": ""
+  },
+  {
+    "key": "text_mo4",
+    "text": "这位爷已经用不上这些东西了。",
+    "note": ""
+  },
+  {
+    "key": "text_mo5",
+    "text": "送它一程，收点辛苦钱。",
+    "note": ""
+  },
+  {
+    "key": "text_mo6",
+    "text": "现在，这口棺材应该安全了……应该。",
+    "note": ""
+  },
+  {
+    "key": "text_mo7",
+    "text": "里面还有些东西，翻翻看？",
+    "note": ""
+  },
+  {
+    "key": "text_mo8",
+    "text": "等等，棺材底下好像还藏着东西。",
+    "note": ""
+  },
+  {
+    "key": "text_mo9",
+    "text": "棺材空了，宝贝可未必空。",
+    "note": ""
+  },
+  {
+    "key": "text_mo10",
+    "text": "棺底似乎压着什么东西。",
+    "note": ""
+  },
+  {
+    "key": "text_no",
+    "text": "还是离开吧……",
+    "note": ""
+  },
+  {
+    "key": "text_busin1",
+    "text": "嘿嘿……活人？稀客，稀客。",
+    "note": ""
+  },
+  {
+    "key": "text_busin2",
+    "text": "别怕，我不吃人，我只做买卖。",
+    "note": ""
+  },
+  {
+    "key": "text_busin3",
+    "text": "墓里缺什么？我这儿都有……只要你付得起。",
+    "note": ""
+  },
+  {
+    "key": "text_busin4",
+    "text": "死人用不上这些，你可用得上。",
+    "note": ""
+  },
+  {
+    "key": "text_busin5",
+    "text": "瞧一瞧，都是保命的好东西。",
+    "note": ""
+  }
+]
