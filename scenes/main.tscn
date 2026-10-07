@@ -41,3 +41,5 @@ offset_left = -285.63068
 offset_top = -117.87933
 offset_right = 317.66913
 offset_bottom = 55.38669
+
+[node name="bgm" type="AudioStreamPlayer" parent="." unique_id=305532500]
