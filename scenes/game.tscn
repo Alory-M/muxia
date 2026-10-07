@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://dfwlwcftyrm0l" path="res://scenes/Player.cs" id="8_oaba0"]
 [ext_resource type="Script" uid="uid://rmvkxdnshkhy" path="res://scenes/Map.cs" id="8_pr1ej"]
 [ext_resource type="PackedScene" uid="uid://d2u0f46gdxmmp" path="res://scenes/bullet.tscn" id="9_458eo"]
+[ext_resource type="Texture2D" uid="uid://cyls8buvrewg4" path="res://界面/白色方形外框.png" id="10_66xif"]
 [ext_resource type="Texture2D" uid="uid://bk451302d7b5o" path="res://host/侧跑/IMG_2907-1.png" id="10_h3rex"]
 [ext_resource type="Texture2D" uid="uid://liyvst8aeiui" path="res://host/侧跑/IMG_2907-2.png" id="11_fedci"]
 [ext_resource type="Texture2D" uid="uid://c37tb7xw5t6yh" path="res://host/侧跑/IMG_2907-3.png" id="12_8qswn"]
@@ -190,11 +191,18 @@ position = Vector2(110.5, 78)
 scale = Vector2(0.22777778, 0.22666667)
 texture = ExtResource("7_yd4ix")
 script = ExtResource("8_pr1ej")
+metadata/_edit_lock_ = true
 
 [node name="in" type="Sprite2D" parent="HUD/Map" unique_id=459464759]
 position = Vector2(-355.22876, 227.36902)
 scale = Vector2(0.0678639, 0.06819656)
 texture = ExtResource("8_8ool0")
+metadata/_edit_lock_ = true
+
+[node name="base_map" type="Sprite2D" parent="HUD/Map" unique_id=789601588]
+position = Vector2(6.67572e-05, 4.411765)
+scale = Vector2(0.50413203, 0.92707044)
+texture = ExtResource("10_66xif")
 
 [node name="btn_normal" type="Button" parent="HUD" unique_id=781705095]
 offset_left = 625.0
