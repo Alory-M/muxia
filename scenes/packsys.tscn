@@ -9,6 +9,9 @@
 [ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="6_t1l7v"]
 [ext_resource type="Texture2D" uid="uid://cyc07skcbe8w3" path="res://bin/item/item/item/解毒剂.png" id="8_tpbov"]
 [ext_resource type="Texture2D" uid="uid://cuexplet2mupj" path="res://bin/item/item/item/子弹（斜）.png" id="9_ch81a"]
+[ext_resource type="Script" uid="uid://bmfqfidb6pjyk" path="res://CloseButton.cs" id="10_tbx3i"]
+[ext_resource type="Texture2D" uid="uid://cbo4ug80q4qqd" path="res://bin/item/item/item/关闭按钮（点击）(1).png" id="11_o7hjt"]
+[ext_resource type="Texture2D" uid="uid://cq7s7jnlnmls1" path="res://bin/item/item/item/关闭按钮（未点击）(1).png" id="12_grxoc"]
 
 [node name="Control" type="Control" unique_id=1854951336 groups=["modal_ui"]]
 layout_mode = 3
@@ -79,6 +82,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="button11" type="Button" parent="." unique_id=398537517]
+visible = false
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 249.0
@@ -348,3 +352,24 @@ offset_bottom = 360.747
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 18
 text = "使用"
+
+[node name="close" type="Node" parent="." unique_id=702788964]
+script = ExtResource("10_tbx3i")
+
+[node name="close2" type="Button" parent="." unique_id=1515850725]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 834.0
+offset_top = 100.0
+offset_right = 881.0
+offset_bottom = 147.0
+
+[node name="点击" type="Sprite2D" parent="." unique_id=787453867]
+position = Vector2(858.5, 125)
+scale = Vector2(0.2360516, 0.2608696)
+texture = ExtResource("11_o7hjt")
+
+[node name="未点击" type="Sprite2D" parent="." unique_id=960416633]
+position = Vector2(858.2526, 125)
+scale = Vector2(0.2381752, 0.2608696)
+texture = ExtResource("12_grxoc")
