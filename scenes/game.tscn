@@ -557,6 +557,9 @@ position = Vector2(429, 1081)
 [node name="Treasure3" parent="." unique_id=505965370 instance=ExtResource("37_7gkqi")]
 position = Vector2(591, 728.99994)
 
+[node name="Treasure4" parent="." unique_id=56563648 instance=ExtResource("37_7gkqi")]
+position = Vector2(1530, 852)
+
 [node name="coffin" parent="." unique_id=847161236 instance=ExtResource("38_753oq")]
 position = Vector2(1085, 1256)
 
