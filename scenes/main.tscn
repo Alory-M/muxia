@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://bleuocx7uuu8d" path="res://ui/tuichu.png" id="2_jyhfs"]
 [ext_resource type="Texture2D" uid="uid://b18ng3p3xcswk" path="res://ui/start.png" id="3_tbgi4"]
 [ext_resource type="Script" uid="uid://dxfbap4c70t25" path="res://scenes/Tuichu.cs" id="4_tbgi4"]
+[ext_resource type="AudioStream" uid="uid://c4psc1dcjleaf" path="res://music/BGM_begin.ogg" id="6_tefeu"]
 
 [node name="Node2D" type="Node2D" unique_id=2089587978]
 script = ExtResource("1_tbgi4")
@@ -43,3 +44,6 @@ offset_right = 317.66913
 offset_bottom = 55.38669
 
 [node name="bgm" type="AudioStreamPlayer" parent="." unique_id=305532500]
+
+[node name="begin" type="AudioStreamPlayer2D" parent="." unique_id=1930456262]
+stream = ExtResource("6_tefeu")
