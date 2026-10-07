@@ -25,10 +25,13 @@
 [ext_resource type="Texture2D" uid="uid://c53qcrt6pykhk" path="res://界面/圆形交互框.PNG" id="16_3hbvx"]
 [ext_resource type="Texture2D" uid="uid://bcrrisfcvpgyw" path="res://host/侧跑/IMG_2907-7.png" id="16_o8ni1"]
 [ext_resource type="Texture2D" uid="uid://1b65rwlwgv53" path="res://host/侧跑/IMG_2907-8.png" id="17_3hbvx"]
+[ext_resource type="Texture2D" uid="uid://b1se2jc5t4vdx" path="res://bin/item/item/item/鑽搧.png" id="17_ms3bu"]
 [ext_resource type="Texture2D" uid="uid://bxl5f6xfsbty3" path="res://界面/半透明底框.png" id="17_q8j3a"]
+[ext_resource type="Texture2D" uid="uid://qeaah0whnyt7" path="res://bin/item/item/item/缁峰甫.PNG" id="18_7ixpq"]
 [ext_resource type="Texture2D" uid="uid://cebd6gosv8sjm" path="res://bin/item/item/item/鎵嬫灙.PNG" id="18_ms3bu"]
 [ext_resource type="Texture2D" uid="uid://batylfq1ssfad" path="res://host/侧跑/IMG_2907-9.png" id="18_q8j3a"]
 [ext_resource type="Texture2D" uid="uid://bi0ymunc5vupq" path="res://bin/item/item/item/icon_zidan.png" id="19_7ixpq"]
+[ext_resource type="Texture2D" uid="uid://cyc07skcbe8w3" path="res://bin/item/item/item/解毒剂.png" id="19_bk1p3"]
 [ext_resource type="Texture2D" uid="uid://hiani86irss0" path="res://host/侧跑/IMG_2907-10.png" id="19_ms3bu"]
 [ext_resource type="Texture2D" uid="uid://d1is30ho6jsvj" path="res://host/侧跑/IMG_2907-11.png" id="20_7ixpq"]
 [ext_resource type="Texture2D" uid="uid://bq0vwbweud1nh" path="res://bin/item/item/item/icon_soul.png" id="20_bk1p3"]
@@ -276,6 +279,16 @@ offset_right = 48.0
 offset_bottom = 47.0
 text = "E"
 
+[node name="icon_yaopin" type="TextureRect" parent="HUD/base_yaopin" unique_id=353987044]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 5.0
+offset_right = 43.0
+offset_bottom = 40.0
+texture = ExtResource("17_ms3bu")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="base_bengdai" type="TextureRect" parent="HUD" unique_id=1909647285]
 offset_left = 57.0
 offset_top = 433.0
@@ -294,6 +307,16 @@ offset_right = 47.0
 offset_bottom = 46.0
 text = "Q"
 
+[node name="icon_bengdai" type="TextureRect" parent="HUD/base_bengdai" unique_id=1694426936]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 40.0
+offset_bottom = 39.0
+texture = ExtResource("18_7ixpq")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="base_jieduji" type="TextureRect" parent="HUD" unique_id=840388999]
 offset_left = 57.0
 offset_top = 490.0
@@ -311,6 +334,16 @@ offset_top = 25.0
 offset_right = 49.0
 offset_bottom = 48.0
 text = "Z"
+
+[node name="icon_jieduji" type="TextureRect" parent="HUD/base_jieduji" unique_id=606038886]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 39.0
+offset_bottom = 38.0
+texture = ExtResource("19_bk1p3")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="base_map" type="TextureRect" parent="HUD" unique_id=1597273760]
 offset_left = -4.0
