@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://bwuqauq8l1axf" path="res://scenes/ColorRect.cs" id="4_8ool0"]
 [ext_resource type="PackedScene" uid="uid://c8dye4fcemnu0" path="res://scenes/packsys.tscn" id="6_05nbr"]
 [ext_resource type="Script" uid="uid://cwhg22pl5b6jq" path="res://scenes/Win.cs" id="7_0sl42"]
-[ext_resource type="Texture2D" uid="uid://b376xmcsuv2j6" path="res://界面/地图.png" id="7_m4url"]
+[ext_resource type="Texture2D" uid="uid://b072yavsy3ni" path="res://界面/map new.png" id="7_yd4ix"]
 [ext_resource type="Texture2D" uid="uid://cg65yeyql1wjs" path="res://界面/主角图标（用于小地图显示位置）.png" id="8_8ool0"]
 [ext_resource type="Script" uid="uid://dfwlwcftyrm0l" path="res://scenes/Player.cs" id="8_oaba0"]
 [ext_resource type="Script" uid="uid://rmvkxdnshkhy" path="res://scenes/Map.cs" id="8_pr1ej"]
@@ -34,6 +34,7 @@
 [ext_resource type="Texture2D" uid="uid://cyc07skcbe8w3" path="res://bin/item/item/item/解毒剂.png" id="19_bk1p3"]
 [ext_resource type="Texture2D" uid="uid://hiani86irss0" path="res://host/侧跑/IMG_2907-10.png" id="19_ms3bu"]
 [ext_resource type="Texture2D" uid="uid://d1is30ho6jsvj" path="res://host/侧跑/IMG_2907-11.png" id="20_7ixpq"]
+[ext_resource type="Texture2D" uid="uid://ce06gqbak0fxe" path="res://ui/设置键图标-.png" id="20_66xif"]
 [ext_resource type="Texture2D" uid="uid://bq0vwbweud1nh" path="res://bin/item/item/item/icon_soul.png" id="20_bk1p3"]
 [ext_resource type="Texture2D" uid="uid://cmf56aq2dynj7" path="res://host/侧跑/IMG_2907-12.png" id="21_bk1p3"]
 [ext_resource type="Texture2D" uid="uid://bvpk006wsb8b3" path="res://bin/item/item/item/icon_coin.png" id="21_n8ral"]
@@ -185,14 +186,14 @@ color = Color(0.972549, 0.05882353, 0.03137255, 1)
 script = ExtResource("4_8ool0")
 
 [node name="Map" type="Sprite2D" parent="HUD" unique_id=552770142]
-position = Vector2(111.00001, 79)
-scale = Vector2(0.09564212, 0.09564211)
-texture = ExtResource("7_m4url")
+position = Vector2(110.5, 78)
+scale = Vector2(0.22777778, 0.22666667)
+texture = ExtResource("7_yd4ix")
 script = ExtResource("8_pr1ej")
 
 [node name="in" type="Sprite2D" parent="HUD/Map" unique_id=459464759]
-position = Vector2(-851.2278, 528.3968)
-scale = Vector2(0.1616222, 0.1616222)
+position = Vector2(-355.22876, 227.36902)
+scale = Vector2(0.0678639, 0.06819656)
 texture = ExtResource("8_8ool0")
 
 [node name="btn_normal" type="Button" parent="HUD" unique_id=781705095]
@@ -388,6 +389,16 @@ offset_top = 6.0
 offset_right = 273.0
 offset_bottom = 69.0
 texture = ExtResource("17_q8j3a")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="icon_set" type="TextureRect" parent="HUD/base_set" unique_id=1334204565]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_right = 60.0
+offset_bottom = 67.0
+texture = ExtResource("20_66xif")
 expand_mode = 1
 stretch_mode = 5
 
