@@ -61,7 +61,10 @@
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="37_7gkqi"]
 [ext_resource type="PackedScene" uid="uid://cw2icyxh8v33y" path="res://scenes/end.tscn" id="43_05nbr"]
 [ext_resource type="Script" uid="uid://ca5hw3s11tftj" path="res://scenes/Endarea.cs" id="56_ms3bu"]
+[ext_resource type="AudioStream" uid="uid://imewbqboyiub" path="res://music/walk.wav" id="59_l6q63"]
+[ext_resource type="AudioStream" uid="uid://b7bmrovcweuwu" path="res://music/gun_shot.wav" id="60_mmvbu"]
 [ext_resource type="AudioStream" uid="uid://u6equrkwrcr1" path="res://music/treasure_box_open.wav" id="61_0rmfi"]
+[ext_resource type="AudioStream" uid="uid://bennwijhrbb12" path="res://music/host_be_attacked.wav" id="61_weeiq"]
 [ext_resource type="AudioStream" uid="uid://bre64od6rt07x" path="res://music/BGM.ogg" id="62_bnuda"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
@@ -546,6 +549,15 @@ script = ExtResource("34_o8oq8")
 
 [node name="soulpiece" type="Node" parent="player" unique_id=998877665]
 script = ExtResource("35_sxt1d")
+
+[node name="walk" type="AudioStreamPlayer" parent="player" unique_id=1745101970]
+stream = ExtResource("59_l6q63")
+
+[node name="attack" type="AudioStreamPlayer" parent="player" unique_id=114675477]
+stream = ExtResource("60_mmvbu")
+
+[node name="be_attack" type="AudioStreamPlayer" parent="player" unique_id=2034867600]
+stream = ExtResource("61_weeiq")
 
 [node name="businessman" parent="." unique_id=1648233843 instance=ExtResource("36_2iuns")]
 position = Vector2(1568, 453)
