@@ -5,13 +5,20 @@
 [ext_resource type="Texture2D" uid="uid://dpk5nf8gdukow" path="res://bin/pack/药品.png" id="2_famm7"]
 [ext_resource type="Texture2D" uid="uid://bg1d8ire2pdfx" path="res://bin/pack/解毒剂.png" id="4_t1l7v"]
 [ext_resource type="Script" uid="uid://dsdpw46ay8klk" path="res://scenes/Stop.cs" id="5_80bua"]
+[ext_resource type="Texture2D" uid="uid://qeaah0whnyt7" path="res://bin/item/item/item/缁峰甫.PNG" id="6_gh8in"]
 [ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="6_t1l7v"]
+[ext_resource type="Texture2D" uid="uid://cyc07skcbe8w3" path="res://bin/item/item/item/解毒剂.png" id="8_tpbov"]
+[ext_resource type="Texture2D" uid="uid://cuexplet2mupj" path="res://bin/item/item/item/子弹（斜）.png" id="9_ch81a"]
 
 [node name="Control" type="Control" unique_id=1854951336 groups=["modal_ui"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -11.0
+offset_top = 1.0
+offset_right = -11.0
+offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_80bua")
@@ -20,6 +27,7 @@ script = ExtResource("1_80bua")
 position = Vector2(552.99994, 316)
 scale = Vector2(0.4876665, 0.48766637)
 texture = ExtResource("1_0fbet")
+metadata/_edit_lock_ = true
 
 [node name="stop" type="Node" parent="." unique_id=84635088]
 script = ExtResource("5_80bua")
@@ -91,7 +99,54 @@ offset_right = 65.0
 offset_bottom = 65.0
 text = "1"
 
+[node name="image2" type="Sprite2D" parent="button11" unique_id=403663777]
+position = Vector2(509, 67.99999)
+scale = Vector2(0.177492, 0.16465878)
+texture = ExtResource("2_famm7")
+
+[node name="counter2" type="Label" parent="button11" unique_id=1814137185]
+layout_mode = 0
+offset_left = 478.0
+offset_top = 141.0
+offset_right = 538.0
+offset_bottom = 183.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "药品"
+
+[node name="counter3" type="Label" parent="button11" unique_id=63064856]
+layout_mode = 0
+offset_left = 417.0
+offset_top = 223.0
+offset_right = 615.0
+offset_bottom = 307.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "试管上的字迹已经模糊，
+药效倒还在。服用后可
+恢复100生命值。"
+
+[node name="use" type="Button" parent="button11" unique_id=713430609]
+layout_mode = 0
+offset_left = 462.0
+offset_top = 333.00003
+offset_right = 2621.0
+offset_bottom = 1209.0
+scale = Vector2(0.045997646, 0.03788419)
+icon = ExtResource("6_t1l7v")
+
+[node name="counter4" type="Label" parent="button11" unique_id=1177917573]
+layout_mode = 0
+offset_left = 493.0
+offset_top = 334.99997
+offset_right = 529.0
+offset_bottom = 360.99997
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "使用"
+
 [node name="button12" type="Button" parent="." unique_id=423775599]
+visible = false
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 349.0
@@ -100,9 +155,9 @@ offset_right = 420.0
 offset_bottom = 208.0
 
 [node name="image" type="Sprite2D" parent="button12" unique_id=550849784]
-position = Vector2(36, 36)
-scale = Vector2(0.055, 0.055)
-texture = ExtResource("4_t1l7v")
+position = Vector2(36.000008, 34.5)
+scale = Vector2(0.096000016, 0.09466667)
+texture = ExtResource("6_gh8in")
 
 [node name="counter" type="Label" parent="button12" unique_id=2095782735]
 layout_mode = 0
@@ -112,7 +167,54 @@ offset_right = 94.0
 offset_bottom = 65.0
 text = "1"
 
+[node name="image2" type="Sprite2D" parent="button12" unique_id=445971823]
+position = Vector2(409, 67.74703)
+scale = Vector2(0.177492, 0.16465878)
+texture = ExtResource("6_gh8in")
+
+[node name="counter2" type="Label" parent="button12" unique_id=1186476663]
+layout_mode = 0
+offset_left = 378.0
+offset_top = 140.74704
+offset_right = 438.0
+offset_bottom = 182.74704
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "绷带"
+
+[node name="counter3" type="Label" parent="button12" unique_id=924854079]
+layout_mode = 0
+offset_left = 317.0
+offset_top = 222.74704
+offset_right = 515.0
+offset_bottom = 306.74704
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "带血的医用绷带，至少
+能用。缠紧伤口，可以
+先把血止住。"
+
+[node name="use" type="Button" parent="button12" unique_id=993401441]
+layout_mode = 0
+offset_left = 362.0
+offset_top = 332.74707
+offset_right = 2521.0
+offset_bottom = 1208.7471
+scale = Vector2(0.045997646, 0.03788419)
+icon = ExtResource("6_t1l7v")
+
+[node name="counter4" type="Label" parent="button12" unique_id=26309430]
+layout_mode = 0
+offset_left = 393.0
+offset_top = 334.747
+offset_right = 429.0
+offset_bottom = 360.747
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "使用"
+
 [node name="button13" type="Button" parent="." unique_id=951525698]
+visible = false
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 447.0
@@ -132,3 +234,117 @@ offset_top = 42.0
 offset_right = 94.0
 offset_bottom = 65.0
 text = "1"
+
+[node name="image2" type="Sprite2D" parent="button13" unique_id=1408226110]
+position = Vector2(308.5, 66.5)
+scale = Vector2(0.1097826, 0.100281164)
+texture = ExtResource("8_tpbov")
+
+[node name="counter2" type="Label" parent="button13" unique_id=802475475]
+layout_mode = 0
+offset_left = 266.0
+offset_top = 141.0
+offset_right = 356.0
+offset_bottom = 183.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "解毒剂"
+
+[node name="counter3" type="Label" parent="button13" unique_id=356117049]
+layout_mode = 0
+offset_left = 218.0
+offset_top = 222.74704
+offset_right = 416.0
+offset_bottom = 306.74704
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "墓里的毒不能拖。喝下
+这瓶药，可以解除中毒
+状态。"
+
+[node name="use" type="Button" parent="button13" unique_id=706893016]
+layout_mode = 0
+offset_left = 263.0
+offset_top = 332.74707
+offset_right = 2422.0
+offset_bottom = 1208.7471
+scale = Vector2(0.045997646, 0.03788419)
+icon = ExtResource("6_t1l7v")
+
+[node name="counter4" type="Label" parent="button13" unique_id=2122565737]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 334.747
+offset_right = 330.0
+offset_bottom = 360.747
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "使用"
+
+[node name="button14" type="Button" parent="." unique_id=1293892094]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 548.0
+offset_top = 136.0
+offset_right = 619.0
+offset_bottom = 208.0
+
+[node name="image" type="Sprite2D" parent="button14" unique_id=1226418777]
+position = Vector2(33.50001, 34.49999)
+scale = Vector2(0.041284423, 0.03994761)
+texture = ExtResource("9_ch81a")
+
+[node name="counter" type="Label" parent="button14" unique_id=250137428]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 42.0
+offset_right = 94.0
+offset_bottom = 65.0
+text = "1"
+
+[node name="image2" type="Sprite2D" parent="button14" unique_id=863617534]
+position = Vector2(208.50003, 68.50001)
+scale = Vector2(0.07011794, 0.07138179)
+texture = ExtResource("9_ch81a")
+
+[node name="counter2" type="Label" parent="button14" unique_id=1335396497]
+layout_mode = 0
+offset_left = 184.0
+offset_top = 140.0
+offset_right = 244.0
+offset_bottom = 182.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "子弹"
+
+[node name="counter3" type="Label" parent="button14" unique_id=5813687]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 215.0
+offset_right = 303.0
+offset_bottom = 328.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "冰冷的黄铜子弹。墓里
+有什么东西怕枪，没人
+说得准。手枪最多装填
+ 6 发。"
+
+[node name="use" type="Button" parent="button14" unique_id=1500905290]
+layout_mode = 0
+offset_left = 162.0
+offset_top = 332.74707
+offset_right = 2321.0
+offset_bottom = 1208.7471
+scale = Vector2(0.045997646, 0.03788419)
+icon = ExtResource("6_t1l7v")
+
+[node name="counter4" type="Label" parent="button14" unique_id=1620767272]
+layout_mode = 0
+offset_left = 193.0
+offset_top = 334.747
+offset_right = 229.0
+offset_bottom = 360.747
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "使用"
