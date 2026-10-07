@@ -61,6 +61,7 @@
 [ext_resource type="PackedScene" uid="uid://xywe4crsrava" path="res://scenes/treasure.tscn" id="37_7gkqi"]
 [ext_resource type="PackedScene" uid="uid://cw2icyxh8v33y" path="res://scenes/end.tscn" id="43_05nbr"]
 [ext_resource type="Script" uid="uid://ca5hw3s11tftj" path="res://scenes/Endarea.cs" id="56_ms3bu"]
+[ext_resource type="AudioStream" uid="uid://bre64od6rt07x" path="res://music/BGM.ogg" id="62_bnuda"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 size = Vector2(22, 88)
@@ -567,3 +568,7 @@ script = ExtResource("56_ms3bu")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="endarea" unique_id=5794379]
 position = Vector2(1981.5, 269)
 shape = SubResource("RectangleShape2D_qxvy8")
+
+[node name="bgm" type="AudioStreamPlayer" parent="." unique_id=1379898773]
+stream = ExtResource("62_bnuda")
+autoplay = true
