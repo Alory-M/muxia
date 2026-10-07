@@ -8,7 +8,7 @@ using Godot;
 ///
 /// Q 消耗绷带(SupplyKind.Bandage)解除"流血";
 /// Z 消耗解毒剂(SupplyKind.Antidote)解除"迟缓";
-/// E 消耗药(SupplyKind.Drug)回血,回多少由 HealAmount 决定。
+/// E 消耗药(SupplyKind.Drug)回血,回多少由 State.HealAmount 决定。
 /// </summary>
 public partial class Clear : Node
 {
@@ -16,9 +16,6 @@ public partial class Clear : Node
 	private const string BleedKey = "Q";
 	private const string SlowKey = "Z";
 	private const string DrugKey = "E";
-
-	/// <summary>按 E 一次回多少血</summary>
-	[Export] public int HealAmount { get; set; } = 10;
 
 	private Player _player;
 	private State _state;
@@ -91,8 +88,8 @@ public partial class Clear : Node
 	/// <summary>用一份药回血。没药、或血已经满了时不消耗</summary>
 	public void UseDrug()
 	{
-		// 只用到 _player 和 _pack,不需要 _state,所以在这里单独判空
-		if (_player == null || _pack == null)
+		// 回血量现在也归 State 管,所以和另外两个道具一样要三个引用齐全
+		if (!RefsReady)
 		{
 			return;
 		}
@@ -111,9 +108,9 @@ public partial class Clear : Node
 			return;
 		}
 
-		_player.hp = Mathf.Min(_player.hp + HealAmount, _player.MaxHp);
+		_player.hp = Mathf.Min(_player.hp + _state.HealAmount, _player.MaxHp);
 
-		GD.Print($"Clear: 用掉一份药,回血 {HealAmount},当前 HP {_player.hp},还剩 {_pack.GetCount(SupplyKind.Drug)} 份。");
+		GD.Print($"Clear: 用掉一份药,回血 {_state.HealAmount},当前 HP {_player.hp},还剩 {_pack.GetCount(SupplyKind.Drug)} 份。");
 	}
 
 	/// <summary>几个道具共用的一套判断:确实中了对应的减益 + 有货,才扣一份并解除</summary>

@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://v4r5wuxjt35m" path="res://bin/treasure/QQ图片20261005185635(1).png" id="3_wqbho"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
-size = Vector2(441.2727, 136)
+size = Vector2(800, 136)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_33age"]
 animations = [{
@@ -32,7 +32,7 @@ scale = Vector2(0.275, 0.275)
 script = ExtResource("1_it12x")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1098350366]
-position = Vector2(-146.63635, 16)
+position = Vector2(32.7273, 16)
 shape = SubResource("RectangleShape2D_33age")
 
 [node name="get" type="Button" parent="." unique_id=1089171805]
@@ -44,16 +44,16 @@ offset_bottom = -25.454544
 theme_override_font_sizes/font_size = 46
 
 [node name="Sprite2D" type="Sprite2D" parent="get" unique_id=1203310747]
-position = Vector2(145.45453, 54.545464)
+position = Vector2(432.72723, -80.00001)
 scale = Vector2(0.12709466, 0.12709467)
 texture = ExtResource("2_wqbho")
 
 [node name="Label" type="Label" parent="get" unique_id=332978016]
 layout_mode = 0
-offset_left = 43.63636
-offset_top = 25.454544
-offset_right = 238.63635
-offset_bottom = 84.454544
+offset_left = 334.54544
+offset_top = -109.09091
+offset_right = 529.5454
+offset_bottom = -50.09091
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 43
 text = "F打开宝箱"

@@ -18,6 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://bkpcrdr88flbs" path="res://ui/关闭按钮（未点击）.png" id="14_q7j3g"]
 [ext_resource type="Texture2D" uid="uid://dp28oifb2fisa" path="res://ui/关闭按钮（点击）.png" id="15_jdax8"]
 [ext_resource type="Script" uid="uid://csx7rapuub1vj" path="res://Limit.cs" id="18_pmeuj"]
+[ext_resource type="Script" uid="uid://oltneue5vsbt" path="res://ShowPrice.cs" id="19_xbkst"]
 
 [node name="Control" type="Control" unique_id=1988767736 groups=["modal_ui", "store_ui"]]
 layout_mode = 3
@@ -31,9 +32,11 @@ grow_vertical = 2
 position = Vector2(552.99994, 316)
 scale = Vector2(0.4876665, 0.48766637)
 texture = ExtResource("1_c176v")
+metadata/_edit_lock_ = true
 
 [node name="store" type="Node" parent="." unique_id=1089208150]
 script = ExtResource("2_fsgxa")
+StockBullet = 300
 
 [node name="stop" type="Node" parent="store" unique_id=766937791]
 script = ExtResource("3_hi8wy")
@@ -64,11 +67,33 @@ position = Vector2(388.00003, 264.00003)
 scale = Vector2(0.10466667, 0.10466667)
 texture = ExtResource("2_jdgcu")
 
+[node name="Label" type="Label" parent="drug" unique_id=484949752]
+offset_left = -640.1277
+offset_top = 850.3182
+offset_right = 613.8723
+offset_bottom = 1339.3181
+theme_override_font_sizes/font_size = 88
+text = "试管上的字迹已经模糊
+药效倒还在
+可恢复100生命值"
+horizontal_alignment = 1
+
 [node name="Antidote" type="Sprite2D" parent="." unique_id=655972296]
 z_index = 1
 position = Vector2(517.00006, 264)
 scale = Vector2(0.058695644, 0.058695655)
 texture = ExtResource("3_sxxsk")
+
+[node name="Label" type="Label" parent="Antidote" unique_id=1220439807]
+offset_left = -579.2604
+offset_top = 1431.111
+offset_right = 596.7396
+offset_bottom = 2129.1108
+theme_override_font_sizes/font_size = 168
+text = "墓里的毒不能拖
+喝下这瓶药
+可解除中毒状态"
+horizontal_alignment = 1
 
 [node name="Bullet" type="Sprite2D" parent="." unique_id=2102952933]
 z_index = 1
@@ -76,11 +101,37 @@ position = Vector2(784, 263.00003)
 scale = Vector2(0.034986153, 0.034986142)
 texture = ExtResource("4_a4gqu")
 
+[node name="Label" type="Label" parent="Bullet" unique_id=814386699]
+offset_left = -1171.8921
+offset_top = 2458.115
+offset_right = 828.1079
+offset_bottom = 3675.115
+theme_override_font_sizes/font_size = 220
+text = "冰冷的黄铜子弹
+墓里有什么东西怕枪
+没人说得准
+手枪最多装填 6 发"
+horizontal_alignment = 1
+
 [node name="绷带" type="Sprite2D" parent="." unique_id=447946765]
 z_index = 1
 position = Vector2(647, 265.00003)
 scale = Vector2(0.10133337, 0.10133337)
 texture = ExtResource("5_mxlhg")
+
+[node name="Label" type="Label" parent="绷带" unique_id=1204630965]
+offset_left = -651.31555
+offset_top = 819.0783
+offset_right = 627.68445
+offset_bottom = 1290.0784
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 0)
+theme_override_font_sizes/font_size = 83
+text = "带血的医用绷带
+缠紧伤口
+可以先把血止住
+解除流血效果"
+horizontal_alignment = 1
 
 [node name="药品" type="Label" parent="." unique_id=174401125]
 layout_mode = 0
@@ -114,7 +165,6 @@ offset_top = 1.0
 offset_right = 48.0
 offset_bottom = 24.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "购买"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -465,12 +515,16 @@ text = "1"
 
 [node name="剩余子弹" type="Label" parent="." unique_id=84271779]
 layout_mode = 0
-offset_left = 803.0
-offset_top = 277.0
-offset_right = 843.0
-offset_bottom = 300.0
+offset_left = 763.0
+offset_top = 275.0
+offset_right = 803.0
+offset_bottom = 298.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "1"
+horizontal_alignment = 1
 
 [node name="limit" type="Node" parent="." unique_id=323045052]
 script = ExtResource("18_pmeuj")
+
+[node name="show price" type="Node" parent="." unique_id=875648521]
+script = ExtResource("19_xbkst")

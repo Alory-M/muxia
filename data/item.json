@@ -1,0 +1,32 @@
+[
+  {
+    "ID": 1001,
+    "name": "item_drop1",
+    "note": "灵魂碎片"
+  },
+  {
+    "ID": 1002,
+    "name": "item_drop2",
+    "note": "财宝"
+  },
+  {
+    "ID": 1003,
+    "name": "item_drop3",
+    "note": "绷带"
+  },
+  {
+    "ID": 1004,
+    "name": "item_drop4",
+    "note": "药品"
+  },
+  {
+    "ID": 1005,
+    "name": "item_drop5",
+    "note": "子弹"
+  },
+  {
+    "ID": 1006,
+    "name": "item_drop6",
+    "note": "解毒剂"
+  }
+]
