@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://fudsjd8ipn8n"]
 
 [ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/Fzombie/zombie.tscn" id="1_ho86e"]
-[ext_resource type="Texture2D" uid="uid://cfj42mqkm0pw5" path="res://bin/sprites/弓箭僵尸（居中.png" id="2_b8j32"]
+[ext_resource type="Texture2D" path="res://assets/user/monster/gongjian.png" id="2_b8j32"]
 [ext_resource type="Script" uid="uid://bfby3tf04rwod" path="res://zombiegd/Fzombie/ArrowZom.cs" id="2_gk3af"]
-[ext_resource type="Texture2D" uid="uid://xcwajcukyura" path="res://bin/sprites/shejian.png" id="3_gk3af"]
-[ext_resource type="PackedScene" uid="uid://d2u0f46gdxmmp" path="res://scenes/bullet.tscn" id="4_bullet"]
+[ext_resource type="Texture2D" path="res://assets/user/monster/gongjian_attack.png" id="3_gk3af"]
+[ext_resource type="PackedScene" path="res://scenes/enemy_arrow.tscn" id="4_bullet"]
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="5_gift"]
 
 [node name="arrowZom" unique_id=1172295772 instance=ExtResource("1_ho86e")]
@@ -16,13 +16,14 @@ FireCd = 1.5
 AttackDamage = 25
 
 [node name="normal" parent="." index="0" unique_id=698874992]
+position = Vector2(-12.528, 2)
 scale = Vector2(0.048, 0.048)
 texture = ExtResource("2_b8j32")
 
 [node name="attack" parent="." index="1" unique_id=951558578]
 visible = true
-position = Vector2(6, -29)
-scale = Vector2(0.23, 0.23)
+position = Vector2(-6.4411765, -6.647059)
+scale = Vector2(0.1764706, 0.1764706)
 texture = ExtResource("3_gk3af")
 
 [node name="gift" type="Node" parent="."]

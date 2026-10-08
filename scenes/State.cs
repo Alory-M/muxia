@@ -35,7 +35,9 @@ public partial class State : Node
         var old = Current;
         switch (next)
         {
-            case PlayerState.Normal: IsBleeding = IsPoisoned = false; _bleedTick = _poisonTick = 0; break;
+            case PlayerState.Normal:
+                IsBleeding = IsPoisoned = false; _bleedTick = _poisonTick = 0;
+                _player?.StopStatusSounds(); break;
             case PlayerState.Bleed:
                 if (!IsBleeding) _bleedTick = 0;
                 IsBleeding = true; _bleedTime = BleedDuration; break;
@@ -49,12 +51,16 @@ public partial class State : Node
     public void ClearState(PlayerState kind)
     {
         var old = Current;
-        if (kind == PlayerState.Bleed) { IsBleeding = false; _bleedTick = 0; }
-        if (kind == PlayerState.Slow) { IsPoisoned = false; _poisonTick = 0; }
+        if (kind == PlayerState.Bleed) { IsBleeding = false; _bleedTick = 0; _player?.StopStatusSound(kind); }
+        if (kind == PlayerState.Slow) { IsPoisoned = false; _poisonTick = 0; _player?.StopStatusSound(kind); }
         EmitSignal(SignalName.StateChanged, (int)old, (int)Current);
     }
     public void ResetToNormal() => ChangeState(PlayerState.Normal);
-    public void SetDebuffsPaused(bool paused) => _paused = paused;
+    public void SetDebuffsPaused(bool paused)
+    {
+        _paused = paused;
+        if (paused) _player?.StopStatusSounds();
+    }
     public override void _Process(double delta)
     {
         if (_paused || Stop.IsPaused || _player == null || _player.hp <= 0) return;
@@ -69,7 +75,7 @@ public partial class State : Node
         while (elapsed >= interval && _player.hp > 0)
         {
             elapsed -= interval;
-            _player.TakeDamage(damage);
+            _player.TakeStatusDamage(damage, kind);
         }
         if (duration > 0 && (remaining -= dt) <= 0) ClearState(kind);
     }

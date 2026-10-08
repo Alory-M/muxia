@@ -8,49 +8,49 @@
 [ext_resource type="Script" uid="uid://bwuqauq8l1axf" path="res://scenes/ColorRect.cs" id="4_8ool0"]
 [ext_resource type="PackedScene" uid="uid://c8dye4fcemnu0" path="res://scenes/packsys.tscn" id="6_05nbr"]
 [ext_resource type="Script" uid="uid://cwhg22pl5b6jq" path="res://scenes/Win.cs" id="7_0sl42"]
-[ext_resource type="Texture2D" uid="uid://b072yavsy3ni" path="res://界面/map new.png" id="7_yd4ix"]
-[ext_resource type="Texture2D" uid="uid://cg65yeyql1wjs" path="res://界面/主角图标（用于小地图显示位置）.png" id="8_8ool0"]
+[ext_resource type="Texture2D" path="res://assets/user/interface/map new.png" id="7_yd4ix"]
+[ext_resource type="Texture2D" path="res://assets/user/icon/host_landmark.png" id="8_8ool0"]
 [ext_resource type="Script" uid="uid://dfwlwcftyrm0l" path="res://scenes/Player.cs" id="8_oaba0"]
 [ext_resource type="Script" uid="uid://rmvkxdnshkhy" path="res://scenes/Map.cs" id="8_pr1ej"]
 [ext_resource type="PackedScene" uid="uid://d2u0f46gdxmmp" path="res://scenes/bullet.tscn" id="9_458eo"]
-[ext_resource type="Texture2D" uid="uid://cyls8buvrewg4" path="res://界面/白色方形外框.png" id="10_66xif"]
-[ext_resource type="Texture2D" uid="uid://bk451302d7b5o" path="res://host/侧跑/IMG_2907-1.png" id="10_h3rex"]
-[ext_resource type="Texture2D" uid="uid://liyvst8aeiui" path="res://host/侧跑/IMG_2907-2.png" id="11_fedci"]
-[ext_resource type="Texture2D" uid="uid://c37tb7xw5t6yh" path="res://host/侧跑/IMG_2907-3.png" id="12_8qswn"]
-[ext_resource type="Texture2D" uid="uid://cv7du20gg5ihd" path="res://bin/item/item/item/角色血条框.png" id="13_0sl42"]
+[ext_resource type="Texture2D" path="res://assets/user/icon/frame_square_white.png" id="10_66xif"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_2.png" id="10_h3rex"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_2.png" id="11_fedci"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_3.png" id="12_8qswn"]
+[ext_resource type="Texture2D" path="res://assets/user/icon/hp_frame_host.png" id="13_0sl42"]
 [ext_resource type="Script" uid="uid://btw64lv421vju" path="res://scenes/ui_hp.gd" id="13_458eo"]
-[ext_resource type="Texture2D" uid="uid://bn8rc02qv0tw4" path="res://bin/item/item/item/角色血条.png" id="13_oaba0"]
-[ext_resource type="Texture2D" uid="uid://c3hyijnl51f3r" path="res://host/侧跑/IMG_2907-4.png" id="13_rm0al"]
-[ext_resource type="Texture2D" uid="uid://cqinihrxo55sh" path="res://host/侧跑/IMG_2907-5.png" id="14_i4re6"]
-[ext_resource type="Texture2D" uid="uid://cnjw6we7hqmqc" path="res://host/侧跑/IMG_2907-6.png" id="15_pf7vy"]
+[ext_resource type="Texture2D" path="res://assets/user/icon/hp_host.png" id="13_oaba0"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_4.png" id="13_rm0al"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_5.png" id="14_i4re6"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_6.png" id="15_pf7vy"]
 [ext_resource type="Texture2D" uid="uid://c53qcrt6pykhk" path="res://界面/圆形交互框.PNG" id="16_3hbvx"]
-[ext_resource type="Texture2D" uid="uid://bcrrisfcvpgyw" path="res://host/侧跑/IMG_2907-7.png" id="16_o8ni1"]
-[ext_resource type="Texture2D" uid="uid://1b65rwlwgv53" path="res://host/侧跑/IMG_2907-8.png" id="17_3hbvx"]
-[ext_resource type="Texture2D" uid="uid://b1se2jc5t4vdx" path="res://bin/item/item/item/鑽搧.png" id="17_ms3bu"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_7.png" id="16_o8ni1"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_8.png" id="17_3hbvx"]
+[ext_resource type="Texture2D" path="res://assets/user/item/drug.png" id="17_ms3bu"]
 [ext_resource type="Texture2D" uid="uid://bxl5f6xfsbty3" path="res://界面/半透明底框.png" id="17_q8j3a"]
-[ext_resource type="Texture2D" uid="uid://qeaah0whnyt7" path="res://bin/item/item/item/缁峰甫.PNG" id="18_7ixpq"]
-[ext_resource type="Texture2D" uid="uid://cebd6gosv8sjm" path="res://bin/item/item/item/鎵嬫灙.PNG" id="18_ms3bu"]
-[ext_resource type="Texture2D" uid="uid://batylfq1ssfad" path="res://host/侧跑/IMG_2907-9.png" id="18_q8j3a"]
-[ext_resource type="Texture2D" uid="uid://bi0ymunc5vupq" path="res://bin/item/item/item/icon_zidan.png" id="19_7ixpq"]
-[ext_resource type="Texture2D" uid="uid://cyc07skcbe8w3" path="res://bin/item/item/item/解毒剂.png" id="19_bk1p3"]
-[ext_resource type="Texture2D" uid="uid://hiani86irss0" path="res://host/侧跑/IMG_2907-10.png" id="19_ms3bu"]
-[ext_resource type="Texture2D" uid="uid://d1is30ho6jsvj" path="res://host/侧跑/IMG_2907-11.png" id="20_7ixpq"]
-[ext_resource type="Texture2D" uid="uid://ce06gqbak0fxe" path="res://ui/设置键图标-.png" id="20_66xif"]
-[ext_resource type="Texture2D" uid="uid://bq0vwbweud1nh" path="res://bin/item/item/item/icon_soul.png" id="20_bk1p3"]
-[ext_resource type="Texture2D" uid="uid://cmf56aq2dynj7" path="res://host/侧跑/IMG_2907-12.png" id="21_bk1p3"]
-[ext_resource type="Texture2D" uid="uid://bvpk006wsb8b3" path="res://bin/item/item/item/icon_coin.png" id="21_n8ral"]
+[ext_resource type="Texture2D" path="res://assets/user/item/bandage.PNG" id="18_7ixpq"]
+[ext_resource type="Texture2D" path="res://assets/user/item/gun.PNG" id="18_ms3bu"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_9.png" id="18_q8j3a"]
+[ext_resource type="Texture2D" path="res://assets/user/icon/icon_bullet.png" id="19_7ixpq"]
+[ext_resource type="Texture2D" path="res://assets/user/item/antidote.png" id="19_bk1p3"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_10.png" id="19_ms3bu"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_11.png" id="20_7ixpq"]
+[ext_resource type="Texture2D" path="res://assets/user/icon/icon_set.png" id="20_66xif"]
+[ext_resource type="Texture2D" path="res://assets/user/icon/icon_soul.png" id="20_bk1p3"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_12.png" id="21_bk1p3"]
+[ext_resource type="Texture2D" path="res://assets/user/icon/icon_coin.png" id="21_n8ral"]
 [ext_resource type="Script" uid="uid://dr5ijxkdgl6un" path="res://scenes/SoulCounter.cs" id="21_q8j3a"]
 [ext_resource type="Script" uid="uid://7lcx3gjlnnrb" path="res://scenes/Counter.cs" id="22_3hbvx"]
 [ext_resource type="Script" uid="uid://dc2mbdfq6u6e5" path="res://scenes/Yudan.cs" id="22_66xif"]
-[ext_resource type="Texture2D" uid="uid://dgf2e0h7xjl5k" path="res://host/侧跑/IMG_2907-13.png" id="22_n8ral"]
-[ext_resource type="Texture2D" uid="uid://dtd4hgk10hlp1" path="res://bin/item/item/item/背包.png" id="22_yd4ix"]
-[ext_resource type="Texture2D" uid="uid://d3ehn2qx227s6" path="res://host/正跑/IMG_2918-1.png" id="23_yd4ix"]
-[ext_resource type="Texture2D" uid="uid://dmna157lwhx60" path="res://host/正跑/IMG_2918-2.png" id="24_66xif"]
-[ext_resource type="Texture2D" uid="uid://cb326vcsfudbf" path="res://host/正跑/IMG_2918-3.png" id="25_bnuda"]
-[ext_resource type="Texture2D" uid="uid://1clndwvd2u7m" path="res://host/背跑/IMG_2913-3.png" id="26_0rmfi"]
-[ext_resource type="Texture2D" uid="uid://b6j1jjxvwd1mk" path="res://host/背跑/IMG_2913-1.png" id="27_xbak0"]
-[ext_resource type="Texture2D" uid="uid://n10y1440twn4" path="res://host/背跑/IMG_2913-2.png" id="28_3x28f"]
-[ext_resource type="Texture2D" uid="uid://bx4s506o7sp6h" path="res://host/背跑/IMG_2913-4.png" id="29_l6q63"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2907_13.png" id="22_n8ral"]
+[ext_resource type="Texture2D" path="res://assets/user/item/bag.png" id="22_yd4ix"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2918_1.png" id="23_yd4ix"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2918_2.png" id="24_66xif"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2918_3.png" id="25_bnuda"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2913_3.png" id="26_0rmfi"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2913_1.png" id="27_xbak0"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2913_2.png" id="28_3x28f"]
+[ext_resource type="Texture2D" path="res://assets/user/host2/IMG_2913_4.png" id="29_l6q63"]
 [ext_resource type="Script" uid="uid://bux2f7nc6t7m0" path="res://scenes/Run.cs" id="30_mmvbu"]
 [ext_resource type="PackedScene" uid="uid://bhvhucpjnebno" path="res://scenes/stop.tscn" id="31_3x338"]
 [ext_resource type="Script" uid="uid://b1ynjrijdxkey" path="res://scenes/State.cs" id="31_weeiq"]
@@ -68,9 +68,9 @@
 [ext_resource type="AudioStream" uid="uid://u6equrkwrcr1" path="res://music/treasure_box_open.wav" id="61_0rmfi"]
 [ext_resource type="AudioStream" uid="uid://bennwijhrbb12" path="res://music/host_be_attacked.wav" id="61_weeiq"]
 [ext_resource type="Script" uid="uid://cjv73bbp7d3yt" path="res://scenes/开门机关.cs" id="61_xbak0"]
-[ext_resource type="Texture2D" uid="uid://lhdumcs5387t" path="res://ui/开门机关.png" id="62_3x28f"]
+[ext_resource type="Texture2D" path="res://assets/user/item/mechan_block.png" id="62_3x28f"]
 [ext_resource type="AudioStream" uid="uid://bre64od6rt07x" path="res://music/BGM.ogg" id="62_bnuda"]
-[ext_resource type="Texture2D" uid="uid://dxobj5m71e8vt" path="res://ui/终点大门.png" id="63_l6q63"]
+[ext_resource type="Texture2D" path="res://assets/user/item/door_plank.png" id="63_l6q63"]
 [ext_resource type="PackedScene" uid="uid://cw8p6eidllgc7" path="res://zombiegd/Fzombie/CoMini.tscn" id="65_3x28f"]
 [ext_resource type="PackedScene" uid="uid://dejj8okgfbs6g" path="res://zombiegd/Fzombie/CoFast.tscn" id="66_weeiq"]
 [ext_resource type="PackedScene" uid="uid://djiqymlvmtmdq" path="res://zombiegd/Fzombie/CoSharp.tscn" id="67_uxocx"]
@@ -175,6 +175,10 @@ size = Vector2(85.5, 80)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qxvy8"]
 size = Vector2(71, 162)
+
+[sub_resource type="AtlasTexture" id="GateFloorTile"]
+atlas = ExtResource("62_3x28f")
+region = Rect2(80, 585, 1034, 946)
 
 [node name="Node2D" type="Node2D" unique_id=261450284]
 script = ExtResource("1_nepv3")
@@ -580,7 +584,7 @@ position = Vector2(805.99994, 196)
 stream = ExtResource("61_0rmfi")
 
 [node name="Treasure2" parent="." unique_id=334792882 instance=ExtResource("37_7gkqi")]
-position = Vector2(429, 1081)
+position = Vector2(480, 1081)
 
 [node name="OpenSound" type="AudioStreamPlayer2D" parent="Treasure2" unique_id=243477350]
 stream = ExtResource("61_0rmfi")
@@ -592,22 +596,22 @@ position = Vector2(591, 728.99994)
 stream = ExtResource("61_0rmfi")
 
 [node name="Treasure4" parent="." unique_id=949335601 instance=ExtResource("37_7gkqi")]
-position = Vector2(1537, 848.99994)
+position = Vector2(1558, 849)
 
 [node name="OpenSound" type="AudioStreamPlayer2D" parent="Treasure4" unique_id=2121362234]
 stream = ExtResource("61_0rmfi")
 
 [node name="开门机关" type="Area2D" parent="." unique_id=134149694]
 z_index = -10
+position = Vector2(1947.28, 1207.892)
 script = ExtResource("61_xbak0")
 
 [node name="Sprite2D" type="Sprite2D" parent="开门机关" unique_id=1842100519]
-position = Vector2(1952, 1277)
-scale = Vector2(0.07429434, 0.074294336)
-texture = ExtResource("62_3x28f")
+scale = Vector2(0.088568665, 0.093750529)
+texture = SubResource("GateFloorTile")
+modulate = Color(1, 1, 1, 0.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="开门机关" unique_id=1302678186]
-position = Vector2(1948.25, 1290)
 shape = SubResource("RectangleShape2D_hfknc")
 
 [node name="终点大门" type="Sprite2D" parent="." unique_id=453360046]
@@ -650,23 +654,87 @@ position = Vector2(1929, 1028)
 [node name="coffin8" parent="." unique_id=1148105144 instance=ExtResource("71_heavy")]
 position = Vector2(1738, 452)
 
+[node name="coffin9" parent="." instance=ExtResource("65_3x28f")]
+position = Vector2(482, 219.31)
+
+[node name="coffin10" parent="." instance=ExtResource("67_uxocx")]
+position = Vector2(433.8, 674.8)
+
+[node name="coffin11" parent="." instance=ExtResource("70_arrow")]
+position = Vector2(819.4, 482)
+
+[node name="coffin12" parent="." instance=ExtResource("71_heavy")]
+position = Vector2(1168.85, 307.4)
+
+[node name="coffin13" parent="." instance=ExtResource("68_7nv0b")]
+position = Vector2(1542.4, 638.65)
+
+[node name="coffin14" parent="." instance=ExtResource("65_3x28f")]
+position = Vector2(1662.9, 807.35)
+
+[node name="coffin15" parent="." instance=ExtResource("70_arrow")]
+position = Vector2(1144.75, 1265.25)
+
+[node name="coffin16" parent="." instance=ExtResource("71_heavy")]
+position = Vector2(1566.5, 1229.1)
+
 [node name="bgm" type="AudioStreamPlayer" parent="." unique_id=1379898773]
 stream = ExtResource("62_bnuda")
 bus = &"Music"
 autoplay = true
 
 [node name="SpikeTrap" parent="." instance=ExtResource("69_trap")]
-position = Vector2(560, 1100)
+position = Vector2(573.58, 941.828)
 MechanismId = 1
 
 [node name="SpikeTrap2" parent="." instance=ExtResource("69_trap")]
-position = Vector2(1350, 850)
+position = Vector2(1306.22, 853.14)
 MechanismId = 1
 
 [node name="ArrowTrap" parent="." instance=ExtResource("69_trap")]
-position = Vector2(650, 680)
+position = Vector2(573.58, 587.076)
 MechanismId = 2
+ArrowOrigin = Vector2(0, -160)
+ArrowDirection = Vector2(0, 1)
 
 [node name="ArrowTrap2" parent="." instance=ExtResource("69_trap")]
-position = Vector2(1660, 1060)
+position = Vector2(1672.54, 1030.516)
 MechanismId = 2
+
+[node name="SpikeTrap3" parent="." instance=ExtResource("69_trap")]
+position = Vector2(298.84, 232.324)
+MechanismId = 1
+
+[node name="SpikeTrap4" parent="." instance=ExtResource("69_trap")]
+position = Vector2(482, 941.828)
+MechanismId = 1
+
+[node name="SpikeTrap5" parent="." instance=ExtResource("69_trap")]
+position = Vector2(939.9, 853.14)
+MechanismId = 1
+
+[node name="SpikeTrap6" parent="." instance=ExtResource("69_trap")]
+position = Vector2(1855.7, 675.764)
+MechanismId = 1
+
+[node name="ArrowTrap3" parent="." instance=ExtResource("69_trap")]
+position = Vector2(1214.64, 409.7)
+MechanismId = 2
+ArrowOrigin = Vector2(0, -160)
+ArrowDirection = Vector2(0, 1)
+
+[node name="ArrowTrap4" parent="." instance=ExtResource("69_trap")]
+position = Vector2(1306.22, 764.452)
+MechanismId = 2
+
+[node name="ArrowTrap5" parent="." instance=ExtResource("69_trap")]
+position = Vector2(1580.96, 1119.204)
+MechanismId = 2
+ArrowOrigin = Vector2(0, -160)
+ArrowDirection = Vector2(0, 1)
+
+[node name="ArrowTrap6" parent="." instance=ExtResource("69_trap")]
+position = Vector2(665.16, 232.324)
+MechanismId = 2
+ArrowOrigin = Vector2(0, -80)
+ArrowDirection = Vector2(0, 1)

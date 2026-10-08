@@ -33,6 +33,7 @@ public partial class Player : CharacterBody2D
 	// 这里不再自己存一份,要用就走 _pack
 	private Pack _pack;
     private State _state;
+    private Run _visual;
     private float _shotCooldown;
     private float _attack = 5f, _shotsPerSecond = 5f, _attackDistance = 160f;
     private float _attackBonus, _speedBonus, _fireBonus, _critical;
@@ -70,6 +71,8 @@ public partial class Player : CharacterBody2D
 	// 枪声 / 受伤音效:射击和受击时各播一次(单次,不循环)
 	private AudioStreamPlayer _gunShotPlayer;
 	private AudioStreamPlayer _hurtPlayer;
+    private AudioStreamPlayer _bleedPlayer;
+    private AudioStreamPlayer _poisonPlayer;
 
 	public override void _Ready()
 	{
@@ -81,6 +84,7 @@ public partial class Player : CharacterBody2D
         _attackDistance = GameData.Number(stats, "hitdistance") * GameData.DistanceUnit;
         _critical = GameData.Number(stats, "critical");
         _state = GetNodeOrNull<State>("state");
+        _visual = GetNodeOrNull<Run>("run");
         _pack = GetNodeOrNull<Pack>("pack");
         Stop.RegisterWorldNode(this);
 		if (_pack == null)
@@ -96,10 +100,10 @@ public partial class Player : CharacterBody2D
 	// 创建走路音效播放器并加载 walk.wav,设成循环
 	private void SetupWalkAudio()
 	{
-		_walkPlayer = new AudioStreamPlayer();
+		_walkPlayer = new AudioStreamPlayer { Name = "FootstepSfx", Bus = "Sfx" };
 		AddChild(_walkPlayer);
 
-		AudioStreamWav stream = GD.Load<AudioStreamWav>("res://music/walk.wav");
+		AudioStreamWav stream = GD.Load<AudioStreamWav>("res://music/walk.wav")?.Duplicate() as AudioStreamWav;
 		if (stream == null)
 		{
 			GD.PushWarning("Player: 找不到音频 res://music/walk.wav");
@@ -112,14 +116,17 @@ public partial class Player : CharacterBody2D
 	// 创建枪声 / 受伤音效播放器并加载音频
 	private void SetupCombatAudio()
 	{
-		_gunShotPlayer = CreateSfxPlayer("gun_shot.wav");
-		_hurtPlayer = CreateSfxPlayer("host_be_attacked.wav");
+		_gunShotPlayer = CreateSfxPlayer("gun_shot.wav", "GunshotSfx");
+		_hurtPlayer = CreateSfxPlayer("host_be_attacked.wav", "DirectHitSfx");
+        // 持续伤害不再每秒重播完整的受击喊声；两个短音各自只有一个声部。
+        _bleedPlayer = CreateSfxPlayer("status_bleed.wav", "BleedStatusSfx", -22f);
+        _poisonPlayer = CreateSfxPlayer("status_poison.wav", "PoisonStatusSfx", -24f);
 	}
 
 	// 创建一个挂在玩家身上的音效播放器,加载 music/ 下的音频文件
-	private AudioStreamPlayer CreateSfxPlayer(string fileName)
+	private AudioStreamPlayer CreateSfxPlayer(string fileName, string name, float volumeDb = 0f)
 	{
-		AudioStreamPlayer player = new AudioStreamPlayer();
+		AudioStreamPlayer player = new AudioStreamPlayer { Name = name, Bus = "Sfx", VolumeDb = volumeDb, MaxPolyphony = 1 };
 		AddChild(player);
 
 		AudioStream stream = GD.Load<AudioStream>($"res://music/{fileName}");
@@ -263,6 +270,7 @@ public partial class Player : CharacterBody2D
         bullet.GetNode<Disappear>("disappear").MaxDistance = _attackDistance;
         bullet.Launch(direction);
         _shotCooldown = 1f / Mathf.Max(0.1f, ShotsPerSecond);
+        _visual?.PlayAttack(direction);
         PlaySfx(_gunShotPlayer);
         return true;
     }
@@ -273,11 +281,46 @@ public partial class Player : CharacterBody2D
 	/// </summary>
 	public void TakeDamage(float amount)
 	{
-		if (amount <= 0f || hp <= 0f || Stop.IsPaused)
-		{
-			return;
-		}
-		hp = Mathf.Max(hp - amount, 0f);
+		if (!ApplyDamage(amount)) return;
+		_visual?.PlayHurt();
 		PlaySfx(_hurtPlayer); // 受伤,播放受击音效
 	}
+
+    /// <summary>状态伤害只播放低声量的状态提示，避免每秒中断射击/移动姿势。</summary>
+    public void TakeStatusDamage(float amount, PlayerState kind)
+    {
+        if (kind != PlayerState.Bleed && kind != PlayerState.Slow) return;
+        if (!ApplyDamage(amount)) return;
+        if (hp > 0) PlaySfx(kind == PlayerState.Bleed ? _bleedPlayer : _poisonPlayer);
+    }
+
+    private bool ApplyDamage(float amount)
+    {
+        if (amount <= 0f || hp <= 0f || Stop.IsPaused) return false;
+        hp = Mathf.Max(hp - amount, 0f);
+        if (hp <= 0) StopStatusSounds();
+        return true;
+    }
+
+    public void StopStatusSound(PlayerState kind)
+    {
+        if (kind == PlayerState.Bleed) _bleedPlayer?.Stop();
+        if (kind == PlayerState.Slow) _poisonPlayer?.Stop();
+    }
+
+    public void StopStatusSounds()
+    {
+        _bleedPlayer?.Stop();
+        _poisonPlayer?.Stop();
+    }
+
+    public override void _ExitTree()
+    {
+        foreach (var audio in new[] { _walkPlayer, _gunShotPlayer, _hurtPlayer, _bleedPlayer, _poisonPlayer })
+        {
+            if (audio == null) continue;
+            audio.Stop();
+            audio.Stream = null;
+        }
+    }
 }

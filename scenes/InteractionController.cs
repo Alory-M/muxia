@@ -6,6 +6,7 @@ public interface IWorldInteractable
     bool CanInteract { get; }
     string InteractionName { get; }
     string InteractionText { get; }
+    string GetDialogueText() => InteractionText;
     string ActionText { get; }
     float InteractionRadius { get; }
     void Interact(Player player);
@@ -95,7 +96,7 @@ public partial class InteractionController : CanvasLayer
         if (Stop.IsPaused || target is not IWorldInteractable item || !item.CanInteract ||
             _player.GlobalPosition.DistanceTo(target.GlobalPosition) > item.InteractionRadius) return;
         _dialogTarget = target; _click.Play();
-        _text.Text = $"{item.InteractionName}\n{item.InteractionText}";
+        _text.Text = $"{item.InteractionName}\n{item.GetDialogueText()}";
         _confirm.Text = item.ActionText;
         _shade.Visible = _dialog.Visible = true;
         _stop.SetPaused(true); Select(0);

@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scenes/Bullet.cs" id="1_bullet"]
+[ext_resource type="Texture2D" path="res://bin/projectiles/trap_arrow.png" id="2_arrow"]
+[ext_resource type="Script" path="res://scenes/Rotate.cs" id="3_rotate"]
+[ext_resource type="Script" path="res://scenes/Disappear.cs" id="4_disappear"]
+
+[sub_resource type="CapsuleShape2D" id="ArrowShape"]
+radius = 4.0
+height = 26.0
+
+[node name="EnemyArrow" type="Area2D"]
+script = ExtResource("1_bullet")
+Speed = 800.0
+
+[node name="ArrowSprite" type="Sprite2D" parent="."]
+scale = Vector2(0.025, 0.025)
+texture = ExtResource("2_arrow")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 0)
+rotation = 1.5707964
+shape = SubResource("ArrowShape")
+
+[node name="rotate" type="Node" parent="."]
+script = ExtResource("3_rotate")
+
+[node name="disappear" type="Node" parent="."]
+script = ExtResource("4_disappear")

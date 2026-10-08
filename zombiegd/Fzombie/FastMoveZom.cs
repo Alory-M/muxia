@@ -9,7 +9,8 @@ public partial class FastMoveZom : Zombie
     private float _teleportTimer;
     public override void _PhysicsProcess(double delta)
     {
-        if (!_active || !EnsurePlayer()) return;
+        if (!_active || IsAppearing) { base._PhysicsProcess(delta); return; }
+        if (Stop.IsPaused || !EnsurePlayer()) return;
         _teleportTimer = Mathf.Max(0, _teleportTimer - (float)delta);
         float distance = GlobalPosition.DistanceTo(_player.GlobalPosition);
         if (CanEngage() && _teleportTimer <= 0 && distance > AttackRange && distance <= TeleportTriggerRange)

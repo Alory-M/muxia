@@ -13,26 +13,36 @@ public partial class Zombie : CharacterBody2D
 {
     [Signal] public delegate void DiedEventHandler();
     [Export] public int MonsterId { get; set; } = 1;
+    [Export] public bool ArtFacesLeft { get; set; }
     public int Health => _hp;
     public bool IsActive => _active && !_dead;
     protected float TerritoryRadius;
     private bool _dead;
     private uint _collisionLayer;
     private Vector2 _home;
-    private Tween _hitTween;
+    private Tween _presentationTween;
+    private bool _isAppearing;
+    private bool _pendingSpawn;
+    private float _spawnRetry;
+    private float _walkPhase;
+    private Vector2 _returnPosition;
+    public string CurrentAnimation { get; private set; } = "idle";
+    public Vector2 ReturnPosition => _returnPosition;
+    protected bool IsAppearing => _isAppearing;
     private readonly List<SpritePose> _spritePoses = new();
 
     // 只改精灵，不改 CharacterBody2D 的碰撞变换或世界位置。
     private sealed class SpritePose
     {
         public readonly Sprite2D Sprite;
-        public readonly Vector2 Position;
+        private readonly Vector2 _position;
+        public Vector2 Position => new(Sprite.FlipH ? -_position.X : _position.X, _position.Y);
         public readonly Vector2 Scale;
         public readonly float Rotation;
         public readonly Color Modulate;
         public SpritePose(Sprite2D sprite)
         {
-            Sprite = sprite; Position = sprite.Position; Scale = sprite.Scale;
+            Sprite = sprite; _position = sprite.Position; Scale = sprite.Scale;
             Rotation = sprite.Rotation; Modulate = sprite.Modulate;
         }
         public void Restore()
@@ -54,7 +64,7 @@ public partial class Zombie : CharacterBody2D
 	[Export] public float MoveSpeed { get; set; } = 80f;    // 移速
 	[Export] public float AttackCd { get; set; } = 1.2f;    // 攻击冷却
 	[Export] public float AttackRange { get; set; } = 60f;  // 攻击距离
-	[Export] public Vector2 SpawnOffset { get; set; } = new Vector2(64, 0); // 预留：出棺位置（暂未使用）
+	[Export] public Vector2 SpawnOffset { get; set; } = new Vector2(72, 0);
 
 	// 内部状态
 	private int _hp;
@@ -88,6 +98,7 @@ public partial class Zombie : CharacterBody2D
         if (gift != null) gift.DropId = int.Parse(stats.GetProperty("drop").GetString());
         _collisionLayer = CollisionLayer;
         _home = GlobalPosition;
+        _returnPosition = _home;
         _hp = MaxHp;
 		_attackTimer = 0f;
 
@@ -109,6 +120,8 @@ public partial class Zombie : CharacterBody2D
 
 		BindCoffin();
 		EnsurePlayer();
+        UpdateFacing();
+        foreach (var pose in _spritePoses) pose.Restore();
         Stop.RegisterWorldNode(this);
 	}
 
@@ -125,7 +138,7 @@ public partial class Zombie : CharacterBody2D
 	// 创建一个挂在僵尸身上的音效播放器，并加载音频文件
 	private AudioStreamPlayer CreateSfxPlayer(string fileName)
 	{
-		AudioStreamPlayer player = new AudioStreamPlayer();
+		AudioStreamPlayer player = new AudioStreamPlayer { Bus = "Sfx" };
 		AddChild(player);
 
 		AudioStream stream = GD.Load<AudioStream>($"res://music/{fileName}");
@@ -153,34 +166,81 @@ public partial class Zombie : CharacterBody2D
 	private void OnCoffinPlayerEntered(Node2D playerNode)
 	{
 		if (_dead) return;
-		Visible = true;
-		_active = true;
+		if (playerNode != null) _player = playerNode;
+        _pendingSpawn = true;
+        TryActivateOutsideCoffin();
+	}
+
+    // 棺材有实体碰撞，必须先找到真正空闲的位置，不能在原点把敌人挤进玩家或棺材。
+    private void TryActivateOutsideCoffin()
+    {
+        if (!_pendingSpawn || Stop.IsPaused || !TryFindSpawnPosition(out Vector2 position)) return;
+        _pendingSpawn = false;
+        GlobalPosition = position;
+        _returnPosition = position;
+        Visible = true;
+        _active = true;
         SetDeferred(CollisionObject2D.PropertyName.CollisionLayer, _collisionLayer);
-		PlaySfx(_sfxShout); // 僵尸现身，播放 ready_shout
-		if (playerNode != null)
-		{
-			_player = playerNode;
-		}
-		ClampToCoffin();
-	}
+        PlaySfx(_sfxShout);
+        UpdateFacing();
+        PlayAppearAnimation();
+    }
 
-	// 玩家进入棺材碰撞箱（detect_area）：切到 attack 状态
-	private void OnDetectAreaBodyEntered(Node2D body)
-	{
-		if (body != null && body.IsInGroup("player"))
-		{
-			SetSpriteState(true);
-		}
-	}
-
-	// 玩家离开棺材碰撞箱（detect_area）：切回 normal 状态
-	private void OnDetectAreaBodyExited(Node2D body)
-	{
-		if (body != null && body.IsInGroup("player"))
-		{
-			SetSpriteState(false);
-		}
-	}
+    private bool TryFindSpawnPosition(out Vector2 position)
+    {
+        position = GlobalPosition;
+        var shapeNode = GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+        if (shapeNode?.Shape == null) return false;
+        Vector2 direction = _player != null && GodotObject.IsInstanceValid(_player)
+            ? _home.DirectionTo(_player.GlobalPosition) : SpawnOffset.Normalized();
+        if (direction.IsZeroApprox()) direction = Vector2.Right;
+        var query = new PhysicsShapeQueryParameters2D
+        {
+            Shape = shapeNode.Shape,
+            CollisionMask = CollisionMask | (_player is CollisionObject2D body ? body.CollisionLayer : 0),
+            CollideWithBodies = true,
+            CollideWithAreas = false,
+            Margin = 3f,
+            Exclude = new Godot.Collections.Array<Rid> { GetRid() }
+        };
+        var trapQuery = new PhysicsShapeQueryParameters2D
+        {
+            Shape = shapeNode.Shape, CollisionMask = uint.MaxValue,
+            CollideWithBodies = false, CollideWithAreas = true, Margin = 3f
+        };
+        bool found = false;
+        float bestDistance = float.MaxValue;
+        Vector2 preferred = _player != null && GodotObject.IsInstanceValid(_player)
+            ? _player.GlobalPosition : _home + SpawnOffset;
+        foreach (float desiredRadius in new[] { Mathf.Max(72f, SpawnOffset.Length()), 96f, 128f, 152f })
+        {
+            float radius = Mathf.Min(desiredRadius, TerritoryRadius - 3f);
+            for (int index = 0; index < 24; index++)
+            {
+                int step = (index + 1) / 2;
+                float angle = step * Mathf.Tau / 24f * (index % 2 == 0 ? -1f : 1f);
+                Vector2 candidate = _home + direction.Rotated(angle) * radius;
+                if (!IsWithinTerritory(candidate)) continue;
+                Transform2D transform = shapeNode.GlobalTransform;
+                transform.Origin += candidate - GlobalPosition;
+                query.Transform = transform;
+                if (GetWorld2D().DirectSpaceState.IntersectShape(query, 1).Count != 0) continue;
+                // 地刺也能伤敌人，但不应在出现动画尚未结束时把新守卫直接秒杀。
+                // 只避开 Trap；棺材交互圈/敌人攻击圈不是实体，也不能阻止正常生成。
+                trapQuery.Transform = transform;
+                bool onTrap = false;
+                foreach (var result in GetWorld2D().DirectSpaceState.IntersectShape(trapQuery, 64))
+                    if (result["collider"].AsGodotObject() is Trap) { onTrap = true; break; }
+                if (onTrap) continue;
+                float distance = candidate.DistanceSquaredTo(preferred);
+                if (distance >= bestDistance) continue;
+                bestDistance = distance;
+                position = candidate;
+                found = true;
+            }
+        }
+        return found;
+    }
 
 	// 切换僵尸外观：showAttack=true 显示攻击精灵、隐藏 normal；false 反之
 	private void SetSpriteState(bool showAttack)
@@ -219,6 +279,8 @@ public partial class Zombie : CharacterBody2D
 		Visible = false;
         CollisionLayer = 0;
         _home = _coffin.GlobalPosition;
+        _returnPosition = _home;
+        CurrentAnimation = "hidden";
 
 		Callable callable = Callable.From<Node2D>(OnCoffinPlayerEntered);
 		if (!parent.IsConnected(Coffin.SignalName.PlayerEntered, callable))
@@ -226,22 +288,7 @@ public partial class Zombie : CharacterBody2D
 			parent.Connect(Coffin.SignalName.PlayerEntered, callable);
 		}
 
-		// 连上棺材碰撞箱(detect_area)的 body 进入/离开信号，用于切换 attack / normal 精灵
-		var detectArea = _coffin.GetNodeOrNull<Area2D>("detect_area");
-		if (detectArea != null)
-		{
-			Callable enterCallable = Callable.From<Node2D>(OnDetectAreaBodyEntered);
-			if (!detectArea.IsConnected("body_entered", enterCallable))
-			{
-				detectArea.Connect("body_entered", enterCallable);
-			}
-
-			Callable exitCallable = Callable.From<Node2D>(OnDetectAreaBodyExited);
-			if (!detectArea.IsConnected("body_exited", exitCallable))
-			{
-				detectArea.Connect("body_exited", exitCallable);
-			}
-		}
+		// 攻击立绘只在真正攻击时显示，靠近棺材不会提前进入攻击动画。
 	}
 
 	// 拿到有效的玩家引用；玩家为空或已失效时，按 player 分组重新找
@@ -256,38 +303,50 @@ public partial class Zombie : CharacterBody2D
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (!_active)
-		{
-			return;
-		}
-		if (!EnsurePlayer())
-		{
-			return;
-		}
+        if (!PrepareAiFrame(delta)) return;
+        _attackTimer -= (float)delta;
+        if (!CanEngage()) { ReturnHome(); return; }
+        if (!IsWithinMeleeRange()) Chase();
+        else MeleeAttack();
+        ClampToCoffin();
+    }
 
-		_attackTimer -= (float)delta;
-		if (!CanEngage()) { ReturnHome(); return; }
-		float dist = GlobalPosition.DistanceTo(_player.GlobalPosition);
-
-		// 1.离玩家远 → 追玩家；2.进入攻击范围 → 普攻
-		if (dist > AttackRange)
-		{
-			Chase();
-		}
-		else
-		{
-			MeleeAttack();
-		}
-
-		// 追击/普攻后都收回棺材碰撞箱内，别让僵尸跑出活动范围
-		ClampToCoffin();
-	}
+    protected bool PrepareAiFrame(double delta)
+    {
+        if (Stop.IsPaused || _dead) return false;
+        if (_pendingSpawn)
+        {
+            _spawnRetry -= (float)delta;
+            if (_spawnRetry <= 0) { TryActivateOutsideCoffin(); _spawnRetry = 0.25f; }
+        }
+        if (!_active || !EnsurePlayer()) return false;
+        if (_isAppearing) { Velocity = Vector2.Zero; return false; }
+        return true;
+    }
 
 	// 每帧根据玩家位置更新朝向（水平翻转），独立于 _PhysicsProcess 里的移动逻辑：
 	// 子类就算重写 _PhysicsProcess 不调 base，这个翻转也照样生效。
 	public override void _Process(double delta)
 	{
 		UpdateFacing();
+        if (!_active || _dead || _presentationTween != null || Stop.IsPaused) return;
+        SetSpriteState(false);
+        if (Velocity.LengthSquared() < 1f)
+        {
+            foreach (var pose in _spritePoses) pose.Restore();
+            CurrentAnimation = "idle";
+            return;
+        }
+        CurrentAnimation = "move";
+        float cadence = MonsterId == 5 ? 6.5f : 10f;
+        _walkPhase += (float)delta * cadence;
+        float step = Mathf.Sin(_walkPhase);
+        foreach (var pose in _spritePoses)
+        {
+            pose.Sprite.Position = pose.Position + new Vector2(0, -Mathf.Abs(step) * 2.5f);
+            pose.Sprite.Rotation = pose.Rotation + step * 0.035f;
+            pose.Sprite.Scale = pose.Scale * new Vector2(1f + 0.015f * step, 1f - 0.015f * step);
+        }
 	}
 
 	// 水平翻转判定：玩家横坐标小于僵尸时翻转精灵（朝左），否则恢复默认朝向（朝右）
@@ -298,7 +357,7 @@ public partial class Zombie : CharacterBody2D
 			return;
 		}
 
-		bool flip = _player.GlobalPosition.X < GlobalPosition.X;
+		bool flip = (_player.GlobalPosition.X < GlobalPosition.X) != ArtFacesLeft;
 		var normal = GetNodeOrNull<Sprite2D>("normal");
 		var attack = GetNodeOrNull<Sprite2D>("attack");
 		if (normal != null)
@@ -322,11 +381,22 @@ public partial class Zombie : CharacterBody2D
         Vector2 center = _coffin?.GetNodeOrNull<Area2D>("detect_area")?.GlobalPosition ?? _home;
         return position.DistanceTo(center) <= TerritoryRadius;
     }
+    // 主角/僵尸的碰撞体都高约84~88px，上下贴身的中心距会大于64px表射程。
+    // 保留原射程；额外只允许沿朝向6px扫掠可触到的真实碰撞体，不扩大横向射程。
+    protected bool IsWithinMeleeRange()
+    {
+        if (_player == null || !GodotObject.IsInstanceValid(_player)) return false;
+        if (GlobalPosition.DistanceTo(_player.GlobalPosition) <= AttackRange) return true;
+        var own = GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+        var target = _player.GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+        if (own?.Shape == null || target?.Shape == null || own.Disabled || target.Disabled) return false;
+        Vector2 reach = own.GlobalPosition.DirectionTo(target.GlobalPosition) * 6f;
+        return own.Shape.CollideWithMotion(own.GlobalTransform, reach, target.Shape, target.GlobalTransform, Vector2.Zero);
+    }
     protected void ReturnHome()
     {
-        SetSpriteState(false);
-        if (GlobalPosition.DistanceTo(_home) < 5f) { Velocity = Vector2.Zero; return; }
-        Velocity = GlobalPosition.DirectionTo(_home) * MoveSpeed;
+        if (GlobalPosition.DistanceTo(_returnPosition) < 5f) { Velocity = Vector2.Zero; return; }
+        Velocity = GlobalPosition.DirectionTo(_returnPosition) * MoveSpeed;
         MoveAndSlide();
     }
     protected void Chase()
@@ -350,16 +420,10 @@ public partial class Zombie : CharacterBody2D
 	// 【通用普攻函数，所有僵尸共用】——子类可重写（如 SharpZom 加流血）
 	protected virtual void Attack()
 	{
-		if (_player == null || !CanEngage())
+		if (_player == null || !CanEngage() || !IsWithinMeleeRange())
 		{
 			return;
 		}
-		// 距离太远打不到（容错比攻击距离多一点）
-		if (GlobalPosition.DistanceTo(_player.GlobalPosition) > AttackRange + 10f)
-		{
-			return;
-		}
-
 		// 兼容 C# 玩家(Player.TakeDamage)和 GDScript 玩家(snake_case 的 take_damage)
 		if (_player is Player player)
 		{
@@ -371,6 +435,7 @@ public partial class Zombie : CharacterBody2D
 		}
 		GD.Print($"僵尸攻击，伤害：{AttackDamage}");
 		PlaySfx(_sfxAttack); // 这一下打到了玩家，播放 zom_attack
+        PlayAttackAnimation();
 	}
 
 	// 受伤函数。方法名故意用 snake_case：Bullet.cs 里是 body.Call("take_damage", ...)，
@@ -388,22 +453,85 @@ public partial class Zombie : CharacterBody2D
         else PlayHitAnimation();
 	}
 
-    private void ResetHitAnimation()
+    private void ResetPresentation()
     {
-        if (_hitTween != null && _hitTween.IsValid()) _hitTween.Kill();
-        _hitTween = null;
+        if (_presentationTween != null && _presentationTween.IsValid()) _presentationTween.Kill();
+        _presentationTween = null;
+        _isAppearing = false;
         foreach (var pose in _spritePoses) pose.Restore();
+    }
+
+    private void EndPresentation()
+    {
+        foreach (var pose in _spritePoses) pose.Restore();
+        _presentationTween = null;
+        _isAppearing = false;
+        CurrentAnimation = "idle";
+        SetSpriteState(false);
+    }
+
+    private void PlayAppearAnimation()
+    {
+        ResetPresentation();
+        SetSpriteState(false);
+        _isAppearing = true;
+        CurrentAnimation = "appear";
+        foreach (var pose in _spritePoses)
+        {
+            pose.Sprite.Position = pose.Position + new Vector2(0, 18);
+            pose.Sprite.Scale = pose.Scale * new Vector2(0.8f, 0.5f);
+            Color transparent = pose.Modulate;
+            transparent.A = 0;
+            pose.Sprite.Modulate = transparent;
+        }
+        _presentationTween = CreateTween();
+        _presentationTween.TweenMethod(Callable.From<float>(progress =>
+        {
+            foreach (var pose in _spritePoses)
+            {
+                pose.Sprite.Position = pose.Position + new Vector2(0, 18f * (1f - progress));
+                pose.Sprite.Scale = pose.Scale * new Vector2(Mathf.Lerp(0.8f, 1f, progress), Mathf.Lerp(0.5f, 1f, progress));
+                Color tint = pose.Modulate;
+                tint.A *= progress;
+                pose.Sprite.Modulate = tint;
+            }
+        }), 0f, 1f, 0.5).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+        _presentationTween.TweenCallback(Callable.From(EndPresentation));
+    }
+
+    protected void PlayAttackAnimation()
+    {
+        if (_dead || !_active) return;
+        ResetPresentation();
+        UpdateFacing();
+        SetSpriteState(true);
+        CurrentAnimation = "attack";
+        float direction = _spritePoses.Count > 0 && _spritePoses[0].Sprite.FlipH != ArtFacesLeft ? -1f : 1f;
+        _presentationTween = CreateTween();
+        _presentationTween.TweenMethod(Callable.From<float>(progress =>
+        {
+            float pulse = Mathf.Sin(progress * Mathf.Pi);
+            foreach (var pose in _spritePoses)
+            {
+                pose.Sprite.Position = pose.Position + new Vector2(direction * 7f, -2f) * pulse;
+                pose.Sprite.Rotation = pose.Rotation - direction * 0.12f * pulse;
+                pose.Sprite.Scale = pose.Scale * new Vector2(1f + 0.07f * pulse, 1f - 0.04f * pulse);
+            }
+        }), 0f, 1f, this is ArrowZom ? 0.38 : 0.3);
+        _presentationTween.TweenCallback(Callable.From(EndPresentation));
     }
 
     private void PlayHitAnimation()
     {
-        ResetHitAnimation();
+        ResetPresentation();
+        SetSpriteState(false);
+        CurrentAnimation = "hurt";
         Vector2 recoil = Vector2.Zero;
         if (_player != null && GodotObject.IsInstanceValid(_player))
             recoil = ToLocal(GlobalPosition + _player.GlobalPosition.DirectionTo(GlobalPosition) * 3f);
         float lean = recoil.X < 0 ? -0.08f : 0.08f;
-        _hitTween = CreateTween();
-        _hitTween.TweenMethod(Callable.From<float>(progress =>
+        _presentationTween = CreateTween();
+        _presentationTween.TweenMethod(Callable.From<float>(progress =>
         {
             float pulse = Mathf.Sin(progress * Mathf.Pi);
             foreach (var pose in _spritePoses)
@@ -414,11 +542,7 @@ public partial class Zombie : CharacterBody2D
                 pose.Sprite.Modulate = pose.Modulate.Lerp(new Color(1f, 0.25f, 0.2f, pose.Modulate.A), 1f - progress);
             }
         }), 0f, 1f, 0.22);
-        _hitTween.TweenCallback(Callable.From(() =>
-        {
-            foreach (var pose in _spritePoses) pose.Restore();
-            _hitTween = null;
-        }));
+        _presentationTween.TweenCallback(Callable.From(EndPresentation));
     }
 
 	// 按当前血量刷新头顶血条：满血=初始宽度，扣血按比例缩短
@@ -471,7 +595,8 @@ public partial class Zombie : CharacterBody2D
         _dead = true;
         _active = false;
         Velocity = Vector2.Zero;
-        ResetHitAnimation();
+        ResetPresentation();
+        CurrentAnimation = "death";
         SetDeferred(CollisionObject2D.PropertyName.CollisionLayer, 0);
         SetDeferred(CollisionObject2D.PropertyName.CollisionMask, 0);
         GetNodeOrNull<CollisionShape2D>("CollisionShape2D")?.SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
@@ -481,9 +606,9 @@ public partial class Zombie : CharacterBody2D
         if (_healthBar != null) _healthBar.Visible = false;
         DropLoot();
         EmitSignal(SignalName.Died);
-        float direction = _spritePoses.Count > 0 && _spritePoses[0].Sprite.FlipH ? -1f : 1f;
-        var deathTween = CreateTween();
-        deathTween.TweenMethod(Callable.From<float>(progress =>
+        float direction = _spritePoses.Count > 0 && _spritePoses[0].Sprite.FlipH != ArtFacesLeft ? -1f : 1f;
+        _presentationTween = CreateTween();
+        _presentationTween.TweenMethod(Callable.From<float>(progress =>
         {
             foreach (var pose in _spritePoses)
             {
@@ -495,7 +620,7 @@ public partial class Zombie : CharacterBody2D
                 pose.Sprite.Modulate = tint;
             }
         }), 0f, 1f, 0.45).SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
-        deathTween.TweenCallback(Callable.From(QueueFree));
+        _presentationTween.TweenCallback(Callable.From(QueueFree));
 	}
 
 	/// <summary>

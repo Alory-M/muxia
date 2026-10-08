@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/Fzombie/zombie.tscn" id="1_8ylib"]
 [ext_resource type="Script" uid="uid://dkc8m7iuk44od" path="res://zombiegd/Fzombie/FastMoveZom.cs" id="2_dj5wx"]
-[ext_resource type="Texture2D" uid="uid://compclij5ury2" path="res://bin/sprites/瞬移僵尸（居中.png" id="3_eg5oc"]
-[ext_resource type="Texture2D" uid="uid://dfyly2unijars" path="res://bin/sprites/shunyi.png" id="4_y6b6c"]
+[ext_resource type="Texture2D" path="res://assets/user/monster/shunyi.png" id="3_eg5oc"]
+[ext_resource type="Texture2D" path="res://assets/user/monster/shunyi_attack.png" id="4_y6b6c"]
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="5_gift"]
 
 [node name="fast_moveZom" unique_id=1172295772 instance=ExtResource("1_8ylib")]
@@ -17,10 +17,13 @@ MoveSpeed = 2.0
 AttackCd = 2.0
 
 [node name="normal" parent="." index="0" unique_id=698874992]
+position = Vector2(0.609, 2)
 scale = Vector2(0.058, 0.058)
 texture = ExtResource("3_eg5oc")
 
 [node name="attack" parent="." index="1" unique_id=951558578]
+position = Vector2(1.2573138, 3.0287113)
+scale = Vector2(0.07620084, 0.07620084)
 texture = ExtResource("4_y6b6c")
 
 [node name="gift" type="Node" parent="."]

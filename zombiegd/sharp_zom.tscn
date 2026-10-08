@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dtoyej8f13wux"]
 
 [ext_resource type="PackedScene" uid="uid://ctoe37kfmw4k0" path="res://zombiegd/Fzombie/zombie.tscn" id="1_kvmt0"]
-[ext_resource type="Texture2D" uid="uid://6iaofuedeg5" path="res://bin/sprites/利爪僵尸（居中.png" id="2_36pp6"]
+[ext_resource type="Texture2D" path="res://assets/user/monster/lizhua.png" id="2_36pp6"]
 [ext_resource type="Script" uid="uid://d2pi0ic473q46" path="res://zombiegd/Fzombie/SharpZom.cs" id="2_ou05y"]
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="3_gift"]
 
@@ -10,13 +10,14 @@ MonsterId = 4
 script = ExtResource("2_ou05y")
 
 [node name="normal" parent="." index="0" unique_id=698874992]
-position = Vector2(3.8146973e-06, 1.0000005)
+position = Vector2(3.741, 1)
 scale = Vector2(0.058, 0.058)
 texture = ExtResource("2_36pp6")
 
 [node name="attack" parent="." index="1" unique_id=951558578]
 visible = true
-scale = Vector2(0.098, 0.098)
+position = Vector2(7.0132896, -4.390812)
+scale = Vector2(0.10467596, 0.10467596)
 
 [node name="ColorRect" parent="." index="2" unique_id=1176879974]
 offset_left = -39.0

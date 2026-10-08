@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/enemy_arrow.tscn" id="1_arrow"]
+[ext_resource type="Shader" path="res://bin/projectiles/poison_arrow.gdshader" id="2_poison"]
+
+[sub_resource type="ShaderMaterial" id="PoisonArrowMaterial"]
+shader = ExtResource("2_poison")
+shader_parameter/head_color = Color(1, 0.08, 0.18, 1)
+shader_parameter/shaft_color = Color(0.48, 0.16, 0.95, 1)
+
+[node name="PoisonArrow" instance=ExtResource("1_arrow")]
+
+[node name="ArrowSprite" parent="." index="0"]
+material = SubResource("PoisonArrowMaterial")
