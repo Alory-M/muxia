@@ -20,6 +20,7 @@ public partial class Coffin : Area2D, IWorldInteractable
     public bool CanInteract => Status == CoffinState.Closed || Status == CoffinState.Unlocked;
     public string InteractionName => Status == CoffinState.Unlocked ? "摸棺" : "棺材";
     public string InteractionText => GameData.Text(Status == CoffinState.Unlocked ? "text_mo1" : "text_coffin1");
+    public string GetDialogueText() => GameData.RandomText(Status == CoffinState.Unlocked ? "text_mo" : "text_coffin");
     public string ActionText => Status == CoffinState.Unlocked ? "摸棺" : "打开棺材";
     public float InteractionRadius => 110f;
     public void Interact(Player player)

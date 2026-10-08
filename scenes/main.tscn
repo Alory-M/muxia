@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://biup1rqmtys3i"]
 
-[ext_resource type="Texture2D" uid="uid://b8clsya62c3xj" path="res://ui/开始界面.png" id="1_o5qli"]
+[ext_resource type="Texture2D" path="res://assets/user/interface/star.png" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://dugsyvwcfwxeb" path="res://scenes/Main.cs" id="1_tbgi4"]
-[ext_resource type="Texture2D" uid="uid://bleuocx7uuu8d" path="res://ui/tuichu.png" id="2_jyhfs"]
-[ext_resource type="Texture2D" uid="uid://b18ng3p3xcswk" path="res://ui/start.png" id="3_tbgi4"]
+[ext_resource type="Texture2D" path="res://assets/user/icon/button_tuichu.png" id="2_jyhfs"]
+[ext_resource type="Texture2D" path="res://assets/user/icon/button_start.png" id="3_tbgi4"]
 [ext_resource type="Script" uid="uid://dxfbap4c70t25" path="res://scenes/Tuichu.cs" id="4_tbgi4"]
 [ext_resource type="AudioStream" uid="uid://c4psc1dcjleaf" path="res://music/BGM_begin.ogg" id="6_tefeu"]
 

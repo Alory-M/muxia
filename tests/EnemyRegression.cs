@@ -54,7 +54,7 @@ public partial class EnemyRegression : Node
     }
     private async Task OpeningOverlapCases()
     {
-        // 按真实地图位置测试踩在棺材中心开棺，包含瞬移僵尸和周围原有墙体。
+        // 棺材已有实体碰撞；从真实可站立的交互位置开棺，检查安全出棺与可移动性。
         foreach (Node node in _game.GetChildren())
         {
             if (node is not Coffin coffin) continue;
@@ -63,21 +63,43 @@ public partial class EnemyRegression : Node
                 if (child is Zombie found) { guardian = found; break; }
             if (guardian == null) continue;
             guardian.SetPhysicsProcess(false);
-            _player.GlobalPosition = coffin.GlobalPosition;
-            coffin.Interact(_player); await Frames();
-            Check(PlayerOverlaps(guardian), $"{coffin.Name}: 确实复现站在棺材中心开棺的初始重叠");
+            var playerShape = _player.GetNode<CollisionShape2D>("CollisionShape2D");
+            Vector2 playerStart = Vector2.Zero;
+            bool foundPosition = false;
+            for (int direction = 0; direction < 24 && !foundPosition; direction++)
+            {
+                Vector2 candidate = coffin.GlobalPosition + Vector2.Right.Rotated(direction * Mathf.Tau / 24f) * 105f;
+                Transform2D transform = playerShape.GlobalTransform;
+                transform.Origin += candidate - _player.GlobalPosition;
+                var query = new PhysicsShapeQueryParameters2D
+                {
+                    Shape = playerShape.Shape, Transform = transform,
+                    CollisionMask = _player.CollisionMask, CollideWithAreas = false,
+                    Exclude = new Godot.Collections.Array<Rid> { _player.GetRid() }
+                };
+                if (_player.GetWorld2D().DirectSpaceState.IntersectShape(query, 1).Count == 0)
+                { playerStart = candidate; foundPosition = true; }
+            }
+            Check(foundPosition, $"{coffin.Name}: 棺材附近保留可站立的交互位置");
+            _player.GlobalPosition = playerStart;
+            await Frames();
+            coffin.Interact(_player); await Frames(4);
+            Check(guardian.IsActive && !PlayerOverlaps(guardian) && !OverlapsBody(guardian),
+                $"{coffin.Name}: 出棺位置不重叠玩家、棺材或墙体 (active={guardian.IsActive}, playerOverlap={PlayerOverlaps(guardian)}, bodyOverlap={OverlapsBody(guardian)}, coffin={coffin.GlobalPosition}, spawn={guardian.GlobalPosition}, player={_player.GlobalPosition})");
+            int beforeHealth = guardian.Health;
+            guardian.take_damage(1);
+            Check(guardian.Health == beforeHealth - 1, $"{coffin.Name}: 出棺后可立即受到伤害");
             bool escaped = false;
             for (int direction = 0; direction < 8 && !escaped; direction++)
             {
-                _player.GlobalPosition = coffin.GlobalPosition;
-                guardian.GlobalPosition = coffin.GlobalPosition;
+                _player.GlobalPosition = playerStart;
                 await Frames();
                 _player.Velocity = Vector2.Right.Rotated(direction * Mathf.Tau / 8f) * 200;
                 for (int frame = 0; frame < 10; frame++) _player.MoveAndSlide();
-                escaped = _player.GlobalPosition.DistanceTo(coffin.GlobalPosition) > 10 && !PlayerOverlaps(guardian);
+                escaped = _player.GlobalPosition.DistanceTo(playerStart) > 10 && !PlayerOverlaps(guardian);
             }
             _player.Velocity = Vector2.Zero;
-            Check(escaped, $"{coffin.Name}: 真实玩家能从开棺初始重叠位置移动脱离");
+            Check(escaped, $"{coffin.Name}: 玩家开棺后能实际移动脱离");
             guardian.take_damage(10000); await Frames();
         }
     }

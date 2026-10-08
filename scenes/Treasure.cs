@@ -1,6 +1,6 @@
 using Godot;
 
-/// <summary>开箱确认后一次性结算；财宝使用 2004 掉落表，额外补给参数独立可调。</summary>
+/// <summary>开箱确认后一次性结算并保留打开的箱体；财宝使用 2004 掉落表。</summary>
 public partial class Treasure : Area2D, IWorldInteractable
 {
     [Export] public int BonusBullets { get; set; } = 12;
@@ -10,6 +10,7 @@ public partial class Treasure : Area2D, IWorldInteractable
     public bool CanInteract => !_collected;
     public string InteractionName => "宝箱";
     public string InteractionText => GameData.Text("text_box1");
+    public string GetDialogueText() => GameData.RandomText("text_box");
     public string ActionText => "打开宝箱";
     public float InteractionRadius => 110f;
     public override void _Ready()
@@ -18,7 +19,6 @@ public partial class Treasure : Area2D, IWorldInteractable
         GetNode<Button>("get").Visible = false;
         _audio = new AudioStreamPlayer { Stream = GD.Load<AudioStream>("res://music/treasure_box_open.wav") };
         AddChild(_audio);
-        GetNode<Timer>("Timer").Timeout += QueueFree;
         Stop.RegisterWorldNode(this);
     }
     public void Interact(Player player)
@@ -33,6 +33,6 @@ public partial class Treasure : Area2D, IWorldInteractable
         pack.Add(kind, BonusSupplies);
         InteractionController.Notify($"获得宝箱财宝，备用子弹 +{BonusBullets}，{kind switch { SupplyKind.Drug => "药品", SupplyKind.Bandage => "绷带", _ => "解毒剂" }} +{BonusSupplies}");
         GetNode<AnimatedSprite2D>("AnimatedSprite2D").Play("open");
-        _audio.Play(); GetNode<Timer>("Timer").Start(1.2);
+        _audio.Play();
     }
 }

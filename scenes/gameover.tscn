@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://r63bpckpid4w"]
 
 [ext_resource type="Script" uid="uid://cnd8rn1ls4cyx" path="res://scenes/Gameover.cs" id="1_dy3ie"]
-[ext_resource type="Texture2D" uid="uid://bm2phrlj7i3iv" path="res://ui/gameover.png" id="1_ncp31"]
+[ext_resource type="Texture2D" path="res://assets/user/interface/fail.png" id="1_ncp31"]
 
 [node name="Node2D" type="Node2D" unique_id=1788357106]
 script = ExtResource("1_dy3ie")

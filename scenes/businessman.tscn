@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://x8qgje1ggp81"]
 
 [ext_resource type="Script" uid="uid://c3ebbci4fsl86" path="res://scenes/Businessman.cs" id="1_fkqpk"]
-[ext_resource type="Texture2D" uid="uid://7si4qktopgdw" path="res://ui/商人鬼.png" id="1_ilaqe"]
+[ext_resource type="Texture2D" path="res://assets/user/monster/yinzhanggui.png" id="1_ilaqe"]
 [ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="3_fwhb0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qxvy8"]
@@ -15,7 +15,8 @@ height = 125.625
 script = ExtResource("1_fkqpk")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1181073944]
-scale = Vector2(0.1395486, 0.13954861)
+position = Vector2(5.3028468, -9.4893048)
+scale = Vector2(0.116435475, 0.116435475)
 texture = ExtResource("1_ilaqe")
 
 [node name="im" type="CollisionShape2D" parent="." unique_id=1572414056]

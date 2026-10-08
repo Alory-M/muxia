@@ -9,6 +9,13 @@ public static class GameData
     public const float SpeedUnit = 20f;
     public const float DistanceUnit = 32f;
     private static readonly Dictionary<string, JsonElement> Tables = new();
+    private static readonly Dictionary<string, DialogueBag> DialogueBags = new();
+    private sealed class DialogueBag
+    {
+        public readonly List<string> Choices = new();
+        public int Next;
+        public string Previous;
+    }
     public static JsonElement Table(string name)
     {
         if (!Tables.TryGetValue(name, out var table))
@@ -35,14 +42,46 @@ public static class GameData
             if (row.GetProperty("key").GetString() == key) return row.GetProperty("text").GetString();
         return key;
     }
+    /// <summary>从 lang 表的同一编号文本组随机取一句；每轮用完再洗牌，避免连续重复。</summary>
+    public static string RandomText(string prefix, string fallbackKey = null)
+    {
+        if (!DialogueBags.TryGetValue(prefix, out var bag))
+        {
+            bag = new DialogueBag();
+            foreach (var row in Table("lang").EnumerateArray())
+            {
+                string key = row.GetProperty("key").GetString();
+                if (key == null || !key.StartsWith(prefix, StringComparison.Ordinal) ||
+                    !int.TryParse(key[prefix.Length..], out int number) || number <= 0) continue;
+                string value = row.GetProperty("text").GetString();
+                if (!string.IsNullOrWhiteSpace(value) && !bag.Choices.Contains(value)) bag.Choices.Add(value);
+            }
+            bag.Next = bag.Choices.Count;
+            DialogueBags[prefix] = bag;
+        }
+        if (bag.Choices.Count == 0) return Text(fallbackKey ?? prefix + "1");
+        if (bag.Next >= bag.Choices.Count)
+        {
+            for (int i = bag.Choices.Count - 1; i > 0; i--)
+            {
+                int other = GD.RandRange(0, i);
+                (bag.Choices[i], bag.Choices[other]) = (bag.Choices[other], bag.Choices[i]);
+            }
+            if (bag.Choices.Count > 1 && bag.Choices[0] == bag.Previous)
+                (bag.Choices[0], bag.Choices[1]) = (bag.Choices[1], bag.Choices[0]);
+            bag.Next = 0;
+        }
+        bag.Previous = bag.Choices[bag.Next++];
+        return bag.Previous;
+    }
     public static Texture2D ItemIcon(int id) => id switch
     {
-        1001 => GD.Load<Texture2D>("res://bin/item/item/item/icon_soul.png"),
-        1002 => GD.Load<Texture2D>("res://bin/item/item/item/icon_coin.png"),
-        1003 => GD.Load<Texture2D>("res://bin/pack/绷带.PNG"),
-        1004 => GD.Load<Texture2D>("res://bin/pack/药品.png"),
-        1005 => GD.Load<Texture2D>("res://bin/pack/子弹.png"),
-        1006 => GD.Load<Texture2D>("res://bin/pack/解毒剂.png"),
+        1001 => GD.Load<Texture2D>("res://assets/user/icon/icon_soul.png"),
+        1002 => GD.Load<Texture2D>("res://assets/user/icon/icon_coin.png"),
+        1003 => GD.Load<Texture2D>("res://assets/user/item/bandage.PNG"),
+        1004 => GD.Load<Texture2D>("res://assets/user/item/drug.png"),
+        1005 => GD.Load<Texture2D>("res://assets/user/icon/icon_bullet.png"),
+        1006 => GD.Load<Texture2D>("res://assets/user/item/antidote.png"),
         _ => null
     };
     public static SupplyKind Supply(int id) => id switch

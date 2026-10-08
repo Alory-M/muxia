@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://ctoe37kfmw4k0"]
 
 [ext_resource type="Script" uid="uid://cpidibj5ldxq7" path="res://zombiegd/Fzombie/Zombie.cs" id="1_flpyv"]
-[ext_resource type="Texture2D" uid="uid://bdw0b74sj8t2" path="res://bin/sprites/大巨僵尸（居中.png" id="2_5sqnc"]
-[ext_resource type="Texture2D" uid="uid://nxckb52ln662" path="res://bin/sprites/jianzhua.png" id="3_b6iy7"]
+[ext_resource type="Texture2D" path="res://assets/user/monster/daju.png" id="2_5sqnc"]
+[ext_resource type="Texture2D" path="res://assets/user/monster/lizhua_attack.png" id="3_b6iy7"]
 [ext_resource type="AudioStream" uid="uid://b8hkj1objwwv4" path="res://music/zombie_shout.wav" id="4_5lqy2"]
 [ext_resource type="AudioStream" uid="uid://cx70gl3ktnfr" path="res://music/zombie_be_attacked_or_die.wav" id="5_uxjps"]
 [ext_resource type="AudioStream" uid="uid://e0p4ljg1medl" path="res://music/zombie_attack_near.wav" id="6_wgk48"]
@@ -20,7 +20,7 @@ motion_mode = 1
 script = ExtResource("1_flpyv")
 
 [node name="normal" type="Sprite2D" parent="." unique_id=698874992]
-position = Vector2(7.6293945e-06, 2.000001)
+position = Vector2(-1.7585456, 2)
 scale = Vector2(0.06763637, 0.068)
 texture = ExtResource("2_5sqnc")
 

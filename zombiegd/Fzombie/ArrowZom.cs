@@ -9,7 +9,7 @@ using Godot;
 /// </summary>
 public partial class ArrowZom : Zombie
 {
-	// 子弹场景：在 Inspector 里拖入 res://scenes/bullet.tscn（外部给定）
+	// 普通弓箭 / 毒箭场景保留 Bullet 的实际弹道和命中判定。
 	[Export] public PackedScene BulletScene { get; set; }
 
 	// 射程：玩家进入这个距离就开始射箭（外部给定，比近战 attack_range 大很多）
@@ -30,7 +30,7 @@ public partial class ArrowZom : Zombie
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (!_active || !EnsurePlayer())
+		if (!PrepareAiFrame(delta))
 		{
 			return;
 		}
@@ -85,6 +85,7 @@ public partial class ArrowZom : Zombie
 		bullet.GlobalPosition = GlobalPosition;
 		bullet.Launch(dir);
         _arrowSound.Play();
+        PlayAttackAnimation();
 		GD.Print("ArrowZom：朝玩家中心射出一箭");
 	}
 

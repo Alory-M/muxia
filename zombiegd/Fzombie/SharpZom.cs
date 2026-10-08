@@ -6,8 +6,7 @@ public partial class SharpZom : Zombie
     [Export(PropertyHint.Range, "0,1,0.05")] public float BleedChance { get; set; } = 1f;
     protected override void Attack()
     {
-        if (_player is not Player player || !CanEngage() ||
-            GlobalPosition.DistanceTo(player.GlobalPosition) > AttackRange + 10f) return;
+        if (_player is not Player player || !CanEngage() || !IsWithinMeleeRange()) return;
         base.Attack();
         if (player.hp > 0 && GD.Randf() < BleedChance)
             player.GetNode<State>("state").ChangeState(PlayerState.Bleed);

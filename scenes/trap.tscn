@@ -1,24 +1,30 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/Trap.cs" id="1_script"]
-[ext_resource type="Texture2D" path="res://bin/item/jiguankuai.png" id="2_tile"]
-[ext_resource type="Texture2D" path="res://bin/item/dici.png" id="3_spikes"]
+[ext_resource type="Texture2D" path="res://assets/user/item/mechan_block.png" id="2_tile"]
+[ext_resource type="Texture2D" path="res://assets/user/item/spikeweed.png" id="3_spikes"]
 
 [sub_resource type="RectangleShape2D" id="Shape"]
-size = Vector2(46, 46)
+size = Vector2(78, 76)
+
+[sub_resource type="AtlasTexture" id="FloorTileTexture"]
+atlas = ExtResource("2_tile")
+region = Rect2(80, 585, 1034, 946)
 
 [node name="Trap" type="Area2D"]
+z_index = -10
 script = ExtResource("1_script")
 
 [node name="Tile" type="Sprite2D" parent="."]
-texture = ExtResource("2_tile")
-scale = Vector2(0.065, 0.065)
-modulate = Color(0.65, 0.6, 0.52, 1)
+texture = SubResource("FloorTileTexture")
+scale = Vector2(0.088568665, 0.093750529)
+modulate = Color(1, 1, 1, 0.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("Shape")
 
 [node name="Spikes" type="Sprite2D" parent="."]
+z_index = 11
 texture = ExtResource("3_spikes")
 scale = Vector2(0.075, 0.075)
 visible = false

@@ -25,8 +25,8 @@ public partial class ExpeditionHud : CanvasLayer
         _stats.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.TopRight); _stats.OffsetLeft = -380; _stats.OffsetRight = -10; _stats.OffsetTop = 75; _stats.OffsetBottom = 125;
         _states = new HBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore }; root.AddChild(_states);
         _states.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomLeft); _states.OffsetLeft = 290; _states.OffsetTop = -72;
-        _bleedIcon = Icon("res://bin/item/item/item/娴佽鍥炬爣.PNG"); _states.AddChild(_bleedIcon);
-        _poisonIcon = Icon("res://bin/item/item/item/中毒图标.PNG"); _states.AddChild(_poisonIcon);
+        _bleedIcon = Icon("res://assets/user/icon/icon_bleed.PNG"); _states.AddChild(_bleedIcon);
+        _poisonIcon = Icon("res://assets/user/icon/icon_poison.PNG"); _states.AddChild(_poisonIcon);
         _status = UiKit.Label("", 18); _states.AddChild(_status);
         _supplies = UiKit.Label("", 16); root.AddChild(_supplies); _supplies.Position = new Vector2(80, 360);
         var help = UiKit.Label("WASD 移动 · J/左键 攻击 · Shift/右键 冲刺 · F 交互 · B 背包 · M 地图 · R 换弹", 14);
@@ -42,7 +42,7 @@ public partial class ExpeditionHud : CanvasLayer
         if (!Stop.IsPaused && _player.hp > 0) ElapsedSeconds += delta;
         _bleedIcon.Visible = _state.IsBleeding; _poisonIcon.Visible = _state.IsPoisoned;
         _status.Text = (_state.IsBleeding ? "流血 · Q 止血 " : "") + (_state.IsPoisoned ? "中毒 · Z 解毒" : "");
-        bool opened = GetParent().GetNode<CanvasItem>("终点大门").Visible == false;
+        bool opened = GetParent().GetNode<开门机关>("开门机关").IsUnlocked;
         _objective.Text = opened ? "墓门已开启 · 前往右上方出口" : "寻找开门机关，携财宝逃出古墓";
         _stats.Text = $"攻击 {_player.EffectiveAttack:0.#}　攻速 {_player.ShotsPerSecond:0.#}　移速 {_player.EffectiveMoveSpeed:0}\n暴击 {_player.CriticalChance:P0}　探索 {(int)ElapsedSeconds / 60:00}:{(int)ElapsedSeconds % 60:00}";
         var pack = _player.GetNode<Pack>("pack");

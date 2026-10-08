@@ -17,7 +17,8 @@ public partial class GameplayRegression : Node
         _checks++; GD.Print($"PASS {_checks}: {message}");
     }
     private async Task Frames(int count = 2)
-    { for (int i = 0; i < count; i++) await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame); }
+    { for (int i = 0; i < count; i++)
+      { await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame); await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame); } }
     private static void Action(string name)
     {
         Input.ParseInputEvent(new InputEventAction { Action = name, Pressed = true });
@@ -92,7 +93,7 @@ public partial class GameplayRegression : Node
             var bagBackground = bag.GetNode<Sprite2D>("background");
             var bagRect = bagBackground.GetGlobalTransform() * bagBackground.GetRect();
             Check(bagRect.Position.X >= 0 && bagRect.End.X <= GetViewport().GetVisibleRect().Size.X &&
-                bagBackground.Texture.ResourcePath == "res://ui/背包.jpeg", "第一版背包美术面板完整显示在视口内");
+                bagBackground.Texture.ResourcePath == "res://assets/user/interface/bag_inter.png", "第一版背包美术面板完整显示在视口内");
             state.ChangeState(PlayerState.Bleed); hp = _player.hp; state._Process(2);
             Check(_player.hp == hp, "模态窗口期间状态不扣血");
             Action("esc");
@@ -104,7 +105,7 @@ public partial class GameplayRegression : Node
             var storeBackground = storeUi.GetNode<Sprite2D>("background");
             var storeRect = storeBackground.GetGlobalTransform() * storeBackground.GetRect();
             Check(storeRect.Position.X >= 0 && storeRect.End.X <= GetViewport().GetVisibleRect().Size.X &&
-                storeBackground.Texture.ResourcePath == "res://ui/商店.png", "第一版商店美术面板完整显示在视口内");
+                storeBackground.Texture.ResourcePath == "res://assets/user/interface/shop_inter.png", "第一版商店美术面板完整显示在视口内");
             gold.Amount = 599; int stock = store.GetProductStock(1005); reserve = pack.GetReserveBullet();
             Check(!store.TryPurchase(1005, 1) && gold.Amount == 599 && store.GetProductStock(1005) == stock && pack.GetReserveBullet() == reserve, "余额不足不扣款、发货或减库存");
             gold.Amount = 1800;
@@ -138,14 +139,33 @@ public partial class GameplayRegression : Node
             Check(coffin.Status == Coffin.CoffinState.Closed && !dialogue.IsDialogOpen, "滚轮可选择离开，F 不误开棺");
             dialogue.OpenDialogue(coffin); Action("interact"); await Frames();
             Check(coffin.Status == Coffin.CoffinState.Fighting && guardian.Visible && guardian.IsActive && guardian.CollisionLayer != 0, "确认开棺激活对应僵尸");
+            guardian.SetPhysicsProcess(false);
+            await ToSignal(GetTree().CreateTimer(0.6), SceneTreeTimer.SignalName.Timeout);
             _player.GlobalPosition = coffin.GlobalPosition + new Vector2(900, 0);
-            guardian.GlobalPosition = coffin.GlobalPosition + new Vector2(80, 0);
+            guardian.GlobalPosition = guardian.ReturnPosition + new Vector2(0, -40);
+            Vector2 returnDirection = guardian.GlobalPosition.DirectionTo(guardian.ReturnPosition);
             guardian._PhysicsProcess(0.016);
-            Check(guardian.Velocity.X < 0, "离开领地后僵尸返回棺材");
-            _player.GlobalPosition = coffin.GlobalPosition + new Vector2(80, 0);
+            Check(guardian.Velocity.Dot(returnDirection) > 0, "离开领地后僵尸返回棺材外的安全位置");
+            // 从实体未遮挡的站位射击，棺材实体也应正确挡住穿过它的子弹。
+            var playerShape = _player.GetNode<CollisionShape2D>("CollisionShape2D");
+            bool foundShot = false;
+            for (int angle = 0; angle < 24 && !foundShot; angle++)
+            {
+                Vector2 candidate = guardian.GlobalPosition + Vector2.Right.Rotated(angle * Mathf.Tau / 24f) * 90;
+                Transform2D transform = playerShape.GlobalTransform;
+                transform.Origin += candidate - _player.GlobalPosition;
+                var excludes = new Godot.Collections.Array<Rid> { _player.GetRid(), guardian.GetRid() };
+                var query = new PhysicsShapeQueryParameters2D { Shape = playerShape.Shape, Transform = transform,
+                    CollisionMask = 1, CollideWithAreas = false, Exclude = excludes };
+                var ray = PhysicsRayQueryParameters2D.Create(candidate, guardian.GlobalPosition, 1, excludes);
+                if (_player.GetWorld2D().DirectSpaceState.IntersectShape(query, 1).Count == 0 &&
+                    _player.GetWorld2D().DirectSpaceState.IntersectRay(ray).Count == 0)
+                { _player.GlobalPosition = candidate; foundShot = true; }
+            }
+            Check(foundShot, "棺材外保留未被实体遮挡的射击位置");
             int beforeSoul = soul.GetSoul();
             await ToSignal(GetTree().CreateTimer(1f / _player.ShotsPerSecond + 0.04f), SceneTreeTimer.SignalName.Timeout);
-            Check(_player.FireTowards(Vector2.Left), "向实际守卫射击");
+            Check(_player.FireTowards(guardian.GlobalPosition - _player.GlobalPosition), "向实际守卫射击");
             await Frames(15);
             Check(coffin.Status == Coffin.CoffinState.Unlocked && soul.GetSoul() - beforeSoul >= 2 && soul.GetSoul() - beforeSoul <= 5, "击败守卫获得碎片并解锁棺材");
             await Frames();
@@ -164,6 +184,7 @@ public partial class GameplayRegression : Node
             gate.EmitSignal(Area2D.SignalName.BodyEntered, _player); await Frames();
             Check(gate.IsUnlocked && gate.IsOpen && exit.Monitoring && _game.GetNode<CanvasItem>("终点大门").Visible,
                 "开门机关显示打开门图像并启用终点检测");
+            Check(_game.GetNode<ExpeditionHud>("ExpeditionHud").GetChild<Control>(0).GetChild<Label>(0).Text.Contains("墓门已开启"), "开门后探索目标提示正确更新");
             exit.EmitSignal(Area2D.SignalName.BodyEntered, _player);
             Check(result.Visible && Stop.IsPaused && result.FinalScore == gold.Amount, "逃出时携带财宝结算，胜利界面冻结世界");
             result.GetNode<Button>("continue").EmitSignal(Button.SignalName.Pressed); await Frames(4);

@@ -1,14 +1,17 @@
 [gd_scene format=3 uid="uid://xywe4crsrava"]
 
 [ext_resource type="Script" uid="uid://4od3xb2ulri5" path="res://scenes/Treasure.cs" id="1_it12x"]
-[ext_resource type="Texture2D" uid="uid://6r67goki3wxf" path="res://bin/treasure/QQ图片20261005185635.png" id="2_0g4qu"]
+[ext_resource type="Texture2D" path="res://assets/user/item/box_close.PNG" id="2_0g4qu"]
 [ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="2_wqbho"]
-[ext_resource type="Texture2D" uid="uid://v4r5wuxjt35m" path="res://bin/treasure/QQ图片20261005185635(1).png" id="3_wqbho"]
+[ext_resource type="Texture2D" path="res://assets/user/item/box_open.PNG" id="3_wqbho"]
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="5_wsoap"]
 [ext_resource type="AudioStream" uid="uid://u6equrkwrcr1" path="res://music/treasure_box_open.wav" id="6_h5oxq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 size = Vector2(800, 136)
+
+[sub_resource type="RectangleShape2D" id="TreasureFootprint"]
+size = Vector2(480, 170)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_33age"]
 animations = [{
@@ -76,3 +79,11 @@ script = ExtResource("5_wsoap")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=316139129]
 stream = ExtResource("6_h5oxq")
+
+[node name="SolidBody" type="StaticBody2D" parent="." groups=["solid_prop"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SolidBody"]
+position = Vector2(0, 28)
+shape = SubResource("TreasureFootprint")

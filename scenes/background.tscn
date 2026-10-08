@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c5xx126tloqba"]
 
-[ext_resource type="Texture2D" uid="uid://b072yavsy3ni" path="res://界面/map new.png" id="1_bkp1e"]
+[ext_resource type="Texture2D" path="res://assets/user/interface/map new.png" id="1_bkp1e"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_33age"]
 distance = 157.0

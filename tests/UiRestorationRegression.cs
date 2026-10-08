@@ -41,9 +41,9 @@ public partial class UiRestorationRegression : Node
             var pack = player.GetNode<Pack>("pack"); var gold = player.GetNode<Gold>("gold");
             var soul = player.GetNode<soulpiece>("soulpiece");
             var bag = _game.GetNode<Packsys>("HUD/packsys");
-            Check(bag.GetNode<Sprite2D>("background").Texture.ResourcePath == "res://ui/背包.jpeg" && ArtFits(bag.GetNode<Sprite2D>("background")), "背包恢复原底图与视口内布局");
+            Check(bag.GetNode<Sprite2D>("background").Texture.ResourcePath == "res://assets/user/interface/bag_inter.png" && ArtFits(bag.GetNode<Sprite2D>("background")), "背包上传羊皮纸底图保持视口内布局");
             bag.SetOpen(true); await Frames();
-            Check(bag.GetNode<Sprite2D>("button14/image").Texture.ResourcePath == "res://bin/pack/子弹.png" &&
+            Check(bag.GetNode<Sprite2D>("button14/image").Texture.ResourcePath == "res://assets/user/icon/icon_bullet.png" &&
                 bag.GetNode<Sprite2D>("button21/image").Texture == GameData.ItemIcon(1002) &&
                 bag.GetNode<Sprite2D>("button22/image").Texture == GameData.ItemIcon(1001), "原格子风格继续显示弹药、金币和灵魂碎片");
             player.hp = 800; int drugs = pack.GetCount(SupplyKind.Drug);
@@ -55,7 +55,7 @@ public partial class UiRestorationRegression : Node
             Check(!bag.Visible && !Stop.IsPaused, "原关闭按钮即时释放背包暂停锁");
             var storeUi = _game.GetNode<Control>("HUD/store");
             var store = storeUi.GetNode<Store>("store");
-            Check(storeUi.GetNode<Sprite2D>("background").Texture.ResourcePath == "res://ui/商店.png" && ArtFits(storeUi.GetNode<Sprite2D>("background")), "商店恢复原底图与四列商品布局");
+            Check(storeUi.GetNode<Sprite2D>("background").Texture.ResourcePath == "res://assets/user/interface/shop_inter.png" && ArtFits(storeUi.GetNode<Sprite2D>("background")), "商店上传羊皮纸底图保持四列商品布局");
             store.SetOpen(true); gold.Amount = 1800; await Frames();
             var quantity = storeUi.GetNode<购买数量>("购买子弹数量");
             int reserve = pack.GetReserveBullet(), magazine = pack.GetCount(SupplyKind.Bullet), stock = store.GetProductStock(1005);
@@ -69,7 +69,7 @@ public partial class UiRestorationRegression : Node
             await Click(storeUi.GetNode<Button>("买药"));
             Check(soul.GetSoul() == 15 && player.EffectiveAttack == attack * 1.5f, "原四列按钮在灵魂类别正确兑换增益");
             await Click(storeUi.GetNode<Button>("SuppliesTab"));
-            Check(storeUi.GetNode<Label>("药品").Text == GameData.Text("item_drop4") && storeUi.GetNode<Label>("买子弹/Label").Text == "600/组", "切回财宝类别恢复药品与弹药按组价格");
+            Check(storeUi.GetNode<Label>("药品").Text == GameData.Text("item_drop4") && storeUi.GetNode<Label>("买子弹/Label").Text.Replace(" ", "") == "600/组", "切回财宝类别恢复药品与弹药按组价格");
             await Click(storeUi.GetNode<Button>("close2"));
             Check(!store.IsOpen && !Stop.IsPaused, "原关闭按钮即时释放商店暂停锁");
             _game.QueueFree(); await Frames(4); GC.Collect(); GC.WaitForPendingFinalizers(); await Frames();

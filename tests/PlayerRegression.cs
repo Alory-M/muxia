@@ -15,7 +15,8 @@ public partial class PlayerRegression : Node
         _checks++; GD.Print($"PASS {_checks}: {description}");
     }
     private async Task Frames(int count = 2)
-    { for (int i = 0; i < count; i++) await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame); }
+    { for (int i = 0; i < count; i++)
+      { await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame); await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame); } }
     private static void Action(string name)
     {
         Key key = name == "Q" ? Key.Q : name == "Z" ? Key.Z : Key.E;

@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-/// <summary>复用原商店美术与四列数量框，财宝购买物资，灵魂碎片兑换增益。</summary>
+/// <summary>羊皮纸四列商店：图标、库存、效果和数量独立排版。</summary>
 public partial class Store : Node
 {
     public const int BulletsPerPurchase = 10;
@@ -17,7 +17,7 @@ public partial class Store : Node
     {
         public Sprite2D Icon;
         public Label Name, Description, Stock, Price;
-        public Button Buy;
+        public Button Buy, Select;
         public 购买数量 Quantity;
         public int ProductId;
     }
@@ -29,7 +29,8 @@ public partial class Store : Node
     private Stop _stop;
     private readonly Dictionary<int, int> _stock = new();
     private readonly List<Column> _columns = new();
-    private Label _balance, _feedback;
+    private Label _balance, _feedback, _categoryHint;
+    private Button _suppliesTab, _buffsTab;
     private int _category = 2;
     private bool _wasOpen;
     public bool IsOpen => _ui?.Visible == true;
@@ -41,8 +42,7 @@ public partial class Store : Node
         _gold = _player?.GetNodeOrNull<Gold>("gold");
         _soul = _player?.GetNodeOrNull<soulpiece>("soulpiece");
         _ui = GetParent() as Control;
-        _ui.Theme = new Theme { DefaultFont = new SystemFont
-            { FontNames = new[] { "Noto Sans CJK SC", "WenQuanYi Zen Hei", "sans-serif" } } };
+        _ui.Theme = PaperUiLayout.Theme();
         _ui.ZIndex = 100;
         _stop = GetNode<Stop>("stop");
         foreach (var row in GameData.Table("shop").EnumerateArray()) _stock[row.GetProperty("ID").GetInt32()] = 10;
@@ -51,13 +51,21 @@ public partial class Store : Node
     }
     private void BindUi()
     {
-        _balance = PaperLabel("", new Vector2(331, 152), new Vector2(491, 35), 17, new Color(0.12f, 0.1f, 0.07f));
+        var background = _ui.GetNode<Sprite2D>("background");
+        background.Position = new Vector2(576, 324);
+        PaperUiLayout.Fit(background, new Vector2(820, 541));
+        PaperUiLayout.Close(_ui);
+        _balance = PaperLabel("", new Vector2(306, 117), new Vector2(600, 38), 20, PaperUiLayout.Ink);
         _balance.Name = "Balance";
-        _feedback = PaperLabel("选择数量，点击价格按钮购买。子弹每组 10 发。", new Vector2(331, 481), new Vector2(491, 43), 13, new Color(0.12f, 0.1f, 0.07f));
+        _feedback = PaperLabel("点击物品查看说明。子弹每组 10 发，购买后加入后备弹药。", new Vector2(306, 527), new Vector2(623, 49), 16, PaperUiLayout.Ink);
         _feedback.Name = "PurchaseFeedback";
-        PaperButton("财宝商店", new Vector2(237, 224), new Vector2(73, 45), () => SelectCategory(2)).Name = "SuppliesTab";
-        PaperButton("灵魂增益", new Vector2(237, 286), new Vector2(73, 45), () => SelectCategory(1)).Name = "BuffsTab";
-        PaperButton("离开", new Vector2(237, 463), new Vector2(73, 30), () => SetOpen(false));
+        _suppliesTab = CategoryButton("财宝商店", new Vector2(191, 188), () => SelectCategory(2));
+        _suppliesTab.Name = "SuppliesTab";
+        _buffsTab = CategoryButton("灵魂增益", new Vector2(191, 313), () => SelectCategory(1));
+        _buffsTab.Name = "BuffsTab";
+        _categoryHint = PaperLabel("", new Vector2(191, 442), new Vector2(91, 66), 16, Colors.White);
+        _categoryHint.HorizontalAlignment = HorizontalAlignment.Center;
+        PaperButton("离开", new Vector2(191, 519), new Vector2(91, 41), () => SetOpen(false));
         for (int index = 0; index < ColumnPaths.Length; index++)
         {
             var paths = ColumnPaths[index];
@@ -69,16 +77,20 @@ public partial class Store : Node
             };
             // 说明使用未缩放的 Label，避免换增益图标时文字跟随图标缩放。
             column.Icon.GetNode<Label>("Label").Visible = false;
-            float center = column.Icon.Position.X;
-            column.Description = PaperLabel("", new Vector2(center - 57, 349), new Vector2(114, 43), 11, Colors.White);
+            float center = 373 + index * 161;
+            var frame = _ui.GetNode<Sprite2D>(index == 0 ? "Sprite2D" : $"Sprite2D{index + 1}");
+            frame.Position = new Vector2(center, 264); PaperUiLayout.Fit(frame, new Vector2(86, 86), true, true);
+            column.Icon.Position = new Vector2(center, 264);
+            column.Description = PaperLabel("", new Vector2(center - 60, 353), new Vector2(120, 50), 16, Colors.White);
             column.Description.Name = $"ProductDescription{index + 1}";
-            column.Name.AddThemeFontSizeOverride("font_size", 23);
-            column.Name.Position = new Vector2(center - 62, 306); column.Name.Size = new Vector2(124, 36);
-            column.Stock.AddThemeFontSizeOverride("font_size", 12);
-            column.Stock.Position = new Vector2(center - 60, 281); column.Stock.Size = new Vector2(120, 19);
-            column.Stock.HorizontalAlignment = HorizontalAlignment.Right;
-            column.Price.Position = Vector2.Zero; column.Price.Size = column.Buy.Size;
-            column.Price.AddThemeFontSizeOverride("font_size", 12);
+            column.Description.HorizontalAlignment = HorizontalAlignment.Center;
+            PaperUiLayout.Label(column.Name, new Vector2(center - 63, 313), new Vector2(126, 34), 22, PaperUiLayout.Ink, HorizontalAlignment.Center);
+            PaperUiLayout.Label(column.Stock, new Vector2(center - 61, 191), new Vector2(122, 29), 16, Colors.White, HorizontalAlignment.Center);
+            PaperUiLayout.ArtButton(column.Buy, new Vector2(center - 57, 463), new Vector2(114, 37), 17);
+            LayoutQuantity(column.Quantity, center);
+            column.Select = new Button { Position = new Vector2(center - 60, 226), Size = new Vector2(120, 177), SelfModulate = new Color(1, 1, 1, 0) };
+            _ui.AddChild(column.Select);
+            column.Select.Pressed += () => ShowProductDetails(column.ProductId);
             column.Quantity.Max = 10;
             column.Buy.Pressed += () =>
             {
@@ -95,13 +107,60 @@ public partial class Store : Node
         IgnoreDecorativeMouseInput(_ui);
         RefreshColumns();
     }
+    private static void LayoutQuantity(购买数量 quantity, float center)
+    {
+        PaperUiLayout.Label(quantity, new Vector2(center - 25, 416), new Vector2(50, 34), 18, Colors.White, HorizontalAlignment.Center);
+        // 新素材的按下态仅包含被按的圆钮，按常态坐标还原，避免拉伸覆盖整条数量框。
+        Sprite2D basis = null;
+        foreach (Node node in quantity.GetChildren())
+            if (node is Sprite2D sprite && sprite.Name.ToString().StartsWith("正常")) { basis = sprite; break; }
+        if (basis == null) return;
+        var normalRect = basis.Texture.GetImage().GetUsedRect();
+        Vector2 normalSize = normalRect.Size;
+        Vector2 normalCenter = normalRect.Position + normalSize / 2;
+        foreach (Node node in quantity.GetChildren())
+        {
+            if (node is Sprite2D sprite)
+            {
+                var used = sprite.Texture.GetImage().GetUsedRect();
+                Vector2 usedSize = used.Size;
+                Vector2 usedCenter = used.Position + usedSize / 2;
+                sprite.Position = new Vector2(25, 17) + (usedCenter - normalCenter) / normalSize * new Vector2(120, 32);
+                PaperUiLayout.Fit(sprite, usedSize / normalSize * new Vector2(120, 32), true);
+            }
+        }
+        var plus = quantity.GetNode<Button>("增"); var minus = quantity.GetNode<Button>("减");
+        plus.Position = new Vector2(58, 0); plus.Size = new Vector2(28, 34); plus.TooltipText = "数量 +1";
+        minus.Position = new Vector2(-36, 0); minus.Size = new Vector2(28, 34); minus.TooltipText = "数量 -1";
+    }
+    private Button CategoryButton(string text, Vector2 position, System.Action action)
+    {
+        var button = new Button { Position = position, Size = new Vector2(91, 110), SelfModulate = new Color(1, 1, 1, 0) };
+        _ui.AddChild(button);
+        button.AddChild(new Sprite2D { Name = "Artwork", Position = new Vector2(45.5f, 38), RegionEnabled = true });
+        var label = new Label { Text = text };
+        button.AddChild(label);
+        PaperUiLayout.Label(label, new Vector2(0, 77), new Vector2(91, 28), 17, Colors.White, HorizontalAlignment.Center);
+        button.Pressed += action;
+        return button;
+    }
+    private static void SetCategoryArtwork(Button button, string type, bool selected)
+    {
+        var sprite = button.GetNode<Sprite2D>("Artwork");
+        sprite.Texture = GD.Load<Texture2D>($"res://assets/user/icon/shop_{type}_{(selected ? "click" : "noclick")}.png");
+        // 原稿保留整个商店画布，只取绘制按钮的区域，去掉画布上方残留参考线。
+        sprite.RegionRect = new Rect2(31, type == "coin" ? 73 : 214, 169, 154);
+        sprite.Scale = new Vector2(78f / 169, 71f / 154);
+    }
+    private void ShowProductDetails(int id)
+    {
+        _feedback.Text = $"{ProductName(id)}：{ProductEffect(id).Replace("\n", " ")}";
+    }
     private Label PaperLabel(string text, Vector2 position, Vector2 size, int fontSize, Color color)
     {
         var label = new Label { Text = text, Position = position, Size = size,
             AutowrapMode = TextServer.AutowrapMode.WordSmart, MouseFilter = Control.MouseFilterEnum.Ignore };
-        label.AddThemeFontSizeOverride("font_size", fontSize);
-        label.AddThemeConstantOverride("line_spacing", -5);
-        label.AddThemeColorOverride("font_color", color);
+        PaperUiLayout.Label(label, position, size, fontSize, color);
         _ui.AddChild(label); return label;
     }
     private Button PaperButton(string text, Vector2 position, Vector2 size, System.Action action)
@@ -113,7 +172,7 @@ public partial class Store : Node
             Scale = new Vector2(size.X / texture.GetWidth(), size.Y / texture.GetHeight()) });
         var label = new Label { Text = text, Size = size, MouseFilter = Control.MouseFilterEnum.Ignore,
             HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
-        label.AddThemeFontSizeOverride("font_size", 14); label.AddThemeColorOverride("font_color", Colors.Black);
+        label.AddThemeFontSizeOverride("font_size", 18); label.AddThemeColorOverride("font_color", PaperUiLayout.Ink);
         button.AddChild(label); button.Pressed += action;
         return button;
     }
@@ -148,6 +207,7 @@ public partial class Store : Node
     {
         if (category != 1 && category != 2) return;
         _category = category; RefreshColumns();
+        if (_feedback != null) _feedback.Text = category == 2 ? "物资使用财宝购买。子弹每组 10 发，加入后备弹药。" : "使用灵魂碎片兑换增益，立即生效，持续至本局结束。";
     }
     private void RefreshColumns()
     {
@@ -156,14 +216,16 @@ public partial class Store : Node
             var column = _columns[index];
             int id = _category == 2 ? SupplyIds[index] : 3001 + index;
             column.ProductId = id;
-            column.Icon.Texture = id >= 3000 ? GameData.ItemIcon(1001) : GameData.ItemIcon(id);
-            var texture = column.Icon.Texture;
-            column.Icon.Scale = Vector2.One * (74f / Mathf.Max(texture.GetWidth(), texture.GetHeight()));
+            column.Icon.Texture = id >= 3000 ? GD.Load<Texture2D>($"res://assets/user/icon/{id switch { 3001 => "icon_attack", 3002 => "icon_move_speed", 3003 => "icon_attack_speed", _ => "icon_critical" }}.png") : GameData.ItemIcon(id);
+            PaperUiLayout.Icon(column.Icon, 72);
             column.Name.Text = ProductName(id);
-            column.Description.Text = ProductEffect(id);
-            column.Price.Text = GetProductPrice(id) + (id == 1005 ? "/组" : "");
-            column.Buy.TooltipText = $"购买 {column.Quantity.Count}{(id == 1005 ? " 组" : " 份")} {ProductName(id)}，单价 {GetProductPrice(id)}{Currency(id)}";
+            column.Description.Text = ProductSummary(id);
+            column.Select.TooltipText = ProductEffect(id);
+            column.Price.Text = GetProductPrice(id) + (id == 1005 ? " / 组" : id >= 3000 ? " 碎片" : " 财宝");
         }
+        if (_suppliesTab != null) SetCategoryArtwork(_suppliesTab, "coin", _category == 2);
+        if (_buffsTab != null) SetCategoryArtwork(_buffsTab, "soul", _category == 1);
+        if (_categoryHint != null) _categoryHint.Text = _category == 2 ? $"{BulletsPerPurchase} 发 / 组\n{GetProductPrice(1005)} 财宝" : "本局增益\n灵魂兑换";
         RefreshStock();
     }
     private void RefreshStock()
@@ -173,6 +235,7 @@ public partial class Store : Node
             int stock = GetProductStock(column.ProductId);
             column.Quantity.Max = stock;
             column.Stock.Text = $"剩余 {stock}{(column.ProductId == 1005 ? " 组" : "")}";
+            column.Buy.TooltipText = $"购买 {column.Quantity.Count}{(column.ProductId == 1005 ? " 组" : " 份")} {ProductName(column.ProductId)}，合计 {(long)GetProductPrice(column.ProductId) * column.Quantity.Count}{Currency(column.ProductId)}";
             column.Buy.Disabled = stock == 0;
             column.Buy.Modulate = stock == 0 ? new Color(0.65f, 0.65f, 0.65f) : Colors.White;
         }
@@ -228,6 +291,15 @@ public partial class Store : Node
             1006 => "墓里的毒不能拖。\n解除中毒。",
             _ => ""
         };
+    }
+    private static string ProductSummary(int id)
+    {
+        if (id >= 3000)
+        {
+            string stat = id switch { 3001 => "攻击", 3002 => "移速", 3003 => "攻速", _ => "暴击" };
+            return $"{stat} +{GameData.Number(GameData.Row("buff", id), "add") * 100:0}%\n本局有效";
+        }
+        return id switch { 1003 => "解除流血", 1004 => "恢复 100 生命", 1005 => $"{BulletsPerPurchase} 发 / 组\n加入后备弹药", 1006 => "解除中毒", _ => "" };
     }
     public int GetPrice(SupplyKind kind) => GetProductPrice(ItemId(kind));
     public int GetStock(SupplyKind kind) => GetProductStock(ItemId(kind));
