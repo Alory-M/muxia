@@ -59,7 +59,7 @@ public partial class GameplayRegression : Node
             var species = new System.Collections.Generic.HashSet<int>();
             foreach (Node node in GetTree().GetNodesInGroup("zombie")) species.Add(((Zombie)node).MonsterId);
             Check(species.Count == 6, "当前地图包含六种策划僵尸");
-            Check(_player.MaxHp == 1000 && _player.EffectiveAttack == 5 && _player.EffectiveMoveSpeed == 100, "主角属性来自 host 表");
+            Check(_player.MaxHp == 1000 && _player.EffectiveAttack == 5 && _player.EffectiveMoveSpeed == 500, "生命与攻击读取 host 表，移速恢复第一版场景值 500");
             Check(InputMap.ActionHasEvent("mouse_press", new InputEventKey { PhysicalKeycode = Key.J }) &&
                 InputMap.ActionHasEvent("mouse_press2", new InputEventKey { PhysicalKeycode = Key.Shift }), "J 和 Shift 替代操作已注册");
             pack.SetCount(SupplyKind.Bullet, 2); int reserve = pack.GetReserveBullet();
@@ -75,7 +75,7 @@ public partial class GameplayRegression : Node
             foreach (Node bullet in GetTree().GetNodesInGroup("bullet")) bullet.QueueFree();
             state.SetProcess(false);
             state.ChangeState(PlayerState.Bleed); state.ChangeState(PlayerState.Slow);
-            Check(state.IsBleeding && state.IsPoisoned && _player.EffectiveMoveSpeed == 80 && _player.EffectiveAttack == 2, "中毒与流血同时存在，毒减速与降攻击正确");
+            Check(state.IsBleeding && state.IsPoisoned && _player.EffectiveMoveSpeed == 480 && _player.EffectiveAttack == 2, "中毒与流血同时存在，毒减速与降攻击正确");
             float hp = _player.hp; state._Process(1.01);
             Check(_player.hp == hp - 20, "一秒流血和毒伤独立结算");
             int bandages = pack.GetCount(SupplyKind.Bandage); clear.UseBandage();
@@ -83,14 +83,16 @@ public partial class GameplayRegression : Node
             clear.UseBandage();
             Check(pack.GetCount(SupplyKind.Bandage) == bandages - 1, "无流血时不浪费绷带");
             int antidotes = pack.GetCount(SupplyKind.Antidote); clear.UseAntidote();
-            Check(!state.IsPoisoned && _player.EffectiveMoveSpeed == 100 && _player.EffectiveAttack == 5 && pack.GetCount(SupplyKind.Antidote) == antidotes - 1, "解毒恢复属性且扣一份道具");
+            Check(!state.IsPoisoned && _player.EffectiveMoveSpeed == 500 && _player.EffectiveAttack == 5 && pack.GetCount(SupplyKind.Antidote) == antidotes - 1, "解毒恢复属性且扣一份道具");
             _player.hp = _player.MaxHp - 50; int drugs = pack.GetCount(SupplyKind.Drug); clear.UseDrug(); clear.UseDrug();
             Check(_player.hp == _player.MaxHp && pack.GetCount(SupplyKind.Drug) == drugs - 1, "药品回血封顶，满血不消耗");
             Action("B");
             await Frames();
             Check(bag.Visible && Stop.IsPaused && _player.ProcessMode == ProcessModeEnum.Disabled, "B 打开背包并冻结世界");
-            var bagPanel = bag.GetChild<PanelContainer>(2);
-            Check(bagPanel.GetGlobalRect().Position.X >= 0 && bagPanel.GetGlobalRect().End.X <= GetViewport().GetVisibleRect().Size.X, "背包面板完整显示在视口内");
+            var bagBackground = bag.GetNode<Sprite2D>("background");
+            var bagRect = bagBackground.GetGlobalTransform() * bagBackground.GetRect();
+            Check(bagRect.Position.X >= 0 && bagRect.End.X <= GetViewport().GetVisibleRect().Size.X &&
+                bagBackground.Texture.ResourcePath == "res://ui/背包.jpeg", "第一版背包美术面板完整显示在视口内");
             state.ChangeState(PlayerState.Bleed); hp = _player.hp; state._Process(2);
             Check(_player.hp == hp, "模态窗口期间状态不扣血");
             Action("esc");
@@ -99,18 +101,20 @@ public partial class GameplayRegression : Node
             store.SetOpen(true); store.SetOpen(true);
             await Frames();
             var storeUi = _game.GetNode<Control>("HUD/store");
-            var storePanel = storeUi.GetChild<PanelContainer>(2);
-            Check(storePanel.GetGlobalRect().Position.X >= 0 && storePanel.GetGlobalRect().End.X <= GetViewport().GetVisibleRect().Size.X, "商店面板与换行商品描述完整显示");
+            var storeBackground = storeUi.GetNode<Sprite2D>("background");
+            var storeRect = storeBackground.GetGlobalTransform() * storeBackground.GetRect();
+            Check(storeRect.Position.X >= 0 && storeRect.End.X <= GetViewport().GetVisibleRect().Size.X &&
+                storeBackground.Texture.ResourcePath == "res://ui/商店.png", "第一版商店美术面板完整显示在视口内");
             gold.Amount = 599; int stock = store.GetProductStock(1005); reserve = pack.GetReserveBullet();
             Check(!store.TryPurchase(1005, 1) && gold.Amount == 599 && store.GetProductStock(1005) == stock && pack.GetReserveBullet() == reserve, "余额不足不扣款、发货或减库存");
             gold.Amount = 1800;
             Check(!store.TryPurchase(1005, 0) && !store.TryPurchase(1005, int.MaxValue) && gold.Amount == 1800, "拒绝零数量和超量购买");
-            Check(store.TryPurchase(1005, 2) && gold.Amount == 600 && pack.GetReserveBullet() == reserve + 10 && pack.GetCount(SupplyKind.Bullet) == 5, "600 一组购买两组十发进入后备，弹匣不变");
+            Check(store.TryPurchase(1005, 2) && gold.Amount == 600 && pack.GetReserveBullet() == reserve + 20 && pack.GetCount(SupplyKind.Bullet) == 5, "600 一组购买两组二十发进入后备，弹匣不变");
             Check(!store.TryPurchase(3001, 1) && soul.GetSoul() == 0, "增益不足碎片时不能购买");
             soul.AddSoul(150);
             float attack = _player.EffectiveAttack;
             Check(store.TryPurchase(3001, 1) && soul.GetSoul() == 135 && _player.EffectiveAttack == attack * 1.5f, "15 碎片兑换攻击 +50%");
-            Check(store.TryPurchase(3002, 1) && Mathf.IsEqualApprox(_player.EffectiveMoveSpeed, 120), "移速增益 ID 与效果对应");
+            Check(store.TryPurchase(3002, 1) && Mathf.IsEqualApprox(_player.EffectiveMoveSpeed, 600), "原版移速仍正确应用 +20% 增益");
             Check(store.TryPurchase(3003, 1) && Mathf.IsEqualApprox(_player.ShotsPerSecond, 6), "攻速增益实际作用于射击");
             Check(store.TryPurchase(3004, 5) && _player.CriticalChance == 1 && !store.TryPurchase(3004, 1), "暴击封顶，不出售无效增益");
             store.SetOpen(false); store.SetOpen(false);
@@ -158,7 +162,8 @@ public partial class GameplayRegression : Node
             exit.EmitSignal(Area2D.SignalName.BodyEntered, _player);
             Check(!result.Visible, "出口关闭时无法提前获得胜利");
             gate.EmitSignal(Area2D.SignalName.BodyEntered, _player); await Frames();
-            Check(gate.IsUnlocked && exit.Monitoring && !_game.GetNode<CanvasItem>("终点大门").Visible, "开门机关解锁大门和终点检测");
+            Check(gate.IsUnlocked && gate.IsOpen && exit.Monitoring && _game.GetNode<CanvasItem>("终点大门").Visible,
+                "开门机关显示打开门图像并启用终点检测");
             exit.EmitSignal(Area2D.SignalName.BodyEntered, _player);
             Check(result.Visible && Stop.IsPaused && result.FinalScore == gold.Amount, "逃出时携带财宝结算，胜利界面冻结世界");
             result.GetNode<Button>("continue").EmitSignal(Button.SignalName.Pressed); await Frames(4);

@@ -4,7 +4,7 @@ public partial class Player : CharacterBody2D
 {
 	// 移动速度(像素/秒)
 	[Export]
-	private float moveSpeed = 100f;
+	private float moveSpeed = 500f;
 
 	// 改成 public 供 Therapy / ColorRect 读写
 	[Export]
@@ -75,7 +75,7 @@ public partial class Player : CharacterBody2D
 	{
 		var stats = GameData.Row("host", 1);
         MaxHp = hp = GameData.Number(stats, "blood");
-        moveSpeed = GameData.Number(stats, "speed") * GameData.SpeedUnit;
+        // 保留第一版场景导出的移速（500 px/s），不再用 host 表覆盖操作手感。
         _attack = GameData.Number(stats, "hit");
         _shotsPerSecond = GameData.Number(stats, "hitspeed");
         _attackDistance = GameData.Number(stats, "hitdistance") * GameData.DistanceUnit;

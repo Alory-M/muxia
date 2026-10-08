@@ -42,20 +42,20 @@ func run():
     var map = game.get_node("HUD/Map")
     var gate = game.get_node("开门机关")
     var trigger = gate.get_node("CollisionShape2D")
-    var marker = map.get_node("GateMarker")
+    var marker = map.get_node("in")
     var world: Rect2 = game.get_node("background/TextureRect").get_global_rect()
-    var ratio: Vector2 = (trigger.global_position - world.position) / world.size
+    var ratio: Vector2 = (player.global_position - world.position) / world.size
     var expected: Vector2 = (ratio - Vector2(0.5, 0.5)) * map.texture.get_size()
-    check(marker.position.distance_to(expected) < 0.1, "小地图机关标记对应实际踩踏位置")
-    check(map.get_node("GateLegend").text.contains("未触发"), "小地图显示机关未触发图例")
+    check(marker.position.distance_to(expected) < 0.1, "原版小地图玩家标记对应实际位置")
+    check(map.get_child_count() == 2 and not map.has_node("GateLegend"), "小地图恢复原图标和外框")
     check(game.get_node("background").z_index < gate.z_index and gate.z_index < player.z_index, "机关绘制在地板上、人物下方")
     check(gate.monitoring and trigger.disabled == false, "调整图层后机关仍检测踩踏")
     check(playing_music(root) == 1 and game.get_node("bgm").playing, "开始游戏切换为单首探索 BGM")
 
     player.global_position = trigger.global_position
     await frames(6)
-    check(not game.get_node("终点大门").visible and game.get_node("endarea").monitoring, "玩家实际踩下地板机关打开墓门")
-    check(map.get_node("GateLegend").text.contains("已开启"), "机关触发后小地图标记更新为已开启")
+    check(game.get_node("终点大门").visible and gate.IsOpen and game.get_node("endarea").monitoring, "玩家实际踩下地板机关显示打开门图像")
+    check(game.get_node("终点大门/OpenGateVisual").visible, "开门后保留可见的打开状态而非消失")
     game.get_node("endarea").emit_signal("body_entered", player)
     await frames(4)
     var result = game.get_node("HUD/end")

@@ -58,7 +58,7 @@ public partial class Trap : Area2D
         _burstTimer -= dt;
         if (_burstTimer > 0) return;
         _arrows--; _burstTimer = 0.12f;
-        var bullet = GD.Load<PackedScene>("res://scenes/bullet.tscn").Instantiate<Bullet>();
+        var bullet = GD.Load<PackedScene>("res://scenes/trap_arrow.tscn").Instantiate<Bullet>();
         bullet.HitsEveryone = true; bullet.Damage = _damage; bullet.Speed = 400;
         GetTree().CurrentScene.AddChild(bullet);
         bullet.GlobalPosition = GlobalPosition + ArrowOrigin;

@@ -50,23 +50,23 @@ public partial class AmmoRegression : Node
             pack.SetCount(SupplyKind.Bullet, 2); pack._totalBullet = 20; gold.Amount = 1800;
             store.SetOpen(true); await Frames();
             int stock = store.GetProductStock(1005);
-            Check(store.TryPurchase(1005, 1) && gold.Amount == 1200 && pack.GetReserveBullet() == 25 &&
+            Check(store.TryPurchase(1005, 1) && gold.Amount == 1200 && pack.GetReserveBullet() == 30 &&
                 pack.GetCount(SupplyKind.Bullet) == 2 && store.GetProductStock(1005) == stock - 1,
-                "购买数量一获得五发备用弹药，花费六百财宝及一组库存");
-            Check(store.TryPurchase(1005, 2) && gold.Amount == 0 && pack.GetReserveBullet() == 35 &&
+                "购买数量一获得十发备用弹药，花费六百财宝及一组库存");
+            Check(store.TryPurchase(1005, 2) && gold.Amount == 0 && pack.GetReserveBullet() == 50 &&
                 pack.GetCount(SupplyKind.Bullet) == 2 && store.GetProductStock(1005) == stock - 3,
-                "购买数量二获得十发备用弹药，花费一千二百财宝及两组库存");
+                "购买数量二获得二十发备用弹药，花费一千二百财宝及两组库存");
             stock = store.GetProductStock(1005);
-            Check(!store.TryPurchase(1005, 1) && gold.Amount == 0 && pack.GetReserveBullet() == 35 &&
+            Check(!store.TryPurchase(1005, 1) && gold.Amount == 0 && pack.GetReserveBullet() == 50 &&
                 store.GetProductStock(1005) == stock, "余额不足不扣库存或增加子弹");
             gold.Amount = 600;
             Check(!store.TryPurchase(1005, 0) && !store.TryPurchase(1005, -1) &&
                 !store.TryPurchase(1005, int.MaxValue) && !store.TryPurchase(9999, 1) &&
-                gold.Amount == 600 && pack.GetReserveBullet() == 35 && store.GetProductStock(1005) == stock,
+                gold.Amount == 600 && pack.GetReserveBullet() == 50 && store.GetProductStock(1005) == stock,
                 "零数量、负数、超量和未知商品不会改变结算状态");
             pack._totalBullet = int.MaxValue - 2;
             Check(!store.TryPurchase(1005, 1) && gold.Amount == 600 && pack.GetReserveBullet() == int.MaxValue - 2 &&
-                store.GetProductStock(1005) == stock, "备用弹药无法完整容纳五发时拒绝购买且不扣款");
+                store.GetProductStock(1005) == stock, "备用弹药无法完整容纳十发时拒绝购买且不扣款");
             store.SetOpen(false);
             Check(!store.TryPurchase(1005, 1), "关闭商店后不能远程购买");
         }

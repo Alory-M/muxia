@@ -1,9 +1,23 @@
 [gd_scene format=3 uid="uid://bipb1owg5xw2i"]
 
-[ext_resource type="Script" path="res://Store.cs" id="1_store"]
-[ext_resource type="Script" path="res://scenes/Stop.cs" id="2_stop"]
+[ext_resource type="Texture2D" uid="uid://m5t5yf1s6npp" path="res://ui/商店.png" id="1_c176v"]
+[ext_resource type="Script" uid="uid://btcqjwcubxnuv" path="res://Store.cs" id="2_fsgxa"]
+[ext_resource type="Texture2D" uid="uid://dpk5nf8gdukow" path="res://bin/pack/药品.png" id="2_jdgcu"]
+[ext_resource type="Texture2D" uid="uid://mcwx1ognce4p" path="res://bin/item/物品框.png" id="3_a4gqu"]
+[ext_resource type="Script" uid="uid://dsdpw46ay8klk" path="res://scenes/Stop.cs" id="3_hi8wy"]
+[ext_resource type="Texture2D" uid="uid://bg1d8ire2pdfx" path="res://bin/pack/解毒剂.png" id="3_sxxsk"]
+[ext_resource type="Texture2D" uid="uid://mtp6kfpn3d4v" path="res://bin/pack/子弹.png" id="4_a4gqu"]
+[ext_resource type="Texture2D" uid="uid://ct1qvp7h5unsi" path="res://bin/pack/绷带.PNG" id="5_mxlhg"]
+[ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="7_a4gqu"]
+[ext_resource type="Script" uid="uid://ci0fwvnaey6ju" path="res://购买数量.cs" id="8_mxlhg"]
+[ext_resource type="Texture2D" uid="uid://b0hd000ek4o0q" path="res://bin/item/item/item/数量选择框.png" id="11_pmeuj"]
+[ext_resource type="Texture2D" uid="uid://2pbgs0pdpyx2" path="res://bin/item/item/item/加号（点击）.png" id="12_xbkst"]
+[ext_resource type="Texture2D" uid="uid://pkxdyflbyj64" path="res://bin/item/item/item/减号（点击）.png" id="13_fw4l6"]
+[ext_resource type="Script" uid="uid://ceellgr546c8y" path="res://Animate.cs" id="13_hayl1"]
+[ext_resource type="Texture2D" uid="uid://cbo4ug80q4qqd" path="res://bin/item/item/item/关闭按钮（点击）(1).png" id="16_3wvf5"]
+[ext_resource type="Texture2D" uid="uid://cq7s7jnlnmls1" path="res://bin/item/item/item/关闭按钮（未点击）(1).png" id="17_qdyly"]
 
-[node name="Control2" type="Control" groups=["modal_ui", "store_ui"]]
+[node name="Control2" type="Control" unique_id=1988767736 groups=["modal_ui", "store_ui"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,8 +25,495 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="store" type="Node" parent="."]
-script = ExtResource("1_store")
+[node name="background" type="Sprite2D" parent="." unique_id=1675147224]
+position = Vector2(552.99994, 316)
+scale = Vector2(0.4876665, 0.48766637)
+texture = ExtResource("1_c176v")
+metadata/_edit_lock_ = true
 
-[node name="stop" type="Node" parent="store"]
-script = ExtResource("2_stop")
+[node name="store" type="Node" parent="." unique_id=1089208150]
+script = ExtResource("2_fsgxa")
+
+[node name="stop" type="Node" parent="store" unique_id=766937791]
+script = ExtResource("3_hi8wy")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1613464529]
+position = Vector2(388, 264)
+scale = Vector2(0.0554301, 0.05587875)
+texture = ExtResource("3_a4gqu")
+
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=25892959]
+position = Vector2(521, 265)
+scale = Vector2(0.0554301, 0.05587875)
+texture = ExtResource("3_a4gqu")
+
+[node name="Sprite2D3" type="Sprite2D" parent="." unique_id=2058758159]
+position = Vector2(650, 265)
+scale = Vector2(0.0554301, 0.05587875)
+texture = ExtResource("3_a4gqu")
+
+[node name="Sprite2D4" type="Sprite2D" parent="." unique_id=1853461170]
+position = Vector2(784.00006, 266)
+scale = Vector2(0.0554301, 0.05587875)
+texture = ExtResource("3_a4gqu")
+
+[node name="drug" type="Sprite2D" parent="." unique_id=1009408977]
+z_index = 1
+position = Vector2(388.00003, 264.00003)
+scale = Vector2(0.10466667, 0.10466667)
+texture = ExtResource("2_jdgcu")
+
+[node name="Label" type="Label" parent="drug" unique_id=484949752]
+offset_left = -640.1277
+offset_top = 850.3182
+offset_right = 613.8723
+offset_bottom = 1339.3181
+theme_override_font_sizes/font_size = 88
+text = "试管上的字迹已经模糊
+药效倒还在
+可恢复100生命值"
+horizontal_alignment = 1
+
+[node name="Antidote" type="Sprite2D" parent="." unique_id=655972296]
+z_index = 1
+position = Vector2(517.00006, 264)
+scale = Vector2(0.058695644, 0.058695655)
+texture = ExtResource("3_sxxsk")
+
+[node name="Label" type="Label" parent="Antidote" unique_id=1220439807]
+offset_left = -579.2604
+offset_top = 1431.111
+offset_right = 596.7396
+offset_bottom = 2129.1108
+theme_override_font_sizes/font_size = 168
+text = "墓里的毒不能拖
+喝下这瓶药
+可解除中毒状态"
+horizontal_alignment = 1
+
+[node name="Bullet" type="Sprite2D" parent="." unique_id=2102952933]
+z_index = 1
+position = Vector2(784, 263.00003)
+scale = Vector2(0.034986153, 0.034986142)
+texture = ExtResource("4_a4gqu")
+
+[node name="Label" type="Label" parent="Bullet" unique_id=814386699]
+offset_left = -1171.8921
+offset_top = 2458.115
+offset_right = 828.1079
+offset_bottom = 3675.115
+theme_override_font_sizes/font_size = 220
+text = "冰冷的黄铜子弹
+墓里有什么东西怕枪
+没人说得准
+手枪最多装填 6 发"
+horizontal_alignment = 1
+
+[node name="绷带" type="Sprite2D" parent="." unique_id=447946765]
+z_index = 1
+position = Vector2(647, 265.00003)
+scale = Vector2(0.10133337, 0.10133337)
+texture = ExtResource("5_mxlhg")
+
+[node name="Label" type="Label" parent="绷带" unique_id=1204630965]
+offset_left = -651.31555
+offset_top = 819.0783
+offset_right = 627.68445
+offset_bottom = 1290.0784
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 0)
+theme_override_font_sizes/font_size = 83
+text = "带血的医用绷带
+缠紧伤口
+可以先把血止住
+解除流血效果"
+horizontal_alignment = 1
+
+[node name="药品" type="Label" parent="." unique_id=174401125]
+layout_mode = 0
+offset_left = 354.0
+offset_top = 304.0
+offset_right = 418.0
+offset_bottom = 349.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "药品"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="买药" type="Button" parent="." unique_id=115090077]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 358.0
+offset_top = 422.0
+offset_right = 417.0
+offset_bottom = 447.0
+
+[node name="Sprite2D" type="Sprite2D" parent="买药" unique_id=319673588]
+position = Vector2(30, 13)
+scale = Vector2(0.028801847, 0.028801845)
+texture = ExtResource("7_a4gqu")
+
+[node name="Label" type="Label" parent="买药" unique_id=1692322264]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 1.0
+offset_right = 50.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "600"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="买解毒剂" type="Button" parent="." unique_id=574388205]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 486.0
+offset_top = 424.0
+offset_right = 545.0
+offset_bottom = 449.0
+
+[node name="Sprite2D" type="Sprite2D" parent="买解毒剂" unique_id=1270999592]
+position = Vector2(30, 13)
+scale = Vector2(0.028801847, 0.028801845)
+texture = ExtResource("7_a4gqu")
+
+[node name="Label" type="Label" parent="买解毒剂" unique_id=534115519]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 1.0
+offset_right = 51.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "600"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="买绷带" type="Button" parent="." unique_id=2062879262]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 619.0
+offset_top = 423.0
+offset_right = 678.0
+offset_bottom = 448.0
+
+[node name="Sprite2D" type="Sprite2D" parent="买绷带" unique_id=1144579123]
+position = Vector2(30, 13)
+scale = Vector2(0.028801847, 0.028801845)
+texture = ExtResource("7_a4gqu")
+
+[node name="Label" type="Label" parent="买绷带" unique_id=1910813460]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 1.0
+offset_right = 51.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "600"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="买子弹" type="Button" parent="." unique_id=1689559950]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 748.0
+offset_top = 423.0
+offset_right = 807.0
+offset_bottom = 448.0
+
+[node name="Sprite2D" type="Sprite2D" parent="买子弹" unique_id=472857836]
+position = Vector2(30, 13)
+scale = Vector2(0.028801847, 0.028801845)
+texture = ExtResource("7_a4gqu")
+
+[node name="Label" type="Label" parent="买子弹" unique_id=733701450]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 1.0
+offset_right = 50.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "600"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="绷带2" type="Label" parent="." unique_id=685630412]
+layout_mode = 0
+offset_left = 618.0
+offset_top = 309.0
+offset_right = 682.0
+offset_bottom = 354.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "绷带"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="子弹" type="Label" parent="." unique_id=204865595]
+layout_mode = 0
+offset_left = 747.0
+offset_top = 309.0
+offset_right = 811.0
+offset_bottom = 354.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "子弹"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="解毒剂" type="Label" parent="." unique_id=1912541322]
+layout_mode = 0
+offset_left = 470.0
+offset_top = 307.0
+offset_right = 566.0
+offset_bottom = 352.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 29
+text = "解毒剂"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="购买药品数量" type="Label" parent="." unique_id=421168739]
+layout_mode = 0
+offset_left = 369.0
+offset_top = 395.0
+offset_right = 409.0
+offset_bottom = 418.0
+theme_override_font_sizes/font_size = 14
+text = "1"
+horizontal_alignment = 1
+script = ExtResource("8_mxlhg")
+
+[node name="正常" type="Sprite2D" parent="购买药品数量" unique_id=986477182]
+position = Vector2(24.999998, 10)
+scale = Vector2(0.10359409, 0.09774444)
+texture = ExtResource("11_pmeuj")
+
+[node name="点加" type="Sprite2D" parent="购买药品数量" unique_id=803738018]
+visible = false
+position = Vector2(25.25, 9.813)
+scale = Vector2(0.10359405, 0.096334614)
+texture = ExtResource("12_xbkst")
+
+[node name="点减" type="Sprite2D" parent="购买药品数量" unique_id=1494903920]
+visible = false
+position = Vector2(25.258, 10)
+scale = Vector2(0.10301879, 0.102443404)
+texture = ExtResource("13_fw4l6")
+
+[node name="增" type="Button" parent="购买药品数量" unique_id=1024433323]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 41.0
+offset_top = 4.0
+offset_right = 57.75
+offset_bottom = 17.399994
+
+[node name="减" type="Button" parent="购买药品数量" unique_id=1502062684]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = -19.0
+offset_top = 4.0
+offset_right = -2.25
+offset_bottom = 17.399994
+
+[node name="animate" type="Node" parent="购买药品数量" unique_id=663348106]
+script = ExtResource("13_hayl1")
+
+[node name="购买解毒剂数量" type="Label" parent="." unique_id=2009017783]
+layout_mode = 0
+offset_left = 497.0
+offset_top = 394.0
+offset_right = 537.0
+offset_bottom = 417.0
+theme_override_font_sizes/font_size = 15
+text = "1"
+horizontal_alignment = 1
+script = ExtResource("8_mxlhg")
+
+[node name="正常2" type="Sprite2D" parent="购买解毒剂数量" unique_id=612956943]
+position = Vector2(27, 11)
+scale = Vector2(0.10359409, 0.09774444)
+texture = ExtResource("11_pmeuj")
+
+[node name="点加2" type="Sprite2D" parent="购买解毒剂数量" unique_id=947017683]
+visible = false
+position = Vector2(26.999985, 11)
+scale = Vector2(0.10359405, 0.096334614)
+texture = ExtResource("12_xbkst")
+
+[node name="点减2" type="Sprite2D" parent="购买解毒剂数量" unique_id=966151882]
+visible = false
+position = Vector2(26.999985, 11)
+scale = Vector2(0.10301879, 0.102443404)
+texture = ExtResource("13_fw4l6")
+
+[node name="增" type="Button" parent="购买解毒剂数量" unique_id=817966959]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 43.0
+offset_top = 5.0
+offset_right = 59.75
+offset_bottom = 18.399994
+
+[node name="减" type="Button" parent="购买解毒剂数量" unique_id=583069686]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = -18.0
+offset_top = 5.0
+offset_right = -1.25
+offset_bottom = 18.399994
+
+[node name="animate" type="Node" parent="购买解毒剂数量" unique_id=858316689]
+script = ExtResource("13_hayl1")
+
+[node name="购买绷带数量" type="Label" parent="." unique_id=1330597090]
+layout_mode = 0
+offset_left = 627.0
+offset_top = 394.0
+offset_right = 667.0
+offset_bottom = 417.0
+theme_override_font_sizes/font_size = 15
+text = "1"
+horizontal_alignment = 1
+script = ExtResource("8_mxlhg")
+
+[node name="正常3" type="Sprite2D" parent="购买绷带数量" unique_id=326395877]
+position = Vector2(25, 11)
+scale = Vector2(0.10359409, 0.09774444)
+texture = ExtResource("11_pmeuj")
+
+[node name="点加3" type="Sprite2D" parent="购买绷带数量" unique_id=2086004647]
+visible = false
+position = Vector2(24.999977, 11)
+scale = Vector2(0.10359405, 0.096334614)
+texture = ExtResource("12_xbkst")
+
+[node name="点减3" type="Sprite2D" parent="购买绷带数量" unique_id=451463053]
+visible = false
+position = Vector2(24.999985, 11)
+scale = Vector2(0.10301879, 0.102443404)
+texture = ExtResource("13_fw4l6")
+
+[node name="增" type="Button" parent="购买绷带数量" unique_id=1745103331]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 41.0
+offset_top = 5.0
+offset_right = 57.75
+offset_bottom = 18.399994
+
+[node name="减" type="Button" parent="购买绷带数量" unique_id=796896645]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = -19.0
+offset_top = 5.0
+offset_right = -2.25
+offset_bottom = 18.399994
+
+[node name="animate" type="Node" parent="购买绷带数量" unique_id=1585915788]
+script = ExtResource("13_hayl1")
+
+[node name="购买子弹数量" type="Label" parent="." unique_id=1045725191]
+layout_mode = 0
+offset_left = 757.0
+offset_top = 394.0
+offset_right = 797.0
+offset_bottom = 417.0
+theme_override_font_sizes/font_size = 15
+text = "1"
+horizontal_alignment = 1
+script = ExtResource("8_mxlhg")
+
+[node name="正常4" type="Sprite2D" parent="购买子弹数量" unique_id=1857330442]
+position = Vector2(25, 11)
+scale = Vector2(0.10359409, 0.09774444)
+texture = ExtResource("11_pmeuj")
+
+[node name="点加4" type="Sprite2D" parent="购买子弹数量" unique_id=982510965]
+visible = false
+position = Vector2(24.999985, 11)
+scale = Vector2(0.10359405, 0.096334614)
+texture = ExtResource("12_xbkst")
+
+[node name="点减4" type="Sprite2D" parent="购买子弹数量" unique_id=1573430574]
+visible = false
+position = Vector2(24.999985, 11)
+scale = Vector2(0.10301879, 0.102443404)
+texture = ExtResource("13_fw4l6")
+
+[node name="增" type="Button" parent="购买子弹数量" unique_id=1635293937]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 41.0
+offset_top = 5.0
+offset_right = 57.75
+offset_bottom = 18.399994
+
+[node name="减" type="Button" parent="购买子弹数量" unique_id=1908352807]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = -19.0
+offset_top = 5.0
+offset_right = -2.25
+offset_bottom = 18.399994
+
+[node name="animate" type="Node" parent="购买子弹数量" unique_id=1327506414]
+script = ExtResource("13_hayl1")
+
+
+[node name="close2" type="Button" parent="." unique_id=1687777691]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 834.0
+offset_top = 100.0
+offset_right = 881.0
+offset_bottom = 147.0
+
+[node name="点击" type="Sprite2D" parent="." unique_id=709426618]
+visible = false
+position = Vector2(858.5, 125)
+scale = Vector2(0.2360516, 0.2608696)
+texture = ExtResource("16_3wvf5")
+
+[node name="未点击" type="Sprite2D" parent="." unique_id=1631785893]
+position = Vector2(858.2526, 125)
+scale = Vector2(0.2381752, 0.2608696)
+texture = ExtResource("17_qdyly")
+
+[node name="剩余药品" type="Label" parent="." unique_id=1844029716]
+layout_mode = 0
+offset_left = 402.0
+offset_top = 270.0
+offset_right = 442.0
+offset_bottom = 293.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "1"
+
+[node name="剩余解毒剂" type="Label" parent="." unique_id=1899581039]
+layout_mode = 0
+offset_left = 539.0
+offset_top = 274.0
+offset_right = 579.0
+offset_bottom = 297.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "1"
+
+[node name="剩余绷带" type="Label" parent="." unique_id=1897623485]
+layout_mode = 0
+offset_left = 670.0
+offset_top = 276.0
+offset_right = 710.0
+offset_bottom = 299.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "1"
+
+[node name="剩余子弹" type="Label" parent="." unique_id=84271779]
+layout_mode = 0
+offset_left = 763.0
+offset_top = 275.0
+offset_right = 803.0
+offset_bottom = 298.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "1"
+horizontal_alignment = 1

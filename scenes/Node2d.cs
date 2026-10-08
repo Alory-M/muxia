@@ -4,14 +4,12 @@ using System;
 public partial class Node2d : Node2D
 {	
 	private Sprite2D _Map;
-	private bool _MapVisible = false;
 	private Pack _pack;
     public override void _EnterTree() => AudioSettings.Ensure();
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		_Map = GetNode<Sprite2D>("HUD/Map");
-        _Map.Visible = false;
 		_pack = GetNode<Pack>("player/pack");
         AddChild(new InteractionController { Name = "Interactions" });
         AddChild(new ExpeditionHud { Name = "ExpeditionHud" });
@@ -37,8 +35,7 @@ public partial class Node2d : Node2D
 	{
 		if (!Stop.IsPaused && Input.IsActionJustPressed("M"))
 		{
-			_MapVisible = !_MapVisible;
-			_Map.Visible = _MapVisible;
+			_Map.Visible = !_Map.Visible;
 		}
 		if (!Stop.IsPaused && Input.IsActionJustPressed("R"))
 		{

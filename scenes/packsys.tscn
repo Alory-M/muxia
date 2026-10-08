@@ -1,16 +1,233 @@
 [gd_scene format=3 uid="uid://c8dye4fcemnu0"]
 
-[ext_resource type="Script" path="res://scenes/Packsys.cs" id="1_pack"]
-[ext_resource type="Script" path="res://scenes/Stop.cs" id="2_stop"]
+[ext_resource type="Texture2D" uid="uid://boo6kjp34ftnb" path="res://ui/背包.jpeg" id="1_0fbet"]
+[ext_resource type="Script" uid="uid://e3us3pbiqrug" path="res://scenes/Packsys.cs" id="1_80bua"]
+[ext_resource type="Texture2D" uid="uid://dpk5nf8gdukow" path="res://bin/pack/药品.png" id="2_famm7"]
+[ext_resource type="Texture2D" uid="uid://bg1d8ire2pdfx" path="res://bin/pack/解毒剂.png" id="4_t1l7v"]
+[ext_resource type="Script" uid="uid://dsdpw46ay8klk" path="res://scenes/Stop.cs" id="5_80bua"]
+[ext_resource type="Texture2D" uid="uid://ct1qvp7h5unsi" path="res://bin/pack/绷带.PNG" id="6_gh8in"]
+[ext_resource type="Texture2D" uid="uid://4gdrfjncno7b" path="res://ui/按钮.jpeg" id="6_t1l7v"]
+[ext_resource type="Texture2D" uid="uid://cuexplet2mupj" path="res://bin/item/item/item/子弹（斜）.png" id="9_ch81a"]
+[ext_resource type="Texture2D" uid="uid://cbo4ug80q4qqd" path="res://bin/item/item/item/关闭按钮（点击）(1).png" id="11_o7hjt"]
+[ext_resource type="Texture2D" uid="uid://cq7s7jnlnmls1" path="res://bin/item/item/item/关闭按钮（未点击）(1).png" id="12_grxoc"]
 
-[node name="Control" type="Control" groups=["modal_ui"]]
+[node name="Control" type="Control" unique_id=1854951336 groups=["modal_ui"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -11.0
+offset_top = 1.0
+offset_right = -11.0
+offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_pack")
+script = ExtResource("1_80bua")
 
-[node name="stop" type="Node" parent="."]
-script = ExtResource("2_stop")
+[node name="background" type="Sprite2D" parent="." unique_id=1981008163]
+position = Vector2(552.99994, 316)
+scale = Vector2(0.4876665, 0.48766637)
+texture = ExtResource("1_0fbet")
+metadata/_edit_lock_ = true
+
+[node name="stop" type="Node" parent="." unique_id=84635088]
+script = ExtResource("5_80bua")
+
+[node name="item" type="Sprite2D" parent="." unique_id=154524614]
+visible = false
+position = Vector2(758, 203)
+scale = Vector2(0.14666663, 0.14666663)
+texture = ExtResource("2_famm7")
+
+[node name="UseItem" type="Button" parent="." unique_id=626442909]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 656.0
+offset_top = 448.0
+offset_right = 776.0
+offset_bottom = 501.0
+
+[node name="TextureRect" type="TextureRect" parent="UseItem" unique_id=1668340431]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 118.9493
+offset_bottom = 50.0
+texture = ExtResource("6_t1l7v")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="UseItem" unique_id=70029848]
+layout_mode = 0
+offset_top = 3.0
+offset_right = 118.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(0.011764706, 0, 0, 1)
+text = "使用"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="itemname" type="Label" parent="." unique_id=263958568]
+visible = false
+layout_mode = 0
+offset_left = 640.0
+offset_top = 277.0
+offset_right = 875.0
+offset_bottom = 306.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="button11" type="Button" parent="." unique_id=398537517]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 249.0
+offset_top = 136.0
+offset_right = 320.0
+offset_bottom = 208.0
+
+[node name="image" type="Sprite2D" parent="button11" unique_id=576964443]
+position = Vector2(36, 36)
+scale = Vector2(0.09466665, 0.09466665)
+texture = ExtResource("2_famm7")
+
+[node name="counter" type="Label" parent="button11" unique_id=1930237141]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 42.0
+offset_right = 65.0
+offset_bottom = 65.0
+text = "1"
+
+[node name="button12" type="Button" parent="." unique_id=423775599]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 349.0
+offset_top = 136.0
+offset_right = 420.0
+offset_bottom = 208.0
+
+[node name="image" type="Sprite2D" parent="button12" unique_id=550849784]
+position = Vector2(36.000008, 34.5)
+scale = Vector2(0.096000016, 0.09466667)
+texture = ExtResource("6_gh8in")
+
+[node name="counter" type="Label" parent="button12" unique_id=2095782735]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 42.0
+offset_right = 94.0
+offset_bottom = 65.0
+text = "1"
+
+[node name="button13" type="Button" parent="." unique_id=951525698]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 447.0
+offset_top = 136.0
+offset_right = 518.0
+offset_bottom = 208.0
+
+[node name="image" type="Sprite2D" parent="button13" unique_id=1249730984]
+position = Vector2(36, 36)
+scale = Vector2(0.058090575, 0.054357592)
+texture = ExtResource("4_t1l7v")
+
+[node name="counter" type="Label" parent="button13" unique_id=1095911934]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 42.0
+offset_right = 94.0
+offset_bottom = 65.0
+text = "1"
+
+[node name="button14" type="Button" parent="." unique_id=1293892094]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 548.0
+offset_top = 136.0
+offset_right = 619.0
+offset_bottom = 208.0
+
+[node name="image" type="Sprite2D" parent="button14" unique_id=1226418777]
+position = Vector2(33.50001, 34.49999)
+scale = Vector2(0.041284423, 0.03994761)
+texture = ExtResource("9_ch81a")
+
+[node name="counter" type="Label" parent="button14" unique_id=250137428]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 42.0
+offset_right = 94.0
+offset_bottom = 65.0
+text = "1"
+
+
+[node name="close2" type="Button" parent="." unique_id=1515850725]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 834.0
+offset_top = 100.0
+offset_right = 881.0
+offset_bottom = 147.0
+
+[node name="点击" type="Sprite2D" parent="." unique_id=787453867]
+visible = false
+position = Vector2(858.5, 125)
+scale = Vector2(0.2360516, 0.2608696)
+texture = ExtResource("11_o7hjt")
+
+[node name="未点击" type="Sprite2D" parent="." unique_id=960416633]
+position = Vector2(858.2526, 125)
+scale = Vector2(0.2381752, 0.2608696)
+texture = ExtResource("12_grxoc")
+
+[node name="description" type="Label" parent="."]
+layout_mode = 0
+offset_left = 650.0
+offset_top = 348.0
+offset_right = 872.0
+offset_bottom = 437.0
+theme_override_colors/font_color = Color(0.12, 0.1, 0.07, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_constants/line_spacing = -3
+autowrap_mode = 3
+
+[node name="button21" type="Button" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 249.0
+offset_top = 236.0
+offset_right = 320.0
+offset_bottom = 307.0
+
+[node name="image" type="Sprite2D" parent="button21"]
+position = Vector2(36, 36)
+
+[node name="counter" type="Label" parent="button21"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 48.0
+offset_right = 68.0
+offset_bottom = 69.0
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+
+[node name="button22" type="Button" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 349.0
+offset_top = 236.0
+offset_right = 420.0
+offset_bottom = 307.0
+
+[node name="image" type="Sprite2D" parent="button22"]
+position = Vector2(36, 36)
+
+[node name="counter" type="Label" parent="button22"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 48.0
+offset_right = 68.0
+offset_bottom = 69.0
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2

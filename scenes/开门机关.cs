@@ -3,9 +3,8 @@ using Godot;
 /// <summary>
 /// 开门机关,挂在 game.tscn 的 开门机关(Area2D)上。
 ///
-/// 玩家碰到它**一次**,终点就解锁:
-///   终点大门(远处那张 Sprite2D)藏起来 —— 门开了
-///   endarea(终点触发区)显示出来,同时把检测打开 —— 变得可交互
+/// 玩家踩下机关一次后，墓门显示打开状态并开启终点检测。
+/// 背景图已包含关闭的栅栏，所以开门时同时绘制门洞和靠边的门扇。
 ///
 /// 在那之前 endarea 是"关着"的:不可见,而且碰撞也是关的。
 /// 注意光把 visible 设成 false 是拦不住玩家的 —— Area2D 的碰撞跟显示没有关系,
@@ -19,10 +18,12 @@ public partial class 开门机关 : Area2D
 	private Area2D _endArea;
 
 	// ../终点大门,门那张图
-	private CanvasItem _gate;
+	private Sprite2D _gate;
+	private Node2D _openGateVisual;
 
 	private bool _triggered;
     public bool IsUnlocked => _triggered;
+    public bool IsOpen => _openGateVisual?.Visible == true;
     public Vector2 TriggerPosition => GetNodeOrNull<CollisionShape2D>("CollisionShape2D")?.GlobalPosition ?? GlobalPosition;
 
 	// 开门音效播放器:机关被触发、门打开时播放一次 stone_door_open.wav
@@ -37,7 +38,7 @@ public partial class 开门机关 : Area2D
 			GD.PushWarning("开门机关: 找不到 ../endarea,拉了机关也解锁不了终点。");
 		}
 
-		_gate = GetNodeOrNull<CanvasItem>("../终点大门");
+		_gate = GetNodeOrNull<Sprite2D>("../终点大门");
 		if (_gate == null)
 		{
 			GD.PushWarning("开门机关: 找不到 ../终点大门,拉了机关也看不到门开。");
@@ -50,11 +51,41 @@ public partial class 开门机关 : Area2D
 		if (_gate != null)
 		{
 			_gate.Visible = true;
+			SetupGateVisual();
 		}
 
 		BodyEntered += OnBodyEntered;
 
 		SetupOpenAudio();
+	}
+
+	private void SetupGateVisual()
+	{
+		_openGateVisual = new Node2D { Name = "OpenGateVisual", Visible = false };
+		_gate.AddChild(_openGateVisual);
+
+		// 坐标对应原门纹理中栅栏的四个角，保持原门框、位置和缩放。
+		// 覆盖背景中烘焙的关闭栅栏，露出可通行的暗门洞。
+		_openGateVisual.AddChild(new Polygon2D
+		{
+			Name = "Doorway",
+			Polygon = new[]
+			{
+				new Vector2(-233, -399), new Vector2(54, -446),
+				new Vector2(54, 423), new Vector2(-233, 380)
+			},
+			Color = new Color(0.012f, 0.018f, 0.023f)
+		});
+
+		// 原栅栏收拢到门洞右侧，明确呈现打开后的门扇。
+		_openGateVisual.AddChild(new Sprite2D
+		{
+			Name = "OpenDoorLeaf",
+			Texture = _gate.Texture,
+			Position = new Vector2(43, 0),
+			Scale = new Vector2(0.14f, 1),
+			ZIndex = 1
+		});
 	}
 
 	// 创建开门音效播放器并加载 stone_door_open.wav
@@ -95,7 +126,9 @@ public partial class 开门机关 : Area2D
 
 		if (_gate != null)
 		{
-			_gate.Visible = false;   // 门开了
+			// SelfModulate 只隐藏关闭的栅栏纹理，子节点继续显示门洞和打开的门扇。
+			_gate.SelfModulate = new Color(1, 1, 1, 0);
+			_openGateVisual.Visible = true;
 		}
 
 		PlayOpenSound(); // 门开了,播放 stone_door_open

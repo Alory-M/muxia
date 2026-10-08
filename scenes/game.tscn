@@ -611,6 +611,7 @@ position = Vector2(1948.25, 1290)
 shape = SubResource("RectangleShape2D_hfknc")
 
 [node name="终点大门" type="Sprite2D" parent="." unique_id=453360046]
+z_index = -10
 position = Vector2(2042.1874, 272.20822)
 scale = Vector2(0.22711685, 0.22106203)
 texture = ExtResource("63_l6q63")
@@ -622,7 +623,7 @@ script = ExtResource("56_ms3bu")
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="endarea" unique_id=5794379]
-position = Vector2(1981.5, 269)
+position = Vector2(2021.5, 269)
 shape = SubResource("RectangleShape2D_qxvy8")
 
 [node name="coffin" parent="." unique_id=847161236 instance=ExtResource("65_3x28f")]
