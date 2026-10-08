@@ -55,7 +55,7 @@
 [ext_resource type="PackedScene" uid="uid://bhvhucpjnebno" path="res://scenes/stop.tscn" id="31_3x338"]
 [ext_resource type="Script" uid="uid://b1ynjrijdxkey" path="res://scenes/State.cs" id="31_weeiq"]
 [ext_resource type="Script" uid="uid://lcivnm5ognjd" path="res://scenes/Pack.cs" id="32_uxocx"]
-[ext_resource type="Script" uid="uid://cstg74fd6wd14" path="res://scenes/Clear.cs" id="33_7nv0b"]
+[ext_resource type="Script" path="res://scenes/Clear.cs" id="33_7nv0b"]
 [ext_resource type="Script" uid="uid://dtli2yu6qnt7w" path="res://scenes/Gold.cs" id="34_o8oq8"]
 [ext_resource type="Script" uid="uid://crecd8f4say6s" path="res://scenes/soulpiece.cs" id="35_sxt1d"]
 [ext_resource type="PackedScene" uid="uid://x8qgje1ggp81" path="res://scenes/businessman.tscn" id="36_2iuns"]
@@ -75,6 +75,11 @@
 [ext_resource type="PackedScene" uid="uid://dejj8okgfbs6g" path="res://zombiegd/Fzombie/CoFast.tscn" id="66_weeiq"]
 [ext_resource type="PackedScene" uid="uid://djiqymlvmtmdq" path="res://zombiegd/Fzombie/CoSharp.tscn" id="67_uxocx"]
 [ext_resource type="PackedScene" uid="uid://pg8l7kvnu057" path="res://zombiegd/Fzombie/CoPoison.tscn" id="68_7nv0b"]
+
+[ext_resource type="PackedScene" path="res://scenes/trap.tscn" id="69_trap"]
+
+[ext_resource type="PackedScene" path="res://zombiegd/Fzombie/CoArrow.tscn" id="70_arrow"]
+[ext_resource type="PackedScene" path="res://zombiegd/Fzombie/CoHeavy.tscn" id="71_heavy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33age"]
 size = Vector2(22, 88)
@@ -179,6 +184,7 @@ position = Vector2(577.205, 1123.205)
 script = ExtResource("2_8ool0")
 
 [node name="background" parent="." unique_id=199233029 instance=ExtResource("2_m4url")]
+z_index = -20
 metadata/_edit_use_anchors_ = true
 metadata/_edit_lock_ = true
 
@@ -220,27 +226,6 @@ metadata/_edit_lock_ = true
 position = Vector2(6.67572e-05, 4.411765)
 scale = Vector2(0.50413203, 0.92707044)
 texture = ExtResource("10_66xif")
-
-[node name="btn_normal" type="Button" parent="HUD" unique_id=781705095]
-offset_left = 625.0
-offset_top = -120.0
-offset_right = 756.0
-offset_bottom = -57.0
-text = "正常"
-
-[node name="btn_bleed" type="Button" parent="HUD" unique_id=2008822049]
-offset_left = 782.0
-offset_top = -120.0
-offset_right = 913.0
-offset_bottom = -57.0
-text = "流血"
-
-[node name="btn_slow" type="Button" parent="HUD" unique_id=664828366]
-offset_left = 947.0
-offset_top = -120.0
-offset_right = 1078.0
-offset_bottom = -57.0
-text = "迟缓"
 
 [node name="packsys" parent="HUD" unique_id=1854951336 instance=ExtResource("6_05nbr")]
 visible = false
@@ -613,6 +598,7 @@ position = Vector2(1537, 848.99994)
 stream = ExtResource("61_0rmfi")
 
 [node name="开门机关" type="Area2D" parent="." unique_id=134149694]
+z_index = -10
 script = ExtResource("61_xbak0")
 
 [node name="Sprite2D" type="Sprite2D" parent="开门机关" unique_id=1842100519]
@@ -654,15 +640,32 @@ position = Vector2(1012, 267)
 [node name="coffin5" parent="." unique_id=985798119 instance=ExtResource("66_weeiq")]
 position = Vector2(1314, 1065)
 
-[node name="coffin6" parent="." unique_id=1076626579 instance=ExtResource("68_7nv0b")]
+[node name="coffin6" parent="." unique_id=1076626579 instance=ExtResource("70_arrow")]
 position = Vector2(797, 1274)
 
 [node name="coffin7" parent="." unique_id=1580140913 instance=ExtResource("68_7nv0b")]
 position = Vector2(1929, 1028)
 
-[node name="coffin8" parent="." unique_id=1148105144 instance=ExtResource("67_uxocx")]
+[node name="coffin8" parent="." unique_id=1148105144 instance=ExtResource("71_heavy")]
 position = Vector2(1738, 452)
 
 [node name="bgm" type="AudioStreamPlayer" parent="." unique_id=1379898773]
 stream = ExtResource("62_bnuda")
+bus = &"Music"
 autoplay = true
+
+[node name="SpikeTrap" parent="." instance=ExtResource("69_trap")]
+position = Vector2(560, 1100)
+MechanismId = 1
+
+[node name="SpikeTrap2" parent="." instance=ExtResource("69_trap")]
+position = Vector2(1350, 850)
+MechanismId = 1
+
+[node name="ArrowTrap" parent="." instance=ExtResource("69_trap")]
+position = Vector2(650, 680)
+MechanismId = 2
+
+[node name="ArrowTrap2" parent="." instance=ExtResource("69_trap")]
+position = Vector2(1660, 1060)
+MechanismId = 2

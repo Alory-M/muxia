@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://dlkgf8xtefc1t" path="res://ui/victory new.png" id="1_mwn6m"]
 [ext_resource type="AudioStream" uid="uid://c8l8v1py23rrk" path="res://music/win.wav" id="3_p7m4f"]
 
-[node name="Node2D" type="Node2D" unique_id=355917944]
+[node name="Node2D" type="Node2D" unique_id=355917944 groups=["modal_ui"]]
 script = ExtResource("1_3d26k")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=2099511184]

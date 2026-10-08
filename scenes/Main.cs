@@ -16,10 +16,14 @@ public partial class Main : Node2D
 
 	// 防止连点:ChangeSceneToFile 是延迟到本帧末尾才执行的,这中间再点一下会排进第二次换场景
 	private bool _starting;
+    private AudioStreamPlayer _music;
+    public override void _EnterTree() => AudioSettings.Ensure();
 
 	public override void _Ready()
 	{
-		// 按钮挂在 HUD/Start 下面,和它上面那张美术图是父子关系
+		AudioSettings.Route(this);
+        _music = ScreenMusic.Start(this, "res://music/BGM_begin.ogg", "bgm");
+        // 按钮挂在 HUD/Start 下面,和它上面那张美术图是父子关系
 		Button start = GetNodeOrNull<Button>("HUD/Start/start");
 		if (start == null)
 		{
@@ -29,7 +33,13 @@ public partial class Main : Node2D
 
 		// 和项目里其它按钮一致:接 Pressed,一次点击只触发一次
 		start.Pressed += OnStartPressed;
+        var hint = UiKit.Label("WASD 移动 · F 交互 · J/左键 攻击 · Shift/右键 冲刺\nB 背包 · M 地图 · R 换弹 · E 药品 · Q 绷带 · Z 解毒", 16);
+        hint.Theme = UiKit.Theme();
+        GetNode("HUD").AddChild(hint);
+        hint.Position = new Vector2(270, 560); hint.Size = new Vector2(660, 70); hint.HorizontalAlignment = HorizontalAlignment.Center;
 	}
+
+    public override void _ExitTree() => ScreenMusic.Release(_music);
 
 	private void OnStartPressed()
 	{

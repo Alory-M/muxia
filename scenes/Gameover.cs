@@ -17,6 +17,8 @@ public partial class Gameover : Node2D
 	// 两个场景路径都拎出来,以后改名不用翻代码
 	private const string GameScenePath = "res://scenes/game.tscn";
 	private const string MainScenePath = "res://scenes/main.tscn";
+    private AudioStreamPlayer _music;
+    public override void _EnterTree() => AudioSettings.Ensure();
 
 	public override void _Ready()
 	{
@@ -24,7 +26,13 @@ public partial class Gameover : Node2D
 		Hook("again", OnAgain);
 		Hook("tomain", OnToMain);
 		Hook("exit", OnExit);
+        AudioSettings.Route(this);
+        _music = ScreenMusic.Start(this, "res://music/BGM_defeat.wav");
+        var sound = new AudioStreamPlayer { Stream = GD.Load<AudioStream>("res://music/game_over.wav"), Bus = "Sfx" };
+        AddChild(sound); sound.Play();
 	}
+
+    public override void _ExitTree() => ScreenMusic.Release(_music);
 
 	/// <summary>接一个按钮,找不到只警告不报错 —— 少一个按钮不该让另外两个也失灵</summary>
 	private void Hook(string buttonName, Action handler)
@@ -46,12 +54,14 @@ public partial class Gameover : Node2D
 	/// </summary>
 	private void OnAgain()
 	{
+		ScreenMusic.Release(_music);
 		GetTree().ChangeSceneToFile(GameScenePath);
 	}
 
 	/// <summary>返回主菜单。ChangeSceneToFile 会先把本场景整个释放掉,不用自己 QueueFree</summary>
 	private void OnToMain()
 	{
+		ScreenMusic.Release(_music);
 		GetTree().ChangeSceneToFile(MainScenePath);
 	}
 

@@ -11,12 +11,13 @@ using Godot;
 public partial class Endarea : Area2D
 {
 	// HUD/end,是 end.tscn 的实例,场景里默认 visible = false
-	private CanvasItem _endUi;
+	private End _endUi;
+    private bool _completed;
 
 	public override void _Ready()
 	{
 		// endarea 和 HUD 都是场景根的子节点,同一个爹,所以往上一层就行
-		_endUi = GetNodeOrNull<CanvasItem>("../HUD/end");
+		_endUi = GetNodeOrNull<End>("../HUD/end");
 		if (_endUi == null)
 		{
 			GD.PushWarning("Endarea: 找不到 ../HUD/end,碰到终点不会显示通关界面。");
@@ -27,12 +28,13 @@ public partial class Endarea : Area2D
 
 	private void OnBodyEntered(Node2D body)
 	{
-		if (_endUi == null || body is not Player)
+		if (_completed || !Monitoring || _endUi == null || body is not Player player || player.hp <= 0)
 		{
 			return;
 		}
 
-		_endUi.Visible = true;
+		_completed = true;
+        _endUi.ShowResults(player);
 		GD.Print("Endarea: 玩家到达终点,显示通关界面。");
 	}
 }

@@ -31,12 +31,17 @@ public partial class Pack : Node
 
 	// _Ready 时记下检查器里的初始值,Refill 还原到它,
 	// 这样"补满是多少"只由检查器说了算,别处不用再写死一份
+	[Export] public int MagazineCapacity = 6;
 	private readonly Dictionary<SupplyKind, int> _initial = new();
 
 	public override void _Ready()
 	{
+		MagazineCapacity = Mathf.Max(0, MagazineCapacity);
+		_BulletCounter = Mathf.Clamp(_BulletCounter, 0, MagazineCapacity);
+		_totalBullet = Mathf.Max(0, _totalBullet);
 		foreach (SupplyKind kind in Enum.GetValues<SupplyKind>())
 		{
+			SetCount(kind, GetCount(kind));
 			_initial[kind] = GetCount(kind);
 		}
 	}
@@ -66,7 +71,7 @@ public partial class Pack : Node
 	/// <summary>还有货吗(默认问"至少有一份吗")</summary>
 	public bool Has(SupplyKind kind, int amount = 1)
 	{
-		return GetCount(kind) >= amount;
+		return amount > 0 && GetCount(kind) >= amount;
 	}
 
 	/// <summary>够就扣掉并返回 true;不够就不扣、返回 false,调用方只看返回值</summary>
@@ -81,15 +86,24 @@ public partial class Pack : Node
 		return true;
 	}
 
-	/// <summary>捡到物资时加数量</summary>
+	/// <summary>能否完整收下物资；子弹问的是备用弹药的容量。</summary>
+	public bool CanAdd(SupplyKind kind, int amount = 1)
+	{
+		if (amount <= 0 || !Enum.IsDefined(kind)) return false;
+		int current = kind == SupplyKind.Bullet ? GetReserveBullet() : GetCount(kind);
+		return current >= 0 && amount <= int.MaxValue - current;
+	}
+
+	/// <summary>获得物资。子弹始终进入备用弹药，只有换弹才会装进弹匣。</summary>
 	public void Add(SupplyKind kind, int amount = 1)
 	{
-		if (amount <= 0)
+		if (!CanAdd(kind, amount))
 		{
 			return;
 		}
 
-		SetCount(kind, GetCount(kind) + amount);
+		if (kind == SupplyKind.Bullet) _totalBullet += amount;
+		else SetCount(kind, GetCount(kind) + amount);
 	}
 
 	// ---- 给掉落表用的具名入口 ----
@@ -101,14 +115,14 @@ public partial class Pack : Node
 	public void AddBullet(int amount) => Add(SupplyKind.Bullet, amount);
 	public void AddAntidote(int amount) => Add(SupplyKind.Antidote, amount);
 
-	/// <summary>直接改数量,负数会被夹到 0</summary>
+	/// <summary>直接改数量，负数夹到 0，弹匣数量不超过容量。</summary>
 	public void SetCount(SupplyKind kind, int amount)
 	{
 		int value = Mathf.Max(amount, 0);
 
 		switch (kind)
 		{
-			case SupplyKind.Bullet: _BulletCounter = value; break;
+			case SupplyKind.Bullet: _BulletCounter = Mathf.Min(value, Mathf.Max(0, MagazineCapacity)); break;
 			case SupplyKind.Drug: _drugCounter = value; break;
 			case SupplyKind.Bandage: _bandageCounter = value; break;
 			case SupplyKind.Antidote: _antidoteCounter = value; break;
@@ -125,9 +139,8 @@ public partial class Pack : Node
 	/// </summary>
 	public void ReloadBullets()
 	{
-		// 弹匣容量 = 检查器里给 _BulletCounter 设的初始值(_Ready 时存进 _initial 了),
-		// 不在这儿再写死一个 6
-		if (!_initial.TryGetValue(SupplyKind.Bullet, out int capacity))
+		int capacity = MagazineCapacity;
+		if (capacity <= 0)
 		{
 			return;
 		}
@@ -152,7 +165,7 @@ public partial class Pack : Node
 		GD.Print($"Pack: 换弹补了 {loaded} 发,弹匣 {_BulletCounter}/{capacity},备用还剩 {_totalBullet}。");
 	}
 
-	/// <summary>把某种物资补回检查器里设置的初始值</summary>
+	/// <summary>重置某种物资到检查器里的初始值；获取物资请使用 Add，装弹请使用 ReloadBullets。</summary>
 	public void Refill(SupplyKind kind)
 	{
 		if (_initial.TryGetValue(kind, out int start))

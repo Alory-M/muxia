@@ -91,6 +91,7 @@ public partial class Win : Node
 	/// <summary>关掉一个窗口。走它自己的 SetOpen,把收尾工作也带上</summary>
 	private static void CloseWindow(CanvasItem ui)
 	{
+		if (ui.IsInGroup("store_ui")) { ui.GetNode<Store>("store").SetOpen(false); return; }
 		if (ui.HasMethod("SetOpen"))
 		{
 			ui.Call("SetOpen", false);

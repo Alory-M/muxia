@@ -1,138 +1,76 @@
 using Godot;
 
-/// <summary>
-/// 消耗品组件,挂在 player 下面。所有道具都遵循同一条规则:
-/// 数量为 0、或者当前用不上,就不消耗。
-///
-/// 数量统一存在同级节点 pack(Pack.cs)里,这里只管"什么时候用、用掉哪一样"。
-///
-/// Q 消耗绷带(SupplyKind.Bandage)解除"流血";
-/// Z 消耗解毒剂(SupplyKind.Antidote)解除"迟缓";
-/// E 消耗药(SupplyKind.Drug)回血,回多少由 State.HealAmount 决定。
-/// </summary>
+/// <summary>快捷键和背包共用的消耗品规则；只有成功产生效果时才扣一份。</summary>
 public partial class Clear : Node
 {
-	// 键位单独拎出来,以后改键不用翻代码
-	private const string BleedKey = "Q";
-	private const string SlowKey = "Z";
-	private const string DrugKey = "E";
+    private Player _player;
+    private State _state;
+    private Pack _pack;
 
-	private Player _player;
-	private State _state;
-	private Pack _pack;
+    public override void _Ready()
+    {
+        _player = GetParent() as Player;
+        _state = GetNodeOrNull<State>("../state");
+        _pack = GetNodeOrNull<Pack>("../pack");
+    }
 
-	public override void _Ready()
-	{
-		_player = GetParent() as Player;
-		if (_player == null)
-		{
-			GD.PushWarning("Clear: 父节点不是 Player,清除减益功能不会生效。");
-			return;
-		}
+    // 专用快捷键在 GUI 处理之前接收，避免焦点控件截走；模态窗口由各自 UI 处理。
+    public override void _Input(InputEvent ev)
+    {
+        if (Stop.IsPaused || (ev is InputEventKey key && key.Echo)) return;
+        SupplyKind? kind = ev.IsActionPressed("Q") ? SupplyKind.Bandage :
+            ev.IsActionPressed("Z") ? SupplyKind.Antidote :
+            ev.IsActionPressed("E") ? SupplyKind.Drug : null;
+        if (kind == null) return;
+        Use(kind.Value);
+        GetViewport().SetInputAsHandled();
+    }
 
-		_state = GetNodeOrNull<State>("../state");
-		if (_state == null)
-		{
-			GD.PushWarning("Clear: 找不到同级节点 state,清除减益功能不会生效。");
-		}
+    public bool CanUse(SupplyKind kind, out string reason)
+    {
+        if (_player == null || _state == null || _pack == null)
+        { reason = "物品暂时不可用"; return false; }
+        if (_player.hp <= 0)
+        { reason = "生命已归零，无法使用物品"; return false; }
+        if (!_pack.Has(kind))
+        { reason = "没有该物品，可在阴掌柜处购买"; return false; }
+        switch (kind)
+        {
+            case SupplyKind.Drug when _player.hp >= _player.MaxHp:
+                reason = "生命已满，无需使用药品"; return false;
+            case SupplyKind.Bandage when !_state.IsBleeding:
+                reason = "当前没有流血，无需使用绷带"; return false;
+            case SupplyKind.Antidote when !_state.IsPoisoned:
+                reason = "当前没有中毒，无需使用解毒剂"; return false;
+            case SupplyKind.Bullet:
+                reason = "请装填弹药"; return false;
+        }
+        reason = ""; return true;
+    }
 
-		_pack = GetNodeOrNull<Pack>("../pack");
-		if (_pack == null)
-		{
-			GD.PushWarning("Clear: 找不到同级节点 pack,拿不到道具数量,清除减益功能不会生效。");
-		}
-	}
+    public bool TryUse(SupplyKind kind, out string feedback)
+    {
+        if (!CanUse(kind, out feedback) || !_pack.TryConsume(kind)) return false;
+        switch (kind)
+        {
+            case SupplyKind.Drug:
+                float healed = Mathf.Min(_state.HealAmount, _player.MaxHp - _player.hp);
+                _player.hp += healed;
+                feedback = $"使用药品，恢复 {healed:0} 点生命"; break;
+            case SupplyKind.Bandage:
+                _state.ClearState(PlayerState.Bleed); feedback = "使用绷带，流血已解除"; break;
+            case SupplyKind.Antidote:
+                _state.ClearState(PlayerState.Slow); feedback = "使用解毒剂，中毒已解除"; break;
+        }
+        return true;
+    }
 
-	// 三个引用缺一不可。必须先判空:下面一取字段就解引用了,晚了会空引用
-	private bool RefsReady => _player != null && _state != null && _pack != null;
-
-	// 和 Player 一样用 _UnhandledInput:按键是逐个事件投递的,不会漏掉连按
-	public override void _UnhandledInput(InputEvent @event)
-	{
-		if (@event.IsActionPressed(BleedKey))
-		{
-			UseBandage();
-		}
-		else if (@event.IsActionPressed(SlowKey))
-		{
-			UseAntidote();
-		}
-		else if (@event.IsActionPressed(DrugKey))
-		{
-			UseDrug();
-		}
-	}
-
-	/// <summary>用绷带解除流血。没绷带、或当前没流血时不消耗</summary>
-	public void UseBandage()
-	{
-		if (!RefsReady)
-		{
-			return;
-		}
-
-		TryUseItem(PlayerState.Bleed, "绷带", SupplyKind.Bandage);
-	}
-
-	/// <summary>用解毒剂解除迟缓。没解毒剂、或当前没迟缓时不消耗</summary>
-	public void UseAntidote()
-	{
-		if (!RefsReady)
-		{
-			return;
-		}
-
-		TryUseItem(PlayerState.Slow, "解毒剂", SupplyKind.Antidote);
-	}
-
-	/// <summary>用一份药回血。没药、或血已经满了时不消耗</summary>
-	public void UseDrug()
-	{
-		// 回血量现在也归 State 管,所以和另外两个道具一样要三个引用齐全
-		if (!RefsReady)
-		{
-			return;
-		}
-
-		// 血满了就别浪费药了。上限以 Player.MaxHp 为准
-		if (_player.hp >= _player.MaxHp)
-		{
-			GD.Print("Clear: 血量已满,省下一份药。");
-			return;
-		}
-
-		// 数量够才扣;不够就不扣,只提示
-		if (!_pack.TryConsume(SupplyKind.Drug))
-		{
-			GD.Print("Clear: 没有药了,回不了血。");
-			return;
-		}
-
-		_player.hp = Mathf.Min(_player.hp + _state.HealAmount, _player.MaxHp);
-
-		GD.Print($"Clear: 用掉一份药,回血 {_state.HealAmount},当前 HP {_player.hp},还剩 {_pack.GetCount(SupplyKind.Drug)} 份。");
-	}
-
-	/// <summary>几个道具共用的一套判断:确实中了对应的减益 + 有货,才扣一份并解除</summary>
-	private void TryUseItem(PlayerState target, string itemName, SupplyKind kind)
-	{
-		// 没中这个减益就别浪费道具了
-		if (_state.Current != target)
-		{
-			GD.Print($"Clear: 当前没有{State.NameOf(target)},省下一份{itemName}。");
-			return;
-		}
-
-		// 数量不够时 TryConsume 不扣、返回 false
-		if (!_pack.TryConsume(kind))
-		{
-			GD.Print($"Clear: 没有{itemName}了,清除不了{State.NameOf(target)}。");
-			return;
-		}
-
-		// 状态机自己负责收尾(停 tick、还原移速、血条颜色),这里只管扣道具
-		_state.ResetToNormal();
-
-		GD.Print($"Clear: 用掉一份{itemName},{State.NameOf(target)}解除,还剩 {_pack.GetCount(kind)} 份。");
-	}
+    public void Use(SupplyKind kind)
+    {
+        TryUse(kind, out string feedback);
+        InteractionController.Notify(feedback);
+    }
+    public void UseBandage() => Use(SupplyKind.Bandage);
+    public void UseAntidote() => Use(SupplyKind.Antidote);
+    public void UseDrug() => Use(SupplyKind.Drug);
 }

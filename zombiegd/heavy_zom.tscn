@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="3_gift"]
 
 [node name="heavyZom" unique_id=1172295772 instance=ExtResource("1_1ldkc")]
+MonsterId = 5
 MaxHp = 60
 AttackDamage = 40
 AttackCd = 2.0

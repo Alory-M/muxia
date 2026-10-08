@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="5_gift"]
 
 [node name="fast_moveZom" unique_id=1172295772 instance=ExtResource("1_8ylib")]
+MonsterId = 2
 script = ExtResource("2_dj5wx")
 TeleportTriggerRange = 300.0
 TeleportDistance = 40.0

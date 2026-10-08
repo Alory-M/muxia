@@ -13,6 +13,13 @@ public partial class soulpiece : Node
 	/// <summary>当前灵魂碎片数量</summary>
 	public int GetSoul() => _soulCounter;
 
+	public bool TrySpend(int amount)
+	{
+		if (amount < 0 || _soulCounter < amount) return false;
+		_soulCounter -= amount;
+		return true;
+	}
+
 	/// <summary>加灵魂碎片。给 GDScript 的僵尸脚本调,免去跨语言传枚举的麻烦</summary>
 	public void AddSoul(int amount = 1)
 	{

@@ -30,12 +30,12 @@ public partial class Gift : Node
 	private static GodotDict _itemRows;   // 物品ID → item.json 里那一整行
 
 	/// <summary>结算一次掉落并发给玩家。由宿主在宝箱消失的那一刻调用</summary>
-	public void Drop()
+	public bool Drop()
 	{
 		GodotDict picked = PickRow();
 		if (picked == null)
 		{
-			return;
+			return false;
 		}
 
 		string rawItem = picked["item"].AsString();
@@ -48,19 +48,19 @@ public partial class Gift : Node
 			|| count <= 0)
 		{
 			GD.PushWarning($"Gift: 掉落表 ID {DropId} 里的 item \"{rawItem}\" 不是 \"物品ID,数量\" 的格式,这次不掉。");
-			return;
+			return false;
 		}
 
 		GodotDict items = LoadItemTable();
 		if (items == null)
 		{
-			return;
+			return false;
 		}
 
 		if (!items.ContainsKey(itemId))
 		{
 			GD.PushWarning($"Gift: item.json 里没有 ID {itemId},这次不掉。");
-			return;
+			return false;
 		}
 
 		GodotDict item = items[itemId].AsGodotDictionary();
@@ -70,9 +70,11 @@ public partial class Gift : Node
 		if (GiveToPlayer(location, count))
 		{
 			GD.Print($"Gift: 掉落 {count} 个{note}(物品 {itemId}),已加到 {location}");
+            InteractionController.Notify($"获得 {note} × {count}");
+            return true;
 		}
+	    return false;
 	}
-
 	/// <summary>
 	/// 从 drop.json 里挑一行:先筛出 DropId 相同的,再按 basewight 加权抽。
 	/// 权重是相对值,不用凑成 100 —— 2004 的四行是 200/150/100/50,

@@ -1,0 +1,26 @@
+[
+  {
+    "ID": 3001,
+    "text": "text_buff1",
+    "add": 0.5,
+    "effect": "攻击提升{}"
+  },
+  {
+    "ID": 3002,
+    "text": "text_buff3",
+    "add": 0.2,
+    "effect": "移速提升{}"
+  },
+  {
+    "ID": 3003,
+    "text": "text_buff2",
+    "add": 0.2,
+    "effect": "攻速提升{}"
+  },
+  {
+    "ID": 3004,
+    "text": "text_buff4",
+    "add": 0.2,
+    "effect": "暴击提升{}"
+  }
+]

@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="5_gift"]
 
 [node name="arrowZom" unique_id=1172295772 instance=ExtResource("1_ho86e")]
+MonsterId = 3
 script = ExtResource("2_gk3af")
 BulletScene = ExtResource("4_bullet")
 FireRange = 500.0

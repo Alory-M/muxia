@@ -32,6 +32,25 @@ public partial class Player : CharacterBody2D
 	// 背包。子弹 / 药 / 绷带 / 解毒剂的数量都在子节点 pack(Pack.cs)里,
 	// 这里不再自己存一份,要用就走 _pack
 	private Pack _pack;
+    private State _state;
+    private float _shotCooldown;
+    private float _attack = 5f, _shotsPerSecond = 5f, _attackDistance = 160f;
+    private float _attackBonus, _speedBonus, _fireBonus, _critical;
+    public float EffectiveMoveSpeed => Mathf.Max(20f, moveSpeed * (1f + _speedBonus) - (_state?.IsPoisoned == true ? _state.PoisonSpeedReduction : 0f));
+    public float EffectiveAttack => Mathf.Max(1f, _attack * (1f + _attackBonus) - (_state?.IsPoisoned == true ? _state.PoisonAttackReduction : 0f));
+    public float ShotsPerSecond => _shotsPerSecond * (1f + _fireBonus);
+    public float CriticalChance => Mathf.Clamp(_critical, 0f, 1f);
+    public void ApplyBuff(int id, int quantity = 1)
+    {
+        float value = GameData.Number(GameData.Row("buff", id), "add") * quantity;
+        switch (id)
+        {
+            case 3001: _attackBonus += value; break;
+            case 3002: _speedBonus += value; break;
+            case 3003: _fireBonus += value; break;
+            case 3004: _critical = Mathf.Min(1f, _critical + value); break;
+        }
+    }
 
 	// 冲刺中?Run 之类的子节点要据此换表现(比如把跑步动画放快),
 	// 所以对外公开,不让人去反射读 _dashRemaining
@@ -54,7 +73,16 @@ public partial class Player : CharacterBody2D
 
 	public override void _Ready()
 	{
-		_pack = GetNodeOrNull<Pack>("pack");
+		var stats = GameData.Row("host", 1);
+        MaxHp = hp = GameData.Number(stats, "blood");
+        moveSpeed = GameData.Number(stats, "speed") * GameData.SpeedUnit;
+        _attack = GameData.Number(stats, "hit");
+        _shotsPerSecond = GameData.Number(stats, "hitspeed");
+        _attackDistance = GameData.Number(stats, "hitdistance") * GameData.DistanceUnit;
+        _critical = GameData.Number(stats, "critical");
+        _state = GetNodeOrNull<State>("state");
+        _pack = GetNodeOrNull<Pack>("pack");
+        Stop.RegisterWorldNode(this);
 		if (_pack == null)
 		{
 			GD.PushWarning("Player: 找不到子节点 pack,拿不到子弹数量,开不了枪。");
@@ -141,6 +169,7 @@ public partial class Player : CharacterBody2D
 	public override void _PhysicsProcess(double delta)
 	{
 		float dt = (float)delta;
+        _shotCooldown = Mathf.Max(0, _shotCooldown - dt);
 
 		// 冲刺中:无视常规移动,沿冲刺方向前进
 		if (IsDashing && dt > 0f)
@@ -177,7 +206,7 @@ public partial class Player : CharacterBody2D
 		// GetVector 会自动把长度裁到 1,所以斜向移动不会比直线更快
 		Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 
-		Velocity = direction * moveSpeed;
+		Velocity = direction * EffectiveMoveSpeed;
 		MoveAndSlide();
 
 		UpdateWalkSound();
@@ -187,6 +216,8 @@ public partial class Player : CharacterBody2D
 	// 输入事件是逐个投递的,两帧之内连点也不会漏掉
 	public override void _UnhandledInput(InputEvent @event)
 	{
+		if (@event is InputEventKey key && key.Echo) return;
+        if (Stop.IsPaused || hp <= 0) return;
 		if (@event.IsActionPressed("mouse_press"))
 		{
 			TryShoot();
@@ -217,40 +248,24 @@ public partial class Player : CharacterBody2D
 	}
 
 	/// <summary>有子弹就打一发、扣一发;没子弹时什么都不做(和以前一样,不提示)</summary>
-	private void TryShoot()
-	{
-		if (_pack == null || !_pack.TryConsume(SupplyKind.Bullet))
-		{
-			return;
-		}
-
-		Shoot();
-	}
-
-	private void Shoot()
-	{
-		if (bulletScene == null)
-		{
-			GD.PushWarning("Player: 没有指定 bulletScene,无法发射。");
-			return;
-		}
-
-		// 方向 = 玩家 -> 鼠标
-		Vector2 toMouse = GetGlobalMousePosition() - GlobalPosition;
-		if (toMouse.LengthSquared() < 0.0001f)
-		{
-			GD.PushWarning("Player: 鼠标与玩家位置重合,方向为零,不发射。");
-			return;
-		}
-
-		// 生成一颗全新的子弹,挂到场景根节点下(而不是玩家下,否则会跟着玩家跑)
-		Bullet bullet = bulletScene.Instantiate<Bullet>();
-		GetParent().AddChild(bullet);
-		bullet.GlobalPosition = GlobalPosition;
-		bullet.Launch(toMouse);
-
-		PlaySfx(_gunShotPlayer); // 开枪,播放枪声
-	}
+    public bool TryShoot()
+    {
+        return FireTowards(GetGlobalMousePosition() - GlobalPosition);
+    }
+    public bool FireTowards(Vector2 direction)
+    {
+        if (Stop.IsPaused || hp <= 0 || _shotCooldown > 0 || bulletScene == null || direction.LengthSquared() < 0.0001f) return false;
+        if (_pack == null || !_pack.TryConsume(SupplyKind.Bullet)) return false;
+        Bullet bullet = bulletScene.Instantiate<Bullet>();
+        bullet.Damage = Mathf.Max(1, Mathf.RoundToInt(EffectiveAttack * (GD.Randf() < CriticalChance ? 2f : 1f)));
+        GetParent().AddChild(bullet);
+        bullet.GlobalPosition = GlobalPosition;
+        bullet.GetNode<Disappear>("disappear").MaxDistance = _attackDistance;
+        bullet.Launch(direction);
+        _shotCooldown = 1f / Mathf.Max(0.1f, ShotsPerSecond);
+        PlaySfx(_gunShotPlayer);
+        return true;
+    }
 
 	/// <summary>
 	/// 受到伤害。供 GDScript 的僵尸脚本调用(对应 GDScript 里的 take_damage)。
@@ -258,7 +273,7 @@ public partial class Player : CharacterBody2D
 	/// </summary>
 	public void TakeDamage(float amount)
 	{
-		if (amount <= 0f)
+		if (amount <= 0f || hp <= 0f || Stop.IsPaused)
 		{
 			return;
 		}

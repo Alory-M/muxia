@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="4_gift"]
 
 [node name="miniZom" unique_id=1172295772 instance=ExtResource("1_7nene")]
+MonsterId = 1
 MaxHp = 15
 AttackDamage = 20
 

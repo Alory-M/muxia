@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="demo"
+config/name="墓下"
 run/main_scene="uid://biup1rqmtys3i"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"

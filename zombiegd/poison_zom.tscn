@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="5_gift"]
 
 [node name="poisonZom" unique_id=1172295772 instance=ExtResource("1_gdhku")]
+MonsterId = 6
 script = ExtResource("2_anbin")
 BulletScene = ExtResource("3_ced3b")
 FireRange = 500.0

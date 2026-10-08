@@ -1,0 +1,14 @@
+[
+  {
+    "ID": 1,
+    "status": "status_bleed",
+    "arguments": "1,10",
+    "note": "每{}秒损失{}血量"
+  },
+  {
+    "ID": 2,
+    "status": "status_poison",
+    "arguments": "1,3",
+    "note": "中毒后移速降低{}，攻击降低{}"
+  }
+]

@@ -1,0 +1,80 @@
+[
+  {
+    "ID": 1,
+    "name": "monster_g",
+    "blood": 15,
+    "hit": 20,
+    "hitspeed": 5,
+    "hittime": 1,
+    "speed": 2,
+    "hitdistance": 2.0,
+    "around": 5.0,
+    "drop": "2001",
+    "note": ""
+  },
+  {
+    "ID": 2,
+    "name": "monster_y1",
+    "blood": 30,
+    "hit": 30,
+    "hitspeed": 5,
+    "hittime": 2,
+    "speed": 2,
+    "hitdistance": 2.0,
+    "around": 20.0,
+    "drop": "2002",
+    "note": "瞬移到玩家身边进行攻击"
+  },
+  {
+    "ID": 3,
+    "name": "monster_y2",
+    "blood": 30,
+    "hit": 30,
+    "hitspeed": 5,
+    "hittime": 2,
+    "speed": 4,
+    "hitdistance": 10.0,
+    "around": 10.0,
+    "drop": "2002",
+    "note": ""
+  },
+  {
+    "ID": 4,
+    "name": "monster_r1",
+    "blood": 30,
+    "hit": 40,
+    "hitspeed": 5,
+    "hittime": 1,
+    "speed": 6,
+    "hitdistance": 2.0,
+    "around": 10.0,
+    "drop": "2003",
+    "note": "攻击使玩家流血"
+  },
+  {
+    "ID": 5,
+    "name": "monster_r2",
+    "blood": 60,
+    "hit": 40,
+    "hitspeed": 5,
+    "hittime": 2,
+    "speed": 3,
+    "hitdistance": 2.0,
+    "around": 10.0,
+    "drop": "2003",
+    "note": ""
+  },
+  {
+    "ID": 6,
+    "name": "monster_r3",
+    "blood": 30,
+    "hit": 40,
+    "hitspeed": 5,
+    "hittime": 1,
+    "speed": 4,
+    "hitdistance": 10.0,
+    "around": 20.0,
+    "drop": "2003",
+    "note": "攻击使玩家中毒"
+  }
+]

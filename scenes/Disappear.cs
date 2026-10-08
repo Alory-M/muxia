@@ -27,6 +27,7 @@ public partial class Disappear : Node
 
 	/// <summary>已经消失了</summary>
 	public bool IsGone => _gone;
+    public float RemainingDistance => Mathf.Max(0, MaxDistance - _traveled);
 
 	public override void _Ready()
 	{
@@ -57,19 +58,27 @@ public partial class Disappear : Node
 
 	private void OnBodyEntered(Node2D body)
 	{
-		if (_gone || _host == null || ShouldPassThrough(body))
+		TryHit(body);
+	}
+
+    // 物理扫掠和 BodyEntered 共用幂等入口，避免同一发子弹重复伤害。
+    public bool TryHit(Node2D body)
+    {
+		if (_gone || _host == null || Stop.IsPaused || ShouldPassThrough(body))
 		{
-			return;
+			return false;
 		}
 
 		_host.ApplyDamage(body);
 		Vanish();
+		return true;
 	}
 
 	/// <summary>该穿过去、不当碰撞的情况</summary>
-	private bool ShouldPassThrough(Node2D body)
+	public bool ShouldPassThrough(Node2D body)
 	{
-		if (_host.HitsPlayer)
+		if (_host.HitsEveryone) return false;
+        if (_host.HitsPlayer)
 		{
 			// 僵尸射的箭:僵尸是自己人,穿过去。玩家不在这一支里 ——
 			// Player 的方法是 PascalCase 的 TakeDamage,HasMethod("take_damage") 认不出来
@@ -80,7 +89,7 @@ public partial class Disappear : Node
 		return body.IsInGroup("player");
 	}
 
-	private void Vanish()
+	public void Vanish()
 	{
 		_gone = true;
 

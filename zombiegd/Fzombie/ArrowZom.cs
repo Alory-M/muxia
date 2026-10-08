@@ -18,6 +18,14 @@ public partial class ArrowZom : Zombie
 	// 射箭冷却（秒）
 	[Export] public float FireCd { get; set; } = 1.5f;
 
+	private AudioStreamPlayer2D _arrowSound;
+    public override void _Ready()
+    {
+        base._Ready();
+        _arrowSound = new AudioStreamPlayer2D { Stream = GD.Load<AudioStream>("res://music/arrow_single.wav"), Bus = "Sfx" };
+        AddChild(_arrowSound);
+    }
+
 	private float _fireTimer; // 射箭冷却计时器
 
 	public override void _PhysicsProcess(double delta)
@@ -27,6 +35,7 @@ public partial class ArrowZom : Zombie
 			return;
 		}
 
+		if (!CanEngage()) { ReturnHome(); return; }
 		_fireTimer -= (float)delta;
 		float dist = GlobalPosition.DistanceTo(_player.GlobalPosition);
 
@@ -75,6 +84,7 @@ public partial class ArrowZom : Zombie
 		GetParent().AddChild(bullet);
 		bullet.GlobalPosition = GlobalPosition;
 		bullet.Launch(dir);
+        _arrowSound.Play();
 		GD.Print("ArrowZom：朝玩家中心射出一箭");
 	}
 

@@ -1,0 +1,12 @@
+[
+  {
+    "ID": 1,
+    "name": "name_host",
+    "blood": 1000,
+    "hit": 5,
+    "hitspeed": 5,
+    "hitdistance": 5.0,
+    "speed": 5,
+    "critical": 0.0
+  }
+]

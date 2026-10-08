@@ -22,6 +22,8 @@ public partial class 开门机关 : Area2D
 	private CanvasItem _gate;
 
 	private bool _triggered;
+    public bool IsUnlocked => _triggered;
+    public Vector2 TriggerPosition => GetNodeOrNull<CollisionShape2D>("CollisionShape2D")?.GlobalPosition ?? GlobalPosition;
 
 	// 开门音效播放器:机关被触发、门打开时播放一次 stone_door_open.wav
 	private AudioStreamPlayer _openPlayer;
@@ -81,7 +83,7 @@ public partial class 开门机关 : Area2D
 
 	private void OnBodyEntered(Node2D body)
 	{
-		if (_triggered || !body.IsInGroup("player"))
+		if (_triggered || body is not Player player || player.hp <= 0 || Stop.IsPaused)
 		{
 			return;
 		}
@@ -98,6 +100,7 @@ public partial class 开门机关 : Area2D
 
 		PlayOpenSound(); // 门开了,播放 stone_door_open
 
+		InteractionController.Notify("墓门已开启，带上财宝前往右上方出口。");
 		GD.Print("开门机关: 玩家拉下机关,终点大门打开,endarea 变成可交互");
 	}
 

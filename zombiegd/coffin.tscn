@@ -1,9 +1,11 @@
 [gd_scene format=3 uid="uid://cb68diu653yey"]
 
-[ext_resource type="Script" uid="uid://bu4122shcj31s" path="res://zombiegd/coffin.gd" id="1_vj7j3"]
+[ext_resource type="Script" path="res://scenes/Coffin.cs" id="1_vj7j3"]
 [ext_resource type="Texture2D" uid="uid://b5o7cthk7n1c1" path="res://bin/item/guancai close.png" id="2_v6yxq"]
 [ext_resource type="Texture2D" uid="uid://c8g56ulxjkhfm" path="res://bin/item/guancai open.png" id="3_fkfil"]
 [ext_resource type="AudioStream" uid="uid://doh5nv4faxkva" path="res://music/coffin_open.wav" id="4_vj7j3"]
+
+[ext_resource type="Script" path="res://scenes/Gift.cs" id="5_gift"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_h1dxn"]
 radius = 226.0553
@@ -28,3 +30,7 @@ shape = SubResource("CircleShape2D_h1dxn")
 
 [node name="coffin_open" type="AudioStreamPlayer2D" parent="." unique_id=826264666]
 stream = ExtResource("4_vj7j3")
+
+[node name="gift" type="Node" parent="."]
+script = ExtResource("5_gift")
+DropId = 2005

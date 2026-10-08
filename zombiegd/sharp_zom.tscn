@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://dwm08y8m5li40" path="res://scenes/Gift.cs" id="3_gift"]
 
 [node name="sharpZom" unique_id=1172295772 instance=ExtResource("1_kvmt0")]
+MonsterId = 4
 script = ExtResource("2_ou05y")
 
 [node name="normal" parent="." index="0" unique_id=698874992]

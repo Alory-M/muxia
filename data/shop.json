@@ -1,0 +1,66 @@
+[
+  {
+    "ID": 3001,
+    "type": 1,
+    "icon": "gongjibuff",
+    "name": "text_buff1",
+    "prize": 15,
+    "text": "攻击提升{}"
+  },
+  {
+    "ID": 3002,
+    "type": 1,
+    "icon": "yisubuff",
+    "name": "text_buff3",
+    "prize": 15,
+    "text": "移速提升{}"
+  },
+  {
+    "ID": 3003,
+    "type": 1,
+    "icon": "gongsubuff",
+    "name": "text_buff2",
+    "prize": 15,
+    "text": "攻速提升{}"
+  },
+  {
+    "ID": 3004,
+    "type": 1,
+    "icon": "baojibuff",
+    "name": "text_buff4",
+    "prize": 15,
+    "text": "暴击提升{}"
+  },
+  {
+    "ID": 1003,
+    "type": 2,
+    "icon": "绷带",
+    "name": "item_drop3",
+    "prize": 600,
+    "text": "绷带"
+  },
+  {
+    "ID": 1004,
+    "type": 2,
+    "icon": "药品",
+    "name": "item_drop4",
+    "prize": 600,
+    "text": "药品"
+  },
+  {
+    "ID": 1005,
+    "type": 2,
+    "icon": "子弹",
+    "name": "item_drop5",
+    "prize": 600,
+    "text": "子弹"
+  },
+  {
+    "ID": 1006,
+    "type": 2,
+    "icon": "解毒剂",
+    "name": "item_drop6",
+    "prize": 600,
+    "text": "解毒剂"
+  }
+]
