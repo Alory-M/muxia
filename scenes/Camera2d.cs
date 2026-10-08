@@ -13,6 +13,10 @@ using Godot;
 /// </summary>
 public partial class Camera2d : Camera2D
 {
+	// 拉近画面，让人物更清晰；HUD 在独立 CanvasLayer 中保持原尺寸。
+	[Export(PropertyHint.Range, "1,2,0.05")]
+	public float ViewZoom { get; set; } = 1.35f;
+
 	// 地图就是 background 里那张图,边界等于它的矩形。
 	// 用 TextureRect 而不是它父节点 background:background 是全屏 anchors 的 Control,
 	// 尺寸跟着视口走;真正带地图尺寸的是 TextureRect
@@ -22,6 +26,7 @@ public partial class Camera2d : Camera2D
 
 	public override void _Ready()
 	{
+		Zoom = Vector2.One * Mathf.Clamp(ViewZoom, 1f, 2f);
 		// 玩家用 "player" 组去找,和 debuff / Stop 一样 ——
 		// 不写死 ../player 这种斜杠,场景里挪一下也不会断
 		_target = GetTree().GetFirstNodeInGroup("player") as Node2D;

@@ -1,81 +1,125 @@
 using Godot;
+using System;
 
-/// <summary>
-/// 开始界面,挂在 main.tscn 的根节点上。
-///
-/// 按下 start 立刻换成游戏场景:不等开场音效、不做过渡、不留尾巴。
-///
-/// 换场景用 ChangeSceneToFile —— 它会先把当前场景(也就是本场景)整个释放掉,
-/// 再加载新的。所以不用自己 QueueFree,也不会出现两个场景同时挂在树上,
-/// 本场景的画面节点和音频节点(begin / bgm)跟着一起被释放,声音不会带到游戏里。
-/// </summary>
+/// <summary>在菜单期间预读并离树准备游戏，点击开始时只进行场景交接。</summary>
 public partial class Main : Node2D
 {
-	// 要加载的场景。拎出来是为了以后改名/换场景不用翻代码
-	private const string GameScenePath = "res://scenes/game.tscn";
+    public string GameplayScenePath { get; set; } = "res://scenes/game.tscn";
+    public bool GamePrepared => GodotObject.IsInstanceValid(_preparedGame);
+    public bool IsStarting => _starting;
 
-	// 防止连点:ChangeSceneToFile 是延迟到本帧末尾才执行的,这中间再点一下会排进第二次换场景
-	private bool _starting;
+    private bool _starting, _switchQueued, _preparationFailed;
     private AudioStreamPlayer _music;
+    private Button _start;
+    private Label _loading;
+    private SceneLoading _loader;
+    private SceneLoading.Ticket _ticket;
+    private Node _preparedGame;
+
     public override void _EnterTree() => AudioSettings.Ensure();
 
-	public override void _Ready()
-	{
-		AudioSettings.Route(this);
+    public override void _Ready()
+    {
+        AudioSettings.Route(this);
         _music = ScreenMusic.Start(this, "res://music/BGM_begin.ogg", "bgm");
-        // 按钮挂在 HUD/Start 下面,和它上面那张美术图是父子关系
-		Button start = GetNodeOrNull<Button>("HUD/Start/start");
-		if (start == null)
-		{
-			GD.PushWarning("Main: 找不到 HUD/Start/start 按钮,开始界面点不动。");
-			return;
-		}
-
-		// 和项目里其它按钮一致:接 Pressed,一次点击只触发一次
-		start.Pressed += OnStartPressed;
+        _start = GetNodeOrNull<Button>("HUD/Start/start");
+        if (_start == null)
+        {
+            GD.PushWarning("Main: 找不到 HUD/Start/start 按钮。");
+            return;
+        }
+        _start.Pressed += OnStartPressed;
+        var hud = GetNode("HUD");
         var hint = UiKit.Label("WASD 移动 · F 交互 · J/左键 攻击 · Shift/右键 冲刺\nB 背包 · M 地图 · R 换弹 · E 药品 · Q 绷带 · Z 解毒", 16);
         hint.Theme = UiKit.Theme();
-        GetNode("HUD").AddChild(hint);
-        hint.Position = new Vector2(270, 560); hint.Size = new Vector2(660, 70); hint.HorizontalAlignment = HorizontalAlignment.Center;
-	}
+        hud.AddChild(hint);
+        hint.Position = new Vector2(270, 560);
+        hint.Size = new Vector2(660, 70);
+        hint.HorizontalAlignment = HorizontalAlignment.Center;
+        _loading = UiKit.Label("正在进入古墓…", 16);
+        _loading.Name = "LoadingHint";
+        _loading.Theme = hint.Theme;
+        _loading.Position = new Vector2(350, 338);
+        _loading.Size = new Vector2(430, 38);
+        _loading.Visible = false;
+        hud.AddChild(_loading);
 
-    public override void _ExitTree() => ScreenMusic.Release(_music);
+        _loader = SceneLoading.For(GetTree());
+        _ticket = _loader.Request(GameplayScenePath);
+    }
 
-	private void OnStartPressed()
-	{
-		if (_starting)
-		{
-			return;
-		}
-		_starting = true;
+    public override void _Process(double delta)
+    {
+        if (_ticket == null || GamePrepared || _preparationFailed) return;
+        if (_ticket.Failed)
+        {
+            if (_starting) ShowLoadFailure();
+            return;
+        }
+        if (_ticket.Scene == null) return;
 
-		// 先掐掉声音再换场景。ChangeSceneToFile 是延迟执行的,而它开头那句
-		// ResourceLoader.load(game.tscn) 是同步的、要花时间;这中间老场景还活着,
-		// 声音也还在响。显式停一下,才能保证"点下去那一刻"音乐就断,
-		// 而不是等新场景加载完才被连带释放掉
-		StopSceneAudio(this);
+        try
+        {
+            // 离树实例没有 Ready、碰撞、暂停锁或自动播放；切换前不激活游戏。
+            _preparedGame = _ticket.Scene.Instantiate();
+            if (!GamePrepared) { _preparationFailed = true; ShowLoadFailure(); return; }
+            if (_starting) QueueGameSwitch();
+        }
+        catch (Exception error)
+        {
+            GD.PushWarning($"Main: 无法准备游戏场景：{error.Message}");
+            _preparationFailed = true;
+            ShowLoadFailure();
+        }
+    }
 
-		GetTree().ChangeSceneToFile(GameScenePath);
-	}
+    public override void _ExitTree()
+    {
+        ScreenMusic.Release(_music);
+        // 玩家从菜单直接退出时释放未交给 SceneTree 的离树实例。
+        if (GodotObject.IsInstanceValid(_preparedGame)) _preparedGame.Free();
+        _preparedGame = null;
+        _ticket = null;
+    }
 
-	/// <summary>
-	/// 停掉本场景里所有音频(目前是根节点下的 begin 开场音效和 bgm)。
-	/// 按类型递归找而不是写死节点名:以后改名字、把音频挪进子树都不用回来改这里
-	/// </summary>
-	private static void StopSceneAudio(Node node)
-	{
-		foreach (Node child in node.GetChildren())
-		{
-			if (child is AudioStreamPlayer streamPlayer)
-			{
-				streamPlayer.Stop();
-			}
-			else if (child is AudioStreamPlayer2D positionalPlayer)
-			{
-				positionalPlayer.Stop();
-			}
+    private void OnStartPressed()
+    {
+        if (_starting) return;
+        _starting = true;
+        _start.Disabled = true;
+        _loading.Text = "正在进入古墓…";
+        _loading.Visible = true;
+        // 冷启动时继续播放菜单曲，并让菜单正常渲染到场景准备完毕。
+        if (_ticket?.Failed == true) _ticket = _loader.Request(GameplayScenePath, retry: true);
+        _preparationFailed = false;
+        if (GamePrepared) QueueGameSwitch();
+    }
 
-			StopSceneAudio(child);
-		}
-	}
+    private void QueueGameSwitch()
+    {
+        if (_switchQueued) return;
+        _switchQueued = true;
+        Callable.From(EnterGame).CallDeferred();
+    }
+
+    private void EnterGame()
+    {
+        if (!IsInsideTree() || GetTree().CurrentScene != this || !GamePrepared) return;
+        var game = _preparedGame;
+        // ChangeSceneToNode 会立刻触发本菜单 ExitTree；先转移所有权避免释放新场景。
+        _preparedGame = null;
+        Error result = GetTree().ChangeSceneToNode(game);
+        if (result == Error.Ok) return;
+        _preparedGame = game;
+        ShowLoadFailure();
+    }
+
+    private void ShowLoadFailure()
+    {
+        _starting = false;
+        _switchQueued = false;
+        _start.Disabled = false;
+        _loading.Text = "暂时无法进入古墓，请再试一次";
+        _loading.Visible = true;
+    }
 }

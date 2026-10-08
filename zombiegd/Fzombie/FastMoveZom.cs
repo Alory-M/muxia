@@ -9,7 +9,7 @@ public partial class FastMoveZom : Zombie
     private float _teleportTimer;
     public override void _PhysicsProcess(double delta)
     {
-        if (!_active || IsAppearing) { base._PhysicsProcess(delta); return; }
+        if (!_active || IsAppearing || IsYielding) { base._PhysicsProcess(delta); return; }
         if (Stop.IsPaused || !EnsurePlayer()) return;
         _teleportTimer = Mathf.Max(0, _teleportTimer - (float)delta);
         float distance = GlobalPosition.DistanceTo(_player.GlobalPosition);

@@ -49,7 +49,7 @@ public partial class ArrowZom : Zombie
 				_fireTimer = FireCd;
 			}
 		}
-		else
+		else if (!IsYielding)
 		{
 			// 超出射程：先追进射程（复用父类追击逻辑）
 			Chase();

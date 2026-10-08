@@ -8,8 +8,8 @@
 [ext_resource type="AudioStream" uid="uid://e0p4ljg1medl" path="res://music/zombie_attack_near.wav" id="6_wgk48"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_02rw5"]
-radius = 323.5293
-height = 1235.294
+radius = 352.94116
+height = 1352.9412
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xkwan"]
 radius = 65.06919

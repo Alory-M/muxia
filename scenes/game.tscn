@@ -631,52 +631,52 @@ position = Vector2(2021.5, 269)
 shape = SubResource("RectangleShape2D_qxvy8")
 
 [node name="coffin" parent="." unique_id=847161236 instance=ExtResource("65_3x28f")]
-position = Vector2(219, 1009)
+position = Vector2(210, 1009)
 
 [node name="coffin2" parent="." unique_id=779695516 instance=ExtResource("66_weeiq")]
-position = Vector2(227, 473)
+position = Vector2(210, 473)
 
 [node name="coffin3" parent="." unique_id=2093551399 instance=ExtResource("67_uxocx")]
-position = Vector2(1027, 665)
+position = Vector2(1034, 665)
 
 [node name="coffin4" parent="." unique_id=23912900 instance=ExtResource("68_7nv0b")]
-position = Vector2(1012, 267)
+position = Vector2(1014, 299)
 
 [node name="coffin5" parent="." unique_id=985798119 instance=ExtResource("66_weeiq")]
-position = Vector2(1314, 1065)
+position = Vector2(1315, 1098)
 
 [node name="coffin6" parent="." unique_id=1076626579 instance=ExtResource("70_arrow")]
-position = Vector2(797, 1274)
+position = Vector2(797, 1294)
 
 [node name="coffin7" parent="." unique_id=1580140913 instance=ExtResource("68_7nv0b")]
-position = Vector2(1929, 1028)
+position = Vector2(1950, 1028)
 
 [node name="coffin8" parent="." unique_id=1148105144 instance=ExtResource("71_heavy")]
-position = Vector2(1738, 452)
+position = Vector2(1713, 450)
 
 [node name="coffin9" parent="." instance=ExtResource("65_3x28f")]
-position = Vector2(482, 219.31)
+position = Vector2(482, 170)
 
 [node name="coffin10" parent="." instance=ExtResource("67_uxocx")]
-position = Vector2(433.8, 674.8)
+position = Vector2(487, 620)
 
 [node name="coffin11" parent="." instance=ExtResource("70_arrow")]
-position = Vector2(819.4, 482)
+position = Vector2(826, 492)
 
 [node name="coffin12" parent="." instance=ExtResource("71_heavy")]
 position = Vector2(1168.85, 307.4)
 
 [node name="coffin13" parent="." instance=ExtResource("68_7nv0b")]
-position = Vector2(1542.4, 638.65)
+position = Vector2(1579, 638.65)
 
 [node name="coffin14" parent="." instance=ExtResource("65_3x28f")]
-position = Vector2(1662.9, 807.35)
+position = Vector2(1691, 848)
 
 [node name="coffin15" parent="." instance=ExtResource("70_arrow")]
-position = Vector2(1144.75, 1265.25)
+position = Vector2(1134, 1294)
 
 [node name="coffin16" parent="." instance=ExtResource("71_heavy")]
-position = Vector2(1566.5, 1229.1)
+position = Vector2(1541, 1294)
 
 [node name="bgm" type="AudioStreamPlayer" parent="." unique_id=1379898773]
 stream = ExtResource("62_bnuda")

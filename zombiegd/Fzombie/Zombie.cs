@@ -26,6 +26,11 @@ public partial class Zombie : CharacterBody2D
     private float _spawnRetry;
     private float _walkPhase;
     private Vector2 _returnPosition;
+    private float _yieldHold;
+    private float _yieldDistance;
+    private Vector2 _yieldDirection;
+    private Vector2 _yieldInputDirection;
+    protected bool IsYielding => _yieldHold > 0f;
     public string CurrentAnimation { get; private set; } = "idle";
     public Vector2 ReturnPosition => _returnPosition;
     protected bool IsAppearing => _isAppearing;
@@ -305,6 +310,13 @@ public partial class Zombie : CharacterBody2D
 	{
         if (!PrepareAiFrame(delta)) return;
         _attackTimer -= (float)delta;
+        // 被玩家和墙挤住时只暂缓追击；贴身攻击仍按原冷却生效。
+        if (IsYielding)
+        {
+            if (CanEngage() && IsWithinMeleeRange()) MeleeAttack();
+            else Velocity = Vector2.Zero;
+            return;
+        }
         if (!CanEngage()) { ReturnHome(); return; }
         if (!IsWithinMeleeRange()) Chase();
         else MeleeAttack();
@@ -314,6 +326,7 @@ public partial class Zombie : CharacterBody2D
     protected bool PrepareAiFrame(double delta)
     {
         if (Stop.IsPaused || _dead) return false;
+        _yieldHold = Mathf.Max(0, _yieldHold - (float)delta);
         if (_pendingSpawn)
         {
             _spawnRetry -= (float)delta;
@@ -322,6 +335,92 @@ public partial class Zombie : CharacterBody2D
         if (!_active || !EnsurePlayer()) return false;
         if (_isAppearing) { Velocity = Vector2.Zero; return false; }
         return true;
+    }
+
+    /// <summary>
+    /// 主角持续朝本实体移动却被堵住时，僵尸小步侧让。始终扫掠完整实体，
+    /// 不忽略玩家、墙、棺材或其它僵尸；没有真实空位时保持原位。
+    /// </summary>
+    public bool TryYieldToPlayer(Player player, Vector2 inputDirection, double delta)
+    {
+        if (!IsActive || IsAppearing || Stop.IsPaused || player == null || player.hp <= 0 ||
+            inputDirection.IsZeroApprox() || delta <= 0 || GlobalPosition.DistanceTo(player.GlobalPosition) > 140f)
+            return false;
+        var own = GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+        if (own?.Shape == null || own.Disabled) return false;
+        Vector2 input = inputDirection.Normalized();
+        // Keep one local relief budget while the player keeps pressing the same
+        // direction. It prevents repeated 3px steps from pushing an enemy an
+        // unbounded distance along a corridor.
+        if (_yieldInputDirection.IsZeroApprox() || _yieldInputDirection.Dot(input) < 0.95f)
+        {
+            _yieldDistance = 0;
+            _yieldDirection = Vector2.Zero;
+            _yieldInputDirection = input;
+        }
+        // 每个连续挤让阶段最多移动 100px。让步速度略高于玩家当前步长，
+        // 这样玩家持续顶住时，僵尸会先离开碰撞面再恢复追击，不会被玩家
+        // 的下一帧移动重新压回同一个实体交叠点。
+        if (_yieldDistance >= 100f) return false;
+        float playerStep = player.EffectiveMoveSpeed * (float)delta;
+        float step = Mathf.Min(Mathf.Min(12f, Mathf.Max(4f, playerStep * 1.15f)), 100f - _yieldDistance);
+        Vector2 direction = input;
+        Vector2 sideways = direction.Orthogonal();
+        Vector2 away = player.GlobalPosition.DirectionTo(GlobalPosition);
+        var directions = new[] { _yieldDirection, sideways, -sideways, away,
+            away.Rotated(Mathf.Pi / 4f), away.Rotated(-Mathf.Pi / 4f), direction };
+        var query = new PhysicsShapeQueryParameters2D
+        {
+            // The relief probe must see the player even when a scene or a
+            // temporary state has disabled one side of the usual layer mask.
+            // The node itself is excluded below, while every real body (walls,
+            // coffins, other zombies and the player) remains a hard blocker.
+            Shape = own.Shape, CollisionMask = uint.MaxValue,
+            CollideWithBodies = true, CollideWithAreas = false, Margin = 0.04f,
+            Exclude = new Godot.Collections.Array<Rid> { GetRid() }
+        };
+        var playerShape = player.GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+        foreach (Vector2 candidate in directions)
+        {
+            if (candidate.IsZeroApprox()) continue;
+            Vector2 motion = candidate.Normalized() * step;
+            if (!IsWithinTerritory(GlobalPosition + motion)) continue;
+            // CharacterBody2D layer settings can change while a modal state or
+            // a spawned enemy is being initialized. Check the two actual shapes
+            // as well, so a relief step can never end inside the player.
+            if (playerShape?.Shape != null &&
+                own.Shape.CollideWithMotion(own.GlobalTransform, motion,
+                    playerShape.Shape, playerShape.GlobalTransform, Vector2.Zero)) continue;
+            // 终点空闲还不够：路径也必须容纳整个胶囊，不能跨过薄墙。
+            query.Transform = own.GlobalTransform;
+            query.Motion = motion;
+            var fraction = GetWorld2D().DirectSpaceState.CastMotion(query);
+            if (fraction.Length < 2 || fraction[0] < 0.999f) continue;
+            Transform2D end = own.GlobalTransform;
+            end.Origin += motion;
+            query.Transform = end;
+            query.Motion = Vector2.Zero;
+            if (GetWorld2D().DirectSpaceState.IntersectShape(query, 1).Count != 0) continue;
+            Vector2 before = GlobalPosition;
+            MoveAndCollide(motion, false, 0.02f);
+            float moved = GlobalPosition.DistanceTo(before);
+            if (moved < 0.01f) continue;
+            _yieldDistance += moved;
+            _yieldDirection = candidate.Normalized();
+            _yieldHold = 0.3f;
+            Velocity = Vector2.Zero;
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>Called when the player has made meaningful progress or released input.</summary>
+    public void ResetYieldBudget()
+    {
+        _yieldHold = 0;
+        _yieldDistance = 0;
+        _yieldDirection = Vector2.Zero;
+        _yieldInputDirection = Vector2.Zero;
     }
 
 	// 每帧根据玩家位置更新朝向（水平翻转），独立于 _PhysicsProcess 里的移动逻辑：

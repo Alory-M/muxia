@@ -8,14 +8,24 @@ public partial class Coffin : Area2D, IWorldInteractable
     public CoffinState Status { get; private set; }
     private Zombie _guardian;
     private Gift _gift;
+    private Sprite2D _closed, _open;
+    private ShaderMaterial _lootGlow;
+    private float _glowTime;
+    public bool LootGlowEnabled => Status == CoffinState.Unlocked;
+    public float LootGlowStrength { get; private set; }
     public override void _Ready()
     {
         AddToGroup("interactable");
         _gift = GetNodeOrNull<Gift>("gift");
         foreach (Node node in GetChildren())
             if (node is Zombie zombie) { _guardian = zombie; zombie.Died += Unlock; break; }
-        GetNode<Sprite2D>("closed").Visible = true;
-        GetNode<Sprite2D>("open").Visible = false;
+        _closed = GetNode<Sprite2D>("closed");
+        _open = GetNode<Sprite2D>("open");
+        _closed.Visible = true;
+        _open.Visible = false;
+        _lootGlow = new ShaderMaterial { Shader = GD.Load<Shader>("res://scenes/coffin_loot_glow.gdshader") };
+        _open.Material = _lootGlow;
+        RefreshLootGlow();
     }
     public bool CanInteract => Status == CoffinState.Closed || Status == CoffinState.Unlocked;
     public string InteractionName => Status == CoffinState.Unlocked ? "摸棺" : "棺材";
@@ -28,14 +38,43 @@ public partial class Coffin : Area2D, IWorldInteractable
         if (!CanInteract || player.hp <= 0) return;
         if (Status == CoffinState.Unlocked)
         {
-            if (_gift?.Drop() == true) Status = CoffinState.Looted;
+            if (_gift?.Drop() == true)
+            {
+                Status = CoffinState.Looted;
+                RefreshLootGlow();
+            }
             return;
         }
         Status = _guardian == null ? CoffinState.Unlocked : CoffinState.Fighting;
-        GetNode<Sprite2D>("closed").Visible = false;
-        GetNode<Sprite2D>("open").Visible = true;
+        _closed.Visible = false;
+        _open.Visible = true;
+        RefreshLootGlow();
         GetNodeOrNull<AudioStreamPlayer2D>("coffin_open")?.Play();
         EmitSignal(SignalName.PlayerEntered, player);
     }
-    private void Unlock() => Status = CoffinState.Unlocked;
+    private void Unlock()
+    {
+        Status = CoffinState.Unlocked;
+        _glowTime = 0;
+        RefreshLootGlow();
+    }
+    private void RefreshLootGlow()
+    {
+        LootGlowStrength = LootGlowEnabled ? 0.36f + Mathf.Sin(_glowTime * 2.2f) * 0.07f : 0f;
+        _lootGlow?.SetShaderParameter("glow_strength", LootGlowStrength);
+    }
+    public override void _Process(double delta)
+    {
+        if (!LootGlowEnabled || Stop.IsPaused) return;
+        _glowTime += (float)delta;
+        RefreshLootGlow();
+    }
+    public override void _ExitTree()
+    {
+        if (GodotObject.IsInstanceValid(_guardian)) _guardian.Died -= Unlock;
+        var audio = GetNodeOrNull<AudioStreamPlayer2D>("coffin_open");
+        if (audio != null) { audio.Stop(); audio.Stream = null; }
+        if (GodotObject.IsInstanceValid(_open)) _open.Material = null;
+        _lootGlow = null;
+    }
 }

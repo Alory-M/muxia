@@ -35,7 +35,18 @@ func run():
     check(title_music.playing and title_music.bus == &"Music" and title_music.stream.loop, "开始界面 BGM 自动循环，使用 Music 总线")
     check(playing_music(root) == 1, "开始界面只播放一首 BGM")
     title.get_node("HUD/Start/start").emit_signal("pressed")
-    await frames(8)
+    # 场景现在由菜单后台线程预读；冷启动不再假定固定的 8 帧，而是
+    # 等待真实场景交接，同时保留一个明确的超时，避免失败时空转。
+    for index in range(240):
+        if current_scene != title:
+            break
+        await frames(1)
+    check(current_scene != title, "后台预读完成后进入实际游戏场景")
+    if current_scene == title:
+        title.queue_free()
+        current_scene = null
+        quit(1)
+        return
 
     var game = current_scene
     var player = game.get_node("player")

@@ -9,21 +9,37 @@ public partial class Trap : Area2D
     private float _cooldown, _remaining, _burstTimer, _spikeTime;
     private int _damage, _arrows;
     private Sprite2D _spikes;
-    private AudioStreamPlayer2D _sfx;
+    private AudioStreamPlayer2D _triggerSfx, _arrowBurstSfx;
     public int ShotsFired { get; private set; }
+    public int TriggerCount { get; private set; }
     public override void _Ready()
     {
         AddToGroup("world_event");
         var row = GameData.Row("mechan", MechanismId);
         _damage = (int)GameData.Number(row, "hit"); _cooldown = GameData.Number(row, "hittime");
         _spikes = GetNode<Sprite2D>("Spikes"); _spikes.Visible = false;
-        _sfx = new AudioStreamPlayer2D { Stream = GD.Load<AudioStream>(MechanismId == 1 ? "res://music/step_on_mechanism.wav" : "res://music/arrows_many.wav"), VolumeDb = -14f };
-        AddChild(_sfx); _sfx.Bus = "Sfx";
+        AudioSettings.Ensure();
+        _triggerSfx = new AudioStreamPlayer2D
+        {
+            Name = "TriggerSfx", Stream = GD.Load<AudioStream>("res://music/step_on_mechanism.wav"),
+            VolumeDb = -14f, MaxPolyphony = 1, Bus = "Sfx"
+        };
+        AddChild(_triggerSfx);
+        if (MechanismId == 2)
+        {
+            _arrowBurstSfx = new AudioStreamPlayer2D
+            {
+                Name = "ArrowBurstSfx", Stream = GD.Load<AudioStream>("res://music/arrows_many.wav"),
+                VolumeDb = -19f, MaxPolyphony = 1, Bus = "Sfx"
+            };
+            AddChild(_arrowBurstSfx);
+        }
         BodyEntered += OnBodyEntered;
         Stop.RegisterWorldNode(this);
     }
     private void OnBodyEntered(Node2D body)
     {
+        if (Stop.IsPaused) return;
         if (body is not Player && body is not Zombie) return;
         if (body is Zombie zombie && !zombie.IsActive) return;
         if (MechanismId == 1 && _spikeTime > 0) Damage(body);
@@ -32,13 +48,15 @@ public partial class Trap : Area2D
     public bool Activate()
     {
         if (Stop.IsPaused || _remaining > 0) return false;
-        _remaining = _cooldown; _sfx.Play();
+        _remaining = _cooldown;
+        TriggerCount++;
+        _triggerSfx.Play();
         if (MechanismId == 1)
         {
             _spikeTime = 0.8f; _spikes.Visible = true;
             foreach (Node2D body in GetOverlappingBodies()) Damage(body);
         }
-        else { _arrows = 10; _burstTimer = 0; }
+        else { _arrows = 10; _burstTimer = 0; _arrowBurstSfx?.Play(); }
         return true;
     }
     private void Damage(Node2D body)
@@ -48,6 +66,7 @@ public partial class Trap : Area2D
     }
     public override void _PhysicsProcess(double delta)
     {
+        if (Stop.IsPaused) return;
         float dt = (float)delta; _remaining = Mathf.Max(0, _remaining - dt);
         if (_spikeTime > 0)
         {
@@ -63,5 +82,13 @@ public partial class Trap : Area2D
         GetTree().CurrentScene.AddChild(bullet);
         bullet.GlobalPosition = GlobalPosition + ArrowOrigin;
         bullet.Launch(ArrowDirection); ShotsFired++;
+    }
+    public override void _ExitTree()
+    {
+        foreach (var audio in new[] { _triggerSfx, _arrowBurstSfx })
+        {
+            if (audio == null) continue;
+            audio.Stop(); audio.Stream = null;
+        }
     }
 }

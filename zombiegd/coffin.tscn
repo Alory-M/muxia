@@ -11,7 +11,7 @@
 radius = 226.0553
 
 [sub_resource type="RectangleShape2D" id="CoffinFootprint"]
-size = Vector2(64, 54)
+size = Vector2(46, 24)
 
 [node name="coffin" type="Area2D" unique_id=847161236]
 position = Vector2(-550, -3)
@@ -43,5 +43,5 @@ collision_layer = 1
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SolidBody"]
-position = Vector2(0, 4)
+position = Vector2(0, 6)
 shape = SubResource("CoffinFootprint")

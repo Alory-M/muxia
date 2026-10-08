@@ -28,6 +28,7 @@ public partial class Player : CharacterBody2D
 
 	private Vector2 _dashDirection = Vector2.Zero;
 	private float _dashRemaining = 0f;         // 本次冲刺还剩多少像素
+    private float _blockedMoveTime;
 
 	// 背包。子弹 / 药 / 绷带 / 解毒剂的数量都在子节点 pack(Pack.cs)里,
 	// 这里不再自己存一份,要用就走 _pack
@@ -175,6 +176,7 @@ public partial class Player : CharacterBody2D
 
 	public override void _PhysicsProcess(double delta)
 	{
+		if (Stop.IsPaused || hp <= 0) return;
 		float dt = (float)delta;
         _shotCooldown = Mathf.Max(0, _shotCooldown - dt);
 
@@ -191,6 +193,7 @@ public partial class Player : CharacterBody2D
 			// 按"实际移动了多少"扣减:撞墙时冲刺会提前结束
 			float moved = (GlobalPosition - before).Length();
 			_dashRemaining -= moved;
+            RequestCrowdingRelief(_dashDirection, step, before, delta);
 
 			// 结束冲刺的两种情况:
 			// 1) 距离冲完了(浮点误差下剩的那一丁点直接抹掉);
@@ -214,10 +217,64 @@ public partial class Player : CharacterBody2D
 		Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 
 		Velocity = direction * EffectiveMoveSpeed;
+		Vector2 walkStart = GlobalPosition;
 		MoveAndSlide();
+        RequestCrowdingRelief(direction, EffectiveMoveSpeed * dt, walkStart, delta);
 
 		UpdateWalkSound();
 	}
+
+    private void RequestCrowdingRelief(Vector2 direction, float expectedStep, Vector2 before, double delta)
+    {
+        float progress = direction.IsZeroApprox() ? 0 : (GlobalPosition - before).Dot(direction.Normalized());
+        // A small sliding advance still means the player remains blocked.  Reset
+        // the zombie relief budget only after nearly the whole requested step is
+        // available; otherwise each partially blocked frame could grant another
+        // full relief budget and push one zombie indefinitely down a corridor.
+        if (direction.IsZeroApprox() || expectedStep <= 0)
+        {
+            _blockedMoveTime = 0;
+            foreach (Node node in GetTree().GetNodesInGroup(Zombie.GroupName))
+                if (node is Zombie zombie && zombie.GlobalPosition.DistanceTo(GlobalPosition) <= 150f)
+                    zombie.ResetYieldBudget();
+            return;
+        }
+        if (progress > expectedStep * 0.85f)
+        {
+            // The player may have slid around one frame while the zombie is
+            // still close. Keep its local relief budget until that nearby
+            // contact is gone; resetting on every successful slide would let
+            // the same enemy be pushed without a distance bound.
+            _blockedMoveTime = 0;
+            bool nearbyZombie = false;
+            foreach (Node node in GetTree().GetNodesInGroup(Zombie.GroupName))
+                if (node is Zombie zombie && zombie.IsActive && zombie.GlobalPosition.DistanceTo(GlobalPosition) <= 150f)
+                {
+                    nearbyZombie = true;
+                    break;
+                }
+            if (!nearbyZombie)
+                foreach (Node node in GetTree().GetNodesInGroup(Zombie.GroupName))
+                    if (node is Zombie zombie && zombie.GlobalPosition.DistanceTo(GlobalPosition) <= 180f)
+                        zombie.ResetYieldBudget();
+            return;
+        }
+        _blockedMoveTime += (float)delta;
+        if (_blockedMoveTime < 0.1f) return;
+        var own = GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+        if (own?.Shape == null || own.Disabled) return;
+        // 只处理真正挡在当前输入路径上的敌人，撞墙不会牵动身后的敌人。
+        foreach (Node node in GetTree().GetNodesInGroup(Zombie.GroupName))
+        {
+            if (node is not Zombie zombie || !zombie.IsActive ||
+                zombie.GlobalPosition.DistanceTo(GlobalPosition) > 140f) continue;
+            var target = zombie.GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+            if (target?.Shape == null || target.Disabled) continue;
+            if (own.Shape.CollideWithMotion(own.GlobalTransform, direction.Normalized() * 30f,
+                target.Shape, target.GlobalTransform, Vector2.Zero))
+                zombie.TryYieldToPlayer(this, direction, delta);
+        }
+    }
 
 	// 用 _UnhandledInput 而不是 _Process + IsActionJustPressed:
 	// 输入事件是逐个投递的,两帧之内连点也不会漏掉
