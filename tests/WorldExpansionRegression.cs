@@ -137,6 +137,9 @@ public partial class WorldExpansionRegression : Node
             foreach (Node node in GetTree().GetNodesInGroup("zombie")) node.SetPhysicsProcess(false);
             await Frames();
             Check(coffins.Count == 16 && traps.Count == 12, "地图扩充为十六口棺材、十二块危险机关");
+            Check(_player.ZIndex > _game.GetNode<Coffin>("coffin10").ZIndex &&
+                _player.ZIndex > _game.GetNode<Treasure>("Treasure3").ZIndex,
+                "玩家绘制层级位于棺材和宝箱上方");
             var species = new Dictionary<int, int>();
             foreach (Coffin coffin in coffins)
             {

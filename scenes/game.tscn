@@ -528,6 +528,7 @@ visible = false
 
 [node name="player" type="CharacterBody2D" parent="." unique_id=569109722 groups=["player"]]
 position = Vector2(243, 1250)
+z_index = 5
 script = ExtResource("8_oaba0")
 moveSpeed = 500.0
 hp = 500.0
@@ -658,7 +659,7 @@ position = Vector2(1713, 450)
 position = Vector2(482, 170)
 
 [node name="coffin10" parent="." instance=ExtResource("67_uxocx")]
-position = Vector2(487, 620)
+position = Vector2(208, 620)
 
 [node name="coffin11" parent="." instance=ExtResource("70_arrow")]
 position = Vector2(826, 492)
