@@ -106,15 +106,15 @@ public partial class GameplayRegression : Node
             var storeRect = storeBackground.GetGlobalTransform() * storeBackground.GetRect();
             Check(storeRect.Position.X >= 0 && storeRect.End.X <= GetViewport().GetVisibleRect().Size.X &&
                 storeBackground.Texture.ResourcePath == "res://assets/user/interface/shop_inter.png", "第一版商店美术面板完整显示在视口内");
-            gold.Amount = 599; int stock = store.GetProductStock(1005); reserve = pack.GetReserveBullet();
-            Check(!store.TryPurchase(1005, 1) && gold.Amount == 599 && store.GetProductStock(1005) == stock && pack.GetReserveBullet() == reserve, "余额不足不扣款、发货或减库存");
+            gold.Amount = 149; int stock = store.GetProductStock(1005); reserve = pack.GetReserveBullet();
+            Check(!store.TryPurchase(1005, 1) && gold.Amount == 149 && store.GetProductStock(1005) == stock && pack.GetReserveBullet() == reserve, "余额不足不扣款、发货，商品不限库存");
             gold.Amount = 1800;
             Check(!store.TryPurchase(1005, 0) && !store.TryPurchase(1005, int.MaxValue) && gold.Amount == 1800, "拒绝零数量和超量购买");
-            Check(store.TryPurchase(1005, 2) && gold.Amount == 600 && pack.GetReserveBullet() == reserve + 20 && pack.GetCount(SupplyKind.Bullet) == 5, "600 一组购买两组二十发进入后备，弹匣不变");
+            Check(store.TryPurchase(1005, 2) && gold.Amount == 1500 && pack.GetReserveBullet() == reserve + 20 && pack.GetCount(SupplyKind.Bullet) == 5, "150 一组购买两组二十发进入后备，弹匣不变");
             Check(!store.TryPurchase(3001, 1) && soul.GetSoul() == 0, "增益不足碎片时不能购买");
             soul.AddSoul(150);
             float attack = _player.EffectiveAttack;
-            Check(store.TryPurchase(3001, 1) && soul.GetSoul() == 135 && _player.EffectiveAttack == attack * 1.5f, "15 碎片兑换攻击 +50%");
+            Check(store.TryPurchase(3001, 1) && soul.GetSoul() == 145 && _player.EffectiveAttack == attack * 1.5f, "5 碎片兑换攻击 +50%");
             Check(store.TryPurchase(3002, 1) && Mathf.IsEqualApprox(_player.EffectiveMoveSpeed, 600), "原版移速仍正确应用 +20% 增益");
             Check(store.TryPurchase(3003, 1) && Mathf.IsEqualApprox(_player.ShotsPerSecond, 6), "攻速增益实际作用于射击");
             Check(store.TryPurchase(3004, 5) && _player.CriticalChance == 1 && !store.TryPurchase(3004, 1), "暴击封顶，不出售无效增益");
@@ -127,26 +127,29 @@ public partial class GameplayRegression : Node
             Check(!Stop.IsPaused, "重复开关不会遗留暂停锁");
             var coffin = _game.GetNode<Coffin>("coffin");
             var guardian = coffin.GetNode<Zombie>("miniZom");
-            _player.GlobalPosition = coffin.GlobalPosition + new Vector2(90, 0); await Frames();
+            _player.GlobalPosition = coffin.GlobalPosition + new Vector2(170, 0); await Frames();
             guardian.take_damage(999);
-            Check(coffin.Status == Coffin.CoffinState.Closed && guardian.Health == 15 && !guardian.Visible && guardian.CollisionLayer == 0, "靠近不自动开棺，未开启的僵尸不受伤、不挡路");
-            dialogue.OpenDialogue(coffin); Check(dialogue.IsDialogOpen && Stop.IsPaused, "F 交互确认暂停世界");
-            Action("esc");
-            Check(coffin.Status == Coffin.CoffinState.Closed && !Stop.IsPaused, "取消开棺不产生敌人");
+            Check(coffin.Status == Coffin.CoffinState.Closed && !coffin.CanInteract && guardian.Health == 15 &&
+                !guardian.Visible && guardian.CollisionLayer == 0, "范围之外棺材保持封闭，未开启的僵尸不受伤、不挡路");
             dialogue.OpenDialogue(coffin);
-            Input.ParseInputEvent(new InputEventMouseButton { ButtonIndex = MouseButton.WheelDown, Pressed = true });
-            Input.FlushBufferedEvents(); Action("interact");
-            Check(coffin.Status == Coffin.CoffinState.Closed && !dialogue.IsDialogOpen, "滚轮可选择离开，F 不误开棺");
-            dialogue.OpenDialogue(coffin); Action("interact"); await Frames();
-            Check(coffin.Status == Coffin.CoffinState.Fighting && guardian.Visible && guardian.IsActive && guardian.CollisionLayer != 0, "确认开棺激活对应僵尸");
+            Check(!dialogue.IsDialogOpen && !Stop.IsPaused, "封闭棺材不开放F摸棺对话");
             guardian.SetPhysicsProcess(false);
+            coffin.SetPhysicsProcess(false);
+            _player.GlobalPosition = coffin.GlobalPosition + new Vector2(90, 0); await Frames();
+            coffin.SetPhysicsProcess(true); await Frames();
+            Check(coffin.Status == Coffin.CoffinState.Fighting && guardian.Visible && guardian.IsActive &&
+                guardian.CollisionLayer != 0 && coffin.GetNode<StaticBody2D>("SolidBody").CollisionLayer == 0,
+                "靠近自动开棺激活对应僵尸，并解除棺材实体阻挡");
+            dialogue.OpenDialogue(coffin);
+            Check(!coffin.CanInteract && !dialogue.IsDialogOpen && !Stop.IsPaused,
+                "战斗期间F不会触发摸棺或暂停敌人");
             await ToSignal(GetTree().CreateTimer(0.6), SceneTreeTimer.SignalName.Timeout);
             _player.GlobalPosition = coffin.GlobalPosition + new Vector2(900, 0);
             guardian.GlobalPosition = guardian.ReturnPosition + new Vector2(0, -40);
             Vector2 returnDirection = guardian.GlobalPosition.DirectionTo(guardian.ReturnPosition);
             guardian._PhysicsProcess(0.016);
             Check(guardian.Velocity.Dot(returnDirection) > 0, "离开领地后僵尸返回棺材外的安全位置");
-            // 从实体未遮挡的站位射击，棺材实体也应正确挡住穿过它的子弹。
+            // 从真实空闲且未被墙体或其它实体遮挡的位置射击守卫。
             var playerShape = _player.GetNode<CollisionShape2D>("CollisionShape2D");
             bool foundShot = false;
             for (int angle = 0; angle < 24 && !foundShot; angle++)
@@ -168,8 +171,20 @@ public partial class GameplayRegression : Node
             Check(_player.FireTowards(guardian.GlobalPosition - _player.GlobalPosition), "向实际守卫射击");
             await Frames(15);
             Check(coffin.Status == Coffin.CoffinState.Unlocked && soul.GetSoul() - beforeSoul >= 2 && soul.GetSoul() - beforeSoul <= 5, "击败守卫获得碎片并解锁棺材");
-            await Frames();
-            int beforeGold = gold.Amount; coffin.Interact(_player); int afterGold = gold.Amount; coffin.Interact(_player);
+            _player.GlobalPosition = coffin.GlobalPosition + new Vector2(90, 0); await Frames();
+            int beforeGold = gold.Amount;
+            dialogue.OpenDialogue(coffin);
+            Check(dialogue.IsDialogOpen && Stop.IsPaused, "守卫死亡后F摸棺对话确认暂停世界");
+            Action("esc");
+            Check(coffin.Status == Coffin.CoffinState.Unlocked && !Stop.IsPaused && gold.Amount == beforeGold,
+                "取消摸棺不领取掉落，解锁状态保留");
+            dialogue.OpenDialogue(coffin);
+            Input.ParseInputEvent(new InputEventMouseButton { ButtonIndex = MouseButton.WheelDown, Pressed = true });
+            Input.FlushBufferedEvents(); Action("interact");
+            Check(coffin.Status == Coffin.CoffinState.Unlocked && !dialogue.IsDialogOpen && gold.Amount == beforeGold,
+                "滚轮可选择离开，F不误领摸棺掉落");
+            dialogue.OpenDialogue(coffin); Action("interact");
+            int afterGold = gold.Amount; coffin.Interact(_player);
             Check(afterGold - beforeGold >= 300 && afterGold - beforeGold <= 800 && gold.Amount == afterGold && coffin.Status == Coffin.CoffinState.Looted, "摸棺按 2005 掉落表发奖且仅一次");
             var chest = _game.GetNode<Treasure>("Treasure2");
             reserve = pack.GetReserveBullet(); beforeGold = gold.Amount;
@@ -198,16 +213,21 @@ public partial class GameplayRegression : Node
             Check(!trap.Activate(), "机关遵循五秒冷却，不能重复触发");
             var arrows = _game.GetNode<Trap>("ArrowTrap");
             Check(arrows.Activate(), "暗箭机关可以启动"); await Frames(100);
-            Check(arrows.ShotsFired == 10, "暗箭机关发射十支箭");
+            Check(arrows.SalvosFired == 10 && arrows.ShotsFired == 30, "暗箭机关十轮齐射，每轮三条平行弹道共三十支箭");
             var poisonBullet = GD.Load<PackedScene>("res://scenes/bullet.tscn").Instantiate<Bullet>();
             poisonBullet.HitsPlayer = true; poisonBullet.AppliesSlow = true; poisonBullet.Damage = 40;
             _game.AddChild(poisonBullet); hp = _player.hp; poisonBullet.ApplyDamage(_player);
             Check(_player.hp == hp - 40 && _player.GetNode<State>("state").IsPoisoned, "毒箭命中时造成伤害并施加中毒");
             poisonBullet.QueueFree();
+            var targetCoffin = _game.GetNode<Coffin>("coffin"); targetCoffin.SetPhysicsProcess(false);
+            var target = targetCoffin.GetNode<Zombie>("miniZom");
+            target.SetPhysicsProcess(false);
+            _player.GlobalPosition = targetCoffin.GlobalPosition + new Vector2(90, 0); await Frames();
+            targetCoffin.SetPhysicsProcess(true); await Frames();
+            Check(target.IsActive && targetCoffin.Status == Coffin.CoffinState.Fighting,
+                "机关箭验证使用靠近自动激活的真实守卫");
             var everyone = GD.Load<PackedScene>("res://scenes/bullet.tscn").Instantiate<Bullet>();
             everyone.HitsEveryone = true; everyone.Damage = 10; _game.AddChild(everyone);
-            var targetCoffin = _game.GetNode<Coffin>("coffin"); targetCoffin.Interact(_player);
-            var target = targetCoffin.GetNode<Zombie>("miniZom");
             everyone.ApplyDamage(target); hp = _player.hp; everyone.ApplyDamage(_player);
             Check(target.Health == 5 && _player.hp == hp - 10, "机关箭伤害玩家和僵尸双方"); everyone.QueueFree();
             var settings = _game.GetNode<EscStop>("HUD/escstop");

@@ -40,10 +40,16 @@ public partial class WorldExpansionRegression : Node
     }
     private bool FindApproach(Node2D prop, out Vector2 approach)
     {
-        foreach (Vector2 direction in new[] { Vector2.Right, Vector2.Left, Vector2.Up, Vector2.Down })
+        var exclusions = new Godot.Collections.Array<Rid> { _player.GetRid() };
+        var solid = prop.GetNodeOrNull<StaticBody2D>("SolidBody");
+        if (solid != null) exclusions.Add(solid.GetRid());
+        foreach (float radius in new[] { 90f, 105f })
+        for (int index = 0; index < 24; index++)
         {
-            Vector2 point = prop.GlobalPosition + direction * 90;
+            Vector2 point = prop.GlobalPosition + Vector2.Right.Rotated(index * Mathf.Tau / 24f) * radius;
             if (!IsPlayerSpaceFree(point)) continue;
+            var ray = PhysicsRayQueryParameters2D.Create(point, prop.GlobalPosition, 1, exclusions);
+            if (_player.GetWorld2D().DirectSpaceState.IntersectRay(ray).Count > 0) continue;
             approach = point;
             return true;
         }
@@ -52,12 +58,14 @@ public partial class WorldExpansionRegression : Node
     }
     private bool ActualPlayerMovementHits(StaticBody2D solid)
     {
-        foreach (Vector2 direction in new[] { Vector2.Right, Vector2.Left, Vector2.Up, Vector2.Down })
+        foreach (float radius in new[] { 90f, 105f })
+        for (int index = 0; index < 24; index++)
         {
-            Vector2 point = solid.GetParent<Node2D>().GlobalPosition + direction * 90;
+            Vector2 direction = Vector2.Right.Rotated(index * Mathf.Tau / 24f);
+            Vector2 point = solid.GetParent<Node2D>().GlobalPosition + direction * radius;
             if (!IsPlayerSpaceFree(point)) continue;
             _player.GlobalPosition = point;
-            KinematicCollision2D collision = _player.MoveAndCollide(-direction * 140);
+            KinematicCollision2D collision = _player.MoveAndCollide(-direction * (radius + 50));
             if (collision?.GetCollider() == solid) return true;
         }
         return false;
@@ -131,12 +139,12 @@ public partial class WorldExpansionRegression : Node
             var coffins = new List<Coffin>(); var traps = new List<Trap>();
             foreach (Node child in _game.GetChildren())
             {
-                if (child is Coffin coffin) coffins.Add(coffin);
+                if (child is Coffin coffin) { coffins.Add(coffin); coffin.SetPhysicsProcess(false); }
                 if (child is Trap trap) { traps.Add(trap); trap.SetPhysicsProcess(false); trap.Monitoring = false; }
             }
             foreach (Node node in GetTree().GetNodesInGroup("zombie")) node.SetPhysicsProcess(false);
             await Frames();
-            Check(coffins.Count == 16 && traps.Count == 12, "地图扩充为十六口棺材、十二块危险机关");
+            Check(coffins.Count == 24 && traps.Count == 12, "地图扩充为二十四口棺材、十二块危险机关");
             Check(_player.ZIndex > _game.GetNode<Coffin>("coffin10").ZIndex &&
                 _player.ZIndex > _game.GetNode<Treasure>("Treasure3").ZIndex,
                 "玩家绘制层级位于棺材和宝箱上方");
@@ -163,19 +171,25 @@ public partial class WorldExpansionRegression : Node
                 Check(ActualPlayerMovementHits(solid), $"实际玩家移动被 {label} 阻挡，无法穿过所在位置");
                 _player.GlobalPosition = initialPosition; propCount++;
             }
-            Check(propCount == 20, "十六口棺材和四个宝箱全部具有实体占位");
+            Check(propCount == 28, "二十四口封闭棺材和四个宝箱全部具有实体占位");
             Check(HasRouteToExit(initialPosition), "新增实体保留从入口到右上方出口的可行路线");
             foreach (Coffin coffin in coffins)
             {
                 Check(FindApproach(coffin, out Vector2 point), $"{coffin.Name} 开棺前有安全玩家位置");
                 _player.GlobalPosition = point; await Frames();
-                coffin.Interact(_player); await Frames();
+                coffin.SetPhysicsProcess(true); await Frames(3);
                 Zombie guardian = Guardian(coffin);
                 Check(guardian.IsActive && guardian.Visible && guardian.ReturnPosition.DistanceTo(coffin.GlobalPosition) >= 60,
-                    $"{coffin.Name} 的守卫出现在实体棺材之外");
+                    $"{coffin.Name} 靠近自动开棺，守卫出现在棺材之外");
+                Check(coffin.GetNode<StaticBody2D>("SolidBody").CollisionLayer == 0 &&
+                    coffin.GetNode<CollisionShape2D>("SolidBody/CollisionShape2D").Disabled,
+                    $"{coffin.Name} 打开后释放实体碰撞，不再阻塞道路");
                 var shape = guardian.GetNode<CollisionShape2D>("CollisionShape2D");
                 Check(_player.GetWorld2D().DirectSpaceState.IntersectShape(Query(shape, guardian.GlobalPosition,
                     guardian.GetRid()), 1).Count == 0, $"{coffin.Name} 的守卫未挤进玩家、墙体或道具");
+                guardian.take_damage(guardian.Health); await Frames();
+                Check(coffin.Status == Coffin.CoffinState.Unlocked && coffin.CanInteract && coffin.LootGlowEnabled,
+                    $"{coffin.Name} 的真实守卫死亡后可摸棺，地图通行不遗留死亡实体");
             }
             var spike = _game.GetNode<Trap>("SpikeTrap3");
             _player.GlobalPosition = spike.GlobalPosition + new Vector2(-100, 0); await Frames();

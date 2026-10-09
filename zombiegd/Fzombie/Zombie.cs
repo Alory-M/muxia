@@ -25,6 +25,7 @@ public partial class Zombie : CharacterBody2D
     private bool _pendingSpawn;
     private float _spawnRetry;
     private float _walkPhase;
+    private ZombieMotionArt _motionArt;
     private Vector2 _returnPosition;
     private float _yieldHold;
     private float _yieldDistance;
@@ -67,6 +68,9 @@ public partial class Zombie : CharacterBody2D
 	[Export] public int MaxHp { get; set; } = 100;          // 血量
 	[Export] public int AttackDamage { get; set; } = 10;    // 伤害
 	[Export] public float MoveSpeed { get; set; } = 80f;    // 移速
+	// 实时跟随主角普通行走速度；增益/中毒立即生效，冲刺速度不会传给僵尸。
+	public float EffectiveMoveSpeed => _player is Player player && GodotObject.IsInstanceValid(player)
+        ? player.EffectiveMoveSpeed : MoveSpeed;
 	[Export] public float AttackCd { get; set; } = 1.2f;    // 攻击冷却
 	[Export] public float AttackRange { get; set; } = 60f;  // 攻击距离
 	[Export] public Vector2 SpawnOffset { get; set; } = new Vector2(72, 0);
@@ -120,6 +124,8 @@ public partial class Zombie : CharacterBody2D
             var sprite = GetNodeOrNull<Sprite2D>(name);
             if (sprite != null) _spritePoses.Add(new SpritePose(sprite));
         }
+        _motionArt = ZombieMotionArt.Create(GetNodeOrNull<Sprite2D>("normal"), MonsterId);
+        if (_motionArt != null) AddChild(_motionArt);
 
 		SetupAudio();
 
@@ -228,6 +234,12 @@ public partial class Zombie : CharacterBody2D
                 if (!IsWithinTerritory(candidate)) continue;
                 Transform2D transform = shapeNode.GlobalTransform;
                 transform.Origin += candidate - GlobalPosition;
+                // 节点移动与物理服务器同步之间也不可把守卫生成在玩家身上。
+                // 使用玩家当前节点变换再做一次直接形状检查，覆盖开局及瞬移帧。
+                var playerShape = _player?.GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+                if (playerShape?.Shape != null && !playerShape.Disabled &&
+                    shapeNode.Shape.CollideWithMotion(transform, Vector2.Zero,
+                        playerShape.Shape, playerShape.GlobalTransform, Vector2.Zero)) continue;
                 query.Transform = transform;
                 if (GetWorld2D().DirectSpaceState.IntersectShape(query, 1).Count != 0) continue;
                 // 地刺也能伤敌人，但不应在出现动画尚未结束时把新守卫直接秒杀。
@@ -251,6 +263,7 @@ public partial class Zombie : CharacterBody2D
 	private void SetSpriteState(bool showAttack)
 	{
 		if (_dead) return;
+        _motionArt?.RestoreOriginal();
 		var normal = GetNodeOrNull<Sprite2D>("normal");
 		var attack = GetNodeOrNull<Sprite2D>("attack");
 		if (normal != null)
@@ -427,8 +440,30 @@ public partial class Zombie : CharacterBody2D
 	// 子类就算重写 _PhysicsProcess 不调 base，这个翻转也照样生效。
 	public override void _Process(double delta)
 	{
+        if (Stop.IsPaused) return;
 		UpdateFacing();
         if (!_active || _dead || _presentationTween != null || Stop.IsPaused) return;
+        if (_motionArt != null && CurrentAnimation == "attack")
+        {
+            if (_motionArt.AdvanceAttack(delta)) EndPresentation();
+            return;
+        }
+        if (_motionArt != null)
+        {
+            foreach (var pose in _spritePoses) pose.Restore();
+            if (Velocity.LengthSquared() < 1f)
+            {
+                SetSpriteState(false);
+                CurrentAnimation = "idle";
+            }
+            else
+            {
+                CurrentAnimation = "move";
+                foreach (var pose in _spritePoses) pose.Sprite.Visible = false;
+                _motionArt.AdvanceWalk(delta, (MonsterId == 5 ? 8f : 10f) * EffectiveMoveSpeed / 500f);
+            }
+            return;
+        }
         SetSpriteState(false);
         if (Velocity.LengthSquared() < 1f)
         {
@@ -456,7 +491,10 @@ public partial class Zombie : CharacterBody2D
 			return;
 		}
 
-		bool flip = (_player.GlobalPosition.X < GlobalPosition.X) != ArtFacesLeft;
+        bool playerIsLeft = _player.GlobalPosition.X < GlobalPosition.X;
+		bool flip = playerIsLeft != ArtFacesLeft;
+        // 生成图集六种都默认朝右；原毒箭立绘仍按 ArtFacesLeft 保持自身朝向规则。
+        _motionArt?.SetFacing(playerIsLeft);
 		var normal = GetNodeOrNull<Sprite2D>("normal");
 		var attack = GetNodeOrNull<Sprite2D>("attack");
 		if (normal != null)
@@ -494,14 +532,17 @@ public partial class Zombie : CharacterBody2D
     }
     protected void ReturnHome()
     {
-        if (GlobalPosition.DistanceTo(_returnPosition) < 5f) { Velocity = Vector2.Zero; return; }
-        Velocity = GlobalPosition.DirectionTo(_returnPosition) * MoveSpeed;
+        float distance = GlobalPosition.DistanceTo(_returnPosition);
+        if (distance < 5f) { Velocity = Vector2.Zero; return; }
+        // 跟随玩家增益后单帧步长可能超过到达容差；限制最后一步，避免来回越过归位点。
+        float frameTime = Mathf.Max((float)GetPhysicsProcessDeltaTime(), 0.0001f);
+        Velocity = GlobalPosition.DirectionTo(_returnPosition) * Mathf.Min(EffectiveMoveSpeed, distance / frameTime);
         MoveAndSlide();
     }
     protected void Chase()
 	{
 		Vector2 dir = (_player.GlobalPosition - GlobalPosition).Normalized();
-		Velocity = dir * MoveSpeed;
+		Velocity = dir * EffectiveMoveSpeed;
 		MoveAndSlide();
 	}
 
@@ -557,6 +598,7 @@ public partial class Zombie : CharacterBody2D
         if (_presentationTween != null && _presentationTween.IsValid()) _presentationTween.Kill();
         _presentationTween = null;
         _isAppearing = false;
+        _motionArt?.RestoreOriginal();
         foreach (var pose in _spritePoses) pose.Restore();
     }
 
@@ -605,6 +647,12 @@ public partial class Zombie : CharacterBody2D
         UpdateFacing();
         SetSpriteState(true);
         CurrentAnimation = "attack";
+        if (_motionArt != null)
+        {
+            foreach (var pose in _spritePoses) pose.Sprite.Visible = false;
+            _motionArt.BeginAttack(this is ArrowZom ? 0.38 : 0.3);
+            return;
+        }
         float direction = _spritePoses.Count > 0 && _spritePoses[0].Sprite.FlipH != ArtFacesLeft ? -1f : 1f;
         _presentationTween = CreateTween();
         _presentationTween.TweenMethod(Callable.From<float>(progress =>
@@ -695,6 +743,11 @@ public partial class Zombie : CharacterBody2D
         _active = false;
         Velocity = Vector2.Zero;
         ResetPresentation();
+        // 受伤可能打断真实图集攻击；死亡仍用原待机立绘倒地渐隐。
+        var normal = GetNodeOrNull<Sprite2D>("normal");
+        var attack = GetNodeOrNull<Sprite2D>("attack");
+        if (normal != null) normal.Visible = true;
+        if (attack != null) attack.Visible = false;
         CurrentAnimation = "death";
         SetDeferred(CollisionObject2D.PropertyName.CollisionLayer, 0);
         SetDeferred(CollisionObject2D.PropertyName.CollisionMask, 0);

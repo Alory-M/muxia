@@ -217,7 +217,7 @@ public partial class CoffinLayoutRegression : Node
             Vector2 start = _player.GlobalPosition;
             foreach (Node node in _game.GetChildren())
             {
-                if (node is Coffin coffin) _coffins.Add(coffin);
+                if (node is Coffin coffin) { _coffins.Add(coffin); coffin.SetPhysicsProcess(false); }
                 if (node is Trap trap) { trap.SetPhysicsProcess(false); trap.Monitoring = false; }
             }
             foreach (Node body in _game.GetNode("background").GetChildren())
@@ -225,7 +225,14 @@ public partial class CoffinLayoutRegression : Node
                     foreach (Node child in body.GetChildren()) if (child is CollisionShape2D shape) _walls.Add(shape);
             foreach (Node enemy in GetTree().GetNodesInGroup("zombie")) enemy.SetPhysicsProcess(false);
             await Frames();
-            Check(_coffins.Count == 16, "十六口棺材及其六种守卫均保留");
+            Check(_coffins.Count == 24, "二十四口贴墙棺材及其六种守卫均保留");
+            var species = new Dictionary<int, int>();
+            foreach (Coffin coffin in _coffins)
+                foreach (Node child in coffin.GetChildren())
+                    if (child is Zombie guardian)
+                        species[guardian.MonsterId] = species.GetValueOrDefault(guardian.MonsterId) + 1;
+            Check(species.Count == 6 && System.Linq.Enumerable.All(species.Values, count => count == 4),
+                "六种守卫各有四口棺材，新增棺材保持种类均衡");
             BuildReachableGrid(start);
             foreach (Coffin coffin in _coffins)
             {

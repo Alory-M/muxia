@@ -4,14 +4,14 @@ using Godot;
 /// 商店里"买几份"的加减控件,挂在 购买XX数量 这个 Label 上。
 ///
 /// 自己存份数(初值 1),管好 增 / 减 两个子按钮:增 +1,减 -1,最低 0。
-/// 够不够钱、够不够货不归它管,上层(Store)结算时直接读 Count。
+/// 不设置商店库存上限；资金和背包容量由上层(Store)结算时校验。
 /// </summary>
 public partial class 购买数量 : Label
 {
 	// 现在要买几份。最低 0;上限由 Max 决定
 	public int Count { get; private set; } = 1;
 
-	// 上限。默认不限,由 Limit 按当前库存写进来
+	// 整数表示上限。商店使用 int.MaxValue，不按库存限制数量。
 	public int Max
 	{
 		get => _max;
@@ -19,7 +19,7 @@ public partial class 购买数量 : Label
 		{
 			_max = Mathf.Max(value, 0);
 
-			// 库存被买掉后可能比当前份数还小,当场夹回去
+			// 兼容其他需要数量上限的控件调用。
 			if (Count > _max)
 			{
 				SetCount(_max);
@@ -43,12 +43,13 @@ public partial class 购买数量 : Label
 			return;
 		}
 
-		plus.Pressed += () => SetCount(Count + 1);
+		// 先检查再加，避免 int.MaxValue + 1 溢出后变成零。
+		plus.Pressed += () => { if (Count < _max) SetCount(Count + 1); };
 		minus.Pressed += () => SetCount(Count - 1);
 	}
 
 	/// <summary>设份数。夹到 [0, Max] 之间</summary>
-	private void SetCount(int value)
+	public void SetCount(int value)
 	{
 		Count = Mathf.Clamp(value, 0, _max);
 		RefreshText();

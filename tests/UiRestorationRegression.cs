@@ -62,14 +62,36 @@ public partial class UiRestorationRegression : Node
             await Click(quantity.GetNode<Button>("增"));
             Check(quantity.Count == 2 && storeUi.GetNode<Label>("ProductDescription4").Text.Contains("10"), "原加减数量框可选择两组且说明每组十发");
             await Click(storeUi.GetNode<Button>("买子弹"));
-            Check(pack.GetReserveBullet() == reserve + 20 && pack.GetCount(SupplyKind.Bullet) == magazine && gold.Amount == 600 && store.GetProductStock(1005) == stock - 2, "原购买按钮两组二十发全部进入后备，按组扣钱和库存");
+            Check(pack.GetReserveBullet() == reserve + 20 && pack.GetCount(SupplyKind.Bullet) == magazine && gold.Amount == 1500 && store.GetProductStock(1005) == stock, "原购买按钮两组二十发全部进入后备，按组扣钱且库存不限量");
+            quantity.SetCount(20); await Click(quantity.GetNode<Button>("增"));
+            Check(quantity.Count == 21 && quantity.Max == int.MaxValue && storeUi.GetNode<Label>("剩余子弹").Text == "不限量", "数量选择超过十组，商品显示不限量");
+            await Click(storeUi.GetNode<Button>("买子弹"));
+            Check(gold.Amount == 1500 && pack.GetReserveBullet() == reserve + 20 && quantity.Count == 21, "数量不限时仍校验购买余额且失败不截断选择数量");
+            quantity.SetCount(int.MaxValue); await Click(quantity.GetNode<Button>("增"));
+            Check(quantity.Count == int.MaxValue, "数量加到整数边界后不会溢出归零");
+            await Click(quantity.GetNode<Button>("减"));
+            Check(quantity.Count == int.MaxValue - 1, "整数边界仍可正常减一");
+            quantity.SetCount(0); await Click(quantity.GetNode<Button>("减"));
+            Check(quantity.Count == 0, "数量减到零后不会变负数");
+            quantity.SetCount(2);
+            foreach (string tabName in new[] { "SuppliesTab", "BuffsTab" })
+            {
+                var tab = storeUi.GetNode<Button>(tabName);
+                var artwork = tab.GetNode<Sprite2D>("Artwork");
+                var label = tab.GetNode<Label>("CategoryLabel");
+                Rect2 artworkRect = artwork.Transform * artwork.GetRect();
+                Check(Mathf.IsEqualApprox(artworkRect.Size.X, 91) && Mathf.Abs(artworkRect.Position.X) < 0.001f &&
+                    label.Position.Y >= artworkRect.End.Y && label.GetRect().End.Y <= tab.Size.Y &&
+                    label.AutowrapMode == TextServer.AutowrapMode.Off,
+                    $"{tabName} 美术填满 91 像素侧栏，类别文字独立单行且不与图案重叠：art={artworkRect}, label={label.GetRect()}, tab={tab.Size}");
+            }
             soul.AddSoul(30); float attack = player.EffectiveAttack;
             await Click(storeUi.GetNode<Button>("BuffsTab"));
             Check(storeUi.GetNode<Label>("药品").Text == GameData.Text("text_buff1"), "原商店美术提供灵魂增益类别");
             await Click(storeUi.GetNode<Button>("买药"));
-            Check(soul.GetSoul() == 15 && player.EffectiveAttack == attack * 1.5f, "原四列按钮在灵魂类别正确兑换增益");
+            Check(soul.GetSoul() == 25 && player.EffectiveAttack == attack * 1.5f, "原四列按钮以五碎片兑换灵魂增益");
             await Click(storeUi.GetNode<Button>("SuppliesTab"));
-            Check(storeUi.GetNode<Label>("药品").Text == GameData.Text("item_drop4") && storeUi.GetNode<Label>("买子弹/Label").Text.Replace(" ", "") == "600/组", "切回财宝类别恢复药品与弹药按组价格");
+            Check(storeUi.GetNode<Label>("药品").Text == GameData.Text("item_drop4") && storeUi.GetNode<Label>("买子弹/Label").Text.Replace(" ", "") == "150/组", "切回财宝类别恢复药品与弹药每组一百五十价格");
             await Click(storeUi.GetNode<Button>("close2"));
             Check(!store.IsOpen && !Stop.IsPaused, "原关闭按钮即时释放商店暂停锁");
             _game.QueueFree(); await Frames(4); GC.Collect(); GC.WaitForPendingFinalizers(); await Frames();

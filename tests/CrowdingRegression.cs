@@ -30,7 +30,8 @@ public partial class CrowdingRegression : Node
         var enemy = GD.Load<PackedScene>($"res://zombiegd/{species}_zom.tscn").Instantiate<Zombie>();
         enemy.Position = _arena + offset;
         _game.AddChild(enemy); _fixtures.Add(enemy);
-        enemy.MoveSpeed = 0; enemy.AttackDamage = 1; enemy.AttackCd = 100;
+        // 固定追击AI，仅通过真实玩家碰撞调用原本的侧让逻辑。
+        enemy.SetPhysicsProcess(false); enemy.AttackDamage = 1; enemy.AttackCd = 100;
         if (enemy is FastMoveZom fast) fast.TeleportCooldown = 100;
         if (enemy is ArrowZom ranged) ranged.BulletScene = null;
         return enemy;
@@ -88,8 +89,9 @@ public partial class CrowdingRegression : Node
 
         Wall(new Vector2(-22, 0), new Vector2(20, 420));
         var front = Enemy("heavy", new Vector2(38, 0));
-        var upper = Enemy("mini", new Vector2(0, -96));
+        var upper = Enemy("mini", new Vector2(13, -96));
         await Frames();
+        Check(!OverlapsBody(front) && !OverlapsBody(upper), "双敌合围的固定AI场景从真实无重叠位置开始");
         Input.ActionPress("move_right"); _player.SetPhysicsProcess(true); await Frames(85);
         Input.ActionRelease("move_right"); _player.SetPhysicsProcess(false);
         Check(_player.GlobalPosition.X > _arena.X + 65, "两只僵尸合围且存在安全空间时玩家能走出");
@@ -150,7 +152,6 @@ public partial class CrowdingRegression : Node
         await Frames(); fast._PhysicsProcess(1); await Frames();
         Check(fast.GlobalPosition.DistanceTo(_player.GlobalPosition) <= fast.AttackRange + 0.1f && !OverlapsBody(fast),
             "扩大体积后瞬移贴墙仍选择真实空闲落点");
-        fast.SetPhysicsProcess(true);
         Input.ActionPress("move_right"); _player.SetPhysicsProcess(true);
         _player._UnhandledInput(new InputEventAction { Action = "mouse_press2", Pressed = true });
         await Frames(85); Input.ActionRelease("move_right"); _player.SetPhysicsProcess(false);
@@ -163,15 +164,14 @@ public partial class CrowdingRegression : Node
         coffin.Position = _arena + new Vector2(90, 0);
         var guardian = GD.Load<PackedScene>("res://zombiegd/heavy_zom.tscn").Instantiate<Zombie>();
         coffin.AddChild(guardian); _game.AddChild(coffin); _fixtures.Add(coffin);
-        await Frames();
-        guardian.MoveSpeed = 0; guardian.AttackDamage = 1; guardian.AttackCd = 100;
-        coffin.Interact(_player); await Frames(40);
+        guardian.SetPhysicsProcess(false); guardian.AttackDamage = 1; guardian.AttackCd = 100;
+        await Frames(40);
         Check(guardian.IsActive && !OverlapsBody(guardian), "扩大僵尸出棺不与玩家、实体棺材重叠");
         Input.ActionPress("move_right"); _player.SetPhysicsProcess(true);
         _player._UnhandledInput(new InputEventAction { Action = "mouse_press2", Pressed = true });
         await Frames(40); Input.ActionRelease("move_right"); _player.SetPhysicsProcess(false);
         Check(!_player.IsDashing && !OverlapsBody(_player) && !OverlapsBody(guardian),
-            "开棺紧接冲刺不会穿棺材、卡住冲刺或把新守卫挤进实体");
+            "靠近自动开棺紧接冲刺可以结束，不把玩家或新守卫挤进实体");
         await ResetFixtures();
     }
     private async void RunTests()

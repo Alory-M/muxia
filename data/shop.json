@@ -4,7 +4,7 @@
     "type": 1,
     "icon": "gongjibuff",
     "name": "text_buff1",
-    "prize": 15,
+    "prize": 5,
     "text": "攻击提升{}"
   },
   {
@@ -12,7 +12,7 @@
     "type": 1,
     "icon": "yisubuff",
     "name": "text_buff3",
-    "prize": 15,
+    "prize": 5,
     "text": "移速提升{}"
   },
   {
@@ -20,7 +20,7 @@
     "type": 1,
     "icon": "gongsubuff",
     "name": "text_buff2",
-    "prize": 15,
+    "prize": 5,
     "text": "攻速提升{}"
   },
   {
@@ -28,7 +28,7 @@
     "type": 1,
     "icon": "baojibuff",
     "name": "text_buff4",
-    "prize": 15,
+    "prize": 5,
     "text": "暴击提升{}"
   },
   {
@@ -36,7 +36,7 @@
     "type": 2,
     "icon": "绷带",
     "name": "item_drop3",
-    "prize": 600,
+    "prize": 150,
     "text": "绷带"
   },
   {
@@ -44,7 +44,7 @@
     "type": 2,
     "icon": "药品",
     "name": "item_drop4",
-    "prize": 600,
+    "prize": 150,
     "text": "药品"
   },
   {
@@ -52,7 +52,7 @@
     "type": 2,
     "icon": "子弹",
     "name": "item_drop5",
-    "prize": 600,
+    "prize": 150,
     "text": "子弹"
   },
   {
@@ -60,7 +60,7 @@
     "type": 2,
     "icon": "解毒剂",
     "name": "item_drop6",
-    "prize": 600,
+    "prize": 150,
     "text": "解毒剂"
   }
 ]

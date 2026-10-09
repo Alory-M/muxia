@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-/// <summary>羊皮纸四列商店：图标、库存、效果和数量独立排版。</summary>
+/// <summary>羊皮纸四列商店：不限库存，按实际购买数量结算。</summary>
 public partial class Store : Node
 {
     public const int BulletsPerPurchase = 10;
@@ -27,7 +27,7 @@ public partial class Store : Node
     private soulpiece _soul;
     private Control _ui;
     private Stop _stop;
-    private readonly Dictionary<int, int> _stock = new();
+    private readonly HashSet<int> _products = new();
     private readonly List<Column> _columns = new();
     private Label _balance, _feedback, _categoryHint;
     private Button _suppliesTab, _buffsTab;
@@ -45,7 +45,7 @@ public partial class Store : Node
         _ui.Theme = PaperUiLayout.Theme();
         _ui.ZIndex = 100;
         _stop = GetNode<Stop>("stop");
-        foreach (var row in GameData.Table("shop").EnumerateArray()) _stock[row.GetProperty("ID").GetInt32()] = 10;
+        foreach (var row in GameData.Table("shop").EnumerateArray()) _products.Add(row.GetProperty("ID").GetInt32());
         SetOpen(false);
         Callable.From(BindUi).CallDeferred();
     }
@@ -91,7 +91,7 @@ public partial class Store : Node
             column.Select = new Button { Position = new Vector2(center - 60, 226), Size = new Vector2(120, 177), SelfModulate = new Color(1, 1, 1, 0) };
             _ui.AddChild(column.Select);
             column.Select.Pressed += () => ShowProductDetails(column.ProductId);
-            column.Quantity.Max = 10;
+            column.Quantity.Max = int.MaxValue;
             column.Buy.Pressed += () =>
             {
                 TryPurchase(column.ProductId, column.Quantity.Count);
@@ -137,10 +137,11 @@ public partial class Store : Node
     {
         var button = new Button { Position = position, Size = new Vector2(91, 110), SelfModulate = new Color(1, 1, 1, 0) };
         _ui.AddChild(button);
-        button.AddChild(new Sprite2D { Name = "Artwork", Position = new Vector2(45.5f, 38), RegionEnabled = true });
-        var label = new Label { Text = text };
+        button.AddChild(new Sprite2D { Name = "Artwork", Position = new Vector2(45.5f, 41.5f), RegionEnabled = true });
+        var label = new Label { Name = "CategoryLabel", Text = text };
         button.AddChild(label);
-        PaperUiLayout.Label(label, new Vector2(0, 77), new Vector2(91, 28), 17, Colors.White, HorizontalAlignment.Center);
+        PaperUiLayout.Label(label, new Vector2(0, 85), new Vector2(91, 25), 17, Colors.White, HorizontalAlignment.Center);
+        label.AutowrapMode = TextServer.AutowrapMode.Off;
         button.Pressed += action;
         return button;
     }
@@ -150,7 +151,7 @@ public partial class Store : Node
         sprite.Texture = GD.Load<Texture2D>($"res://assets/user/icon/shop_{type}_{(selected ? "click" : "noclick")}.png");
         // 原稿保留整个商店画布，只取绘制按钮的区域，去掉画布上方残留参考线。
         sprite.RegionRect = new Rect2(31, type == "coin" ? 73 : 214, 169, 154);
-        sprite.Scale = new Vector2(78f / 169, 71f / 154);
+        sprite.Scale = new Vector2(91f / 169, 83f / 154);
     }
     private void ShowProductDetails(int id)
     {
@@ -232,26 +233,24 @@ public partial class Store : Node
     {
         foreach (var column in _columns)
         {
-            int stock = GetProductStock(column.ProductId);
-            column.Quantity.Max = stock;
-            column.Stock.Text = $"剩余 {stock}{(column.ProductId == 1005 ? " 组" : "")}";
+            bool capped = column.ProductId == 3004 && GetRemainingCriticalPurchases() == 0;
+            column.Quantity.Max = int.MaxValue;
+            column.Stock.Text = capped ? "暴击已满" : "不限量";
             column.Buy.TooltipText = $"购买 {column.Quantity.Count}{(column.ProductId == 1005 ? " 组" : " 份")} {ProductName(column.ProductId)}，合计 {(long)GetProductPrice(column.ProductId) * column.Quantity.Count}{Currency(column.ProductId)}";
-            column.Buy.Disabled = stock == 0;
-            column.Buy.Modulate = stock == 0 ? new Color(0.65f, 0.65f, 0.65f) : Colors.White;
+            column.Buy.Disabled = capped;
+            column.Buy.Modulate = capped ? new Color(0.65f, 0.65f, 0.65f) : Colors.White;
         }
     }
     public int GetProductPrice(int id) => GameData.Row("shop", id).GetProperty("prize").GetInt32();
-    public int GetProductStock(int id)
-    {
-        int stock = _stock.TryGetValue(id, out var value) ? value : 0;
-        if (id == 3004 && _player != null)
-            stock = Mathf.Min(stock, Mathf.CeilToInt((1f - _player.CriticalChance) / GameData.Number(GameData.Row("buff", id), "add") - 0.0001f));
-        return Mathf.Max(0, stock);
-    }
+    // 保留旧库存查询接口；MaxValue 表示已上架商品不限量，不随购买减少。
+    public int GetProductStock(int id) => _products.Contains(id) ? int.MaxValue : 0;
+    private int GetRemainingCriticalPurchases() => _player == null ? 0 : Mathf.Max(0,
+        Mathf.CeilToInt((1f - _player.CriticalChance) / GameData.Number(GameData.Row("buff", 3004), "add") - 0.0001f));
     public bool TryPurchase(int id, int quantity)
     {
-        if (!IsOpen || _player == null || _pack == null || _gold == null || _soul == null || !_stock.ContainsKey(id)) return false;
-        if (quantity <= 0 || quantity > GetProductStock(id)) return Fail("数量无效或库存不足。");
+        if (!IsOpen || _player == null || _pack == null || _gold == null || _soul == null || !_products.Contains(id)) return false;
+        if (quantity <= 0) return Fail("购买数量必须大于零。");
+        if (id == 3004 && quantity > GetRemainingCriticalPurchases()) return Fail("暴击增益超过 100% 上限，本次未扣款。");
         var product = GameData.Row("shop", id);
         long cost = (long)GetProductPrice(id) * quantity;
         if (cost < 0 || cost > int.MaxValue) return Fail("购买金额超出范围。");
@@ -260,7 +259,6 @@ public partial class Store : Node
         if (!buff && (supplyAmount > int.MaxValue || !_pack.CanAdd(GameData.Supply(id), (int)supplyAmount)))
             return Fail("物资数量超出背包范围，本次未扣款。");
         if (!(buff ? _soul.TrySpend((int)cost) : _gold.TrySpend((int)cost))) return Fail($"{Currency(id)}不足，本次未扣款。");
-        _stock[id] -= quantity;
         if (buff) _player.ApplyBuff(id, quantity);
         else _pack.Add(GameData.Supply(id), (int)supplyAmount);
         string received = id == 1005 ? $"{quantity} 组 / {supplyAmount} 发，已加入备用弹药" : $"× {quantity}";

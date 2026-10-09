@@ -7,7 +7,7 @@ using GodotDict = Godot.Collections.Dictionary;
 /// 掉落组件,挂在 treasure.tscn 的 gift 节点上(照 rotate / disappear 的组件写法)。
 ///
 /// 开箱时由宿主 Treasure 调用 Drop():从 data/drop.json 里按 DropId 取一组候选,
-/// 按 basewight 加权抽中**一行**,再照 data/item.json 把这份东西加到玩家身上。
+/// 按 basewight 加权抽中一行，再独立掷出带 chance 的额外物资行。
 ///
 /// 两张表都在 res://data/ 下,改掉落只改 json,不用动代码、不用重编译。
 /// 表在第一次掉落时读进来,之后一直用这份缓存 —— 改了 json 要重开游戏才生效。
@@ -33,12 +33,28 @@ public partial class Gift : Node
 	public bool Drop()
 	{
 		GodotDict picked = PickRow();
-		if (picked == null)
+		var rewards = new List<string>();
+		if (picked == null || !GiveItem(picked["item"].AsString(), rewards))
 		{
 			return false;
 		}
 
-		string rawItem = picked["item"].AsString();
+		// 基础财宝发放成功后才掷额外物资。每一行独立抽取，可同时获得多种物资。
+		foreach (Variant entry in LoadDropRows())
+		{
+			if (entry.VariantType != Variant.Type.Dictionary) continue;
+			GodotDict row = entry.AsGodotDictionary();
+			if (!row.ContainsKey("ID") || row["ID"].AsInt32() != DropId ||
+				!row.ContainsKey("item") || !row.ContainsKey("chance")) continue;
+			float chance = Mathf.Clamp((float)row["chance"].AsDouble(), 0f, 1f);
+			if (GD.Randf() < chance) GiveItem(row["item"].AsString(), rewards);
+		}
+		InteractionController.Notify($"获得 {string.Join("、", rewards)}");
+		return true;
+	}
+
+	private bool GiveItem(string rawItem, List<string> rewards)
+	{
 
 		// "1002,100" → 物品 ID 和数量
 		string[] parts = rawItem.Split(',');
@@ -70,7 +86,7 @@ public partial class Gift : Node
 		if (GiveToPlayer(location, count))
 		{
 			GD.Print($"Gift: 掉落 {count} 个{note}(物品 {itemId}),已加到 {location}");
-            InteractionController.Notify($"获得 {note} × {count}");
+			rewards.Add($"{note} × {count}");
             return true;
 		}
 	    return false;
@@ -99,6 +115,8 @@ public partial class Gift : Node
 			}
 
 			GodotDict row = entry.AsGodotDictionary();
+			// chance 行是基础掉落之外的独立奖励，不参与基础行的加权抽取。
+			if (row.ContainsKey("chance")) continue;
 			if (!row.ContainsKey("ID") || !row.ContainsKey("item") || !row.ContainsKey("basewight"))
 			{
 				continue;

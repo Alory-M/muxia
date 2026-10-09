@@ -103,7 +103,7 @@ func run():
     before_reserve = pack.GetReserveBullet()
     await click(shop_ui.get_node("买子弹"))
     verify(pack.GetReserveBullet() == before_reserve + 20 and pack.GetCount(0) == 6, "商店实际点击购买两组二十发加入后备")
-    verify(player.get_node("gold").Amount == 600, "原每组六百价格保留")
+    verify(player.get_node("gold").Amount == 1500, "金币商品每组一百五十，两组扣三百")
     text_fits(shop_ui.get_node("PurchaseFeedback"), "购买反馈完整显示")
     await click(shop_ui.get_node("BuffsTab"))
     verify(shop_ui.get_node("药品").text != "药品" and shop_ui.get_node("ProductDescription1").text.contains("攻击"), "实际点击灵魂增益切换分类")

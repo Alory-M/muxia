@@ -123,6 +123,9 @@ public partial class Packsys : Control
         {
             slot.Icon.Texture = GameData.ItemIcon(id);
             PaperUiLayout.Icon(slot.Icon, 60);
+            bool available = HasItem(id);
+            slot.Icon.Visible = slot.Counter.Visible = available;
+            slot.Button.Disabled = !available;
             slot.Counter.Text = id == 1005 ? $"{_pack.GetCount(SupplyKind.Bullet)}/{_pack.GetReserveBullet()}" : Count(id).ToString();
             slot.Button.TooltipText = $"{GameData.Text($"item_drop{id - 1000}")}\n数量：{slot.Counter.Text}";
         }
@@ -133,9 +136,13 @@ public partial class Packsys : Control
         1001 => _soul.GetSoul(), 1002 => _gold.Amount, 1005 => _pack.GetReserveBullet(),
         _ => _pack.GetCount(GameData.Supply(id))
     };
+    private bool HasItem(int id) => id == 1005
+        ? _pack.GetCount(SupplyKind.Bullet) > 0 || _pack.GetReserveBullet() > 0
+        : Count(id) > 0;
     public void SelectItem(int id)
     {
         if (id != 0 && (id < 1001 || id > 1006)) return;
+        if (id != 0 && !HasItem(id)) id = 0;
         _selected = id;
         if (_use == null) return;
         _icon.Visible = _name.Visible = _description.Visible = id != 0;

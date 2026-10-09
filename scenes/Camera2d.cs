@@ -14,8 +14,14 @@ using Godot;
 public partial class Camera2d : Camera2D
 {
 	// 拉近画面，让人物更清晰；HUD 在独立 CanvasLayer 中保持原尺寸。
-	[Export(PropertyHint.Range, "1,2,0.05")]
-	public float ViewZoom { get; set; } = 1.35f;
+	[Export(PropertyHint.Range, "1,4,0.05")]
+	public float ViewZoom { get; set; } = 2.4f;
+
+    // 可见直径140世界像素，约为一条墓道宽度；放大不改变地图碰撞和行走距离。
+    [Export(PropertyHint.Range, "50,100,1")]
+    public float VisionWorldRadius { get; set; } = 70f;
+    public float VisibleWorldDiameter => VisionWorldRadius * 2f;
+    private ShaderMaterial _visionMaterial;
 
 	// 地图就是 background 里那张图,边界等于它的矩形。
 	// 用 TextureRect 而不是它父节点 background:background 是全屏 anchors 的 Control,
@@ -26,7 +32,7 @@ public partial class Camera2d : Camera2D
 
 	public override void _Ready()
 	{
-		Zoom = Vector2.One * Mathf.Clamp(ViewZoom, 1f, 2f);
+		Zoom = Vector2.One * Mathf.Clamp(ViewZoom, 1f, 4f);
 		// 玩家用 "player" 组去找,和 debuff / Stop 一样 ——
 		// 不写死 ../player 这种斜杠,场景里挪一下也不会断
 		_target = GetTree().GetFirstNodeInGroup("player") as Node2D;
@@ -42,7 +48,29 @@ public partial class Camera2d : Camera2D
 
 		// 开局先对齐一次,免得第一帧镜头还停在检查器里的老位置
 		FollowTarget();
+        var layer = new CanvasLayer { Name = "TombVision", Layer = 1 };
+        AddChild(layer);
+        _visionMaterial = new ShaderMaterial { Shader = GD.Load<Shader>("res://scenes/tomb_vision.gdshader") };
+        var veil = new Godot.ColorRect
+        {
+            Name = "VisionVeil", Color = Colors.Black, Material = _visionMaterial,
+            MouseFilter = Control.MouseFilterEnum.Ignore
+        };
+        layer.AddChild(veil);
+        veil.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+        UpdateVision();
 	}
+
+    public override void _Process(double delta) => UpdateVision();
+
+    private void UpdateVision()
+    {
+        if (_visionMaterial == null || !GodotObject.IsInstanceValid(_target)) return;
+        _visionMaterial.SetShaderParameter("viewport_size", GetViewportRect().Size);
+        _visionMaterial.SetShaderParameter("player_screen", GetViewport().GetCanvasTransform() * _target.GlobalPosition);
+        _visionMaterial.SetShaderParameter("pixels_per_world", Zoom.X);
+        _visionMaterial.SetShaderParameter("world_radius", VisionWorldRadius);
+    }
 
 	// 用 _PhysicsProcess 而不是 _Process:玩家是在 _PhysicsProcess 里 MoveAndSlide 移动的,
 	// 镜头跟着同一份位置走才不会有抖动

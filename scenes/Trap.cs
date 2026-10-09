@@ -1,16 +1,20 @@
 using Godot;
 
-/// <summary>踩中机关启动：地刺伤害所有重叠单位；暗箭十连发伤害路径上的双方。</summary>
+/// <summary>踩中机关启动：地刺伤害所有重叠单位；暗箭以三条平行弹道十连发伤害双方。</summary>
 public partial class Trap : Area2D
 {
     [Export] public int MechanismId { get; set; } = 1;
     [Export] public Vector2 ArrowOrigin { get; set; } = new Vector2(-160, 0);
     [Export] public Vector2 ArrowDirection { get; set; } = Vector2.Right;
     private float _cooldown, _remaining, _burstTimer, _spikeTime;
-    private int _damage, _arrows;
+    private const int ArrowSalvoCount = 10;
+    private const float ArrowLaneSpacing = 32f;
+    private int _damage, _salvosRemaining;
+    private PackedScene _arrowScene;
     private Sprite2D _spikes;
     private AudioStreamPlayer2D _triggerSfx, _arrowBurstSfx;
     public int ShotsFired { get; private set; }
+    public int SalvosFired { get; private set; }
     public int TriggerCount { get; private set; }
     public override void _Ready()
     {
@@ -27,6 +31,7 @@ public partial class Trap : Area2D
         AddChild(_triggerSfx);
         if (MechanismId == 2)
         {
+            _arrowScene = GD.Load<PackedScene>("res://scenes/trap_arrow.tscn");
             _arrowBurstSfx = new AudioStreamPlayer2D
             {
                 Name = "ArrowBurstSfx", Stream = GD.Load<AudioStream>("res://music/arrows_many.wav"),
@@ -56,7 +61,7 @@ public partial class Trap : Area2D
             _spikeTime = 0.8f; _spikes.Visible = true;
             foreach (Node2D body in GetOverlappingBodies()) Damage(body);
         }
-        else { _arrows = 10; _burstTimer = 0; _arrowBurstSfx?.Play(); }
+        else { _salvosRemaining = ArrowSalvoCount; _burstTimer = 0; _arrowBurstSfx?.Play(); }
         return true;
     }
     private void Damage(Node2D body)
@@ -73,15 +78,20 @@ public partial class Trap : Area2D
             _spikeTime -= dt;
             if (_spikeTime <= 0) _spikes.Visible = false;
         }
-        if (_arrows <= 0) return;
+        if (_salvosRemaining <= 0) return;
         _burstTimer -= dt;
         if (_burstTimer > 0) return;
-        _arrows--; _burstTimer = 0.12f;
-        var bullet = GD.Load<PackedScene>("res://scenes/trap_arrow.tscn").Instantiate<Bullet>();
-        bullet.HitsEveryone = true; bullet.Damage = _damage; bullet.Speed = 400;
-        GetTree().CurrentScene.AddChild(bullet);
-        bullet.GlobalPosition = GlobalPosition + ArrowOrigin;
-        bullet.Launch(ArrowDirection); ShotsFired++;
+        _salvosRemaining--; _burstTimer = 0.12f; SalvosFired++;
+        Vector2 direction = ArrowDirection.Normalized();
+        Vector2 laneOffset = direction.Orthogonal() * ArrowLaneSpacing;
+        for (int lane = -1; lane <= 1; lane++)
+        {
+            var bullet = _arrowScene.Instantiate<Bullet>();
+            bullet.HitsEveryone = true; bullet.Damage = _damage; bullet.Speed = 400;
+            GetTree().CurrentScene.AddChild(bullet);
+            bullet.GlobalPosition = GlobalPosition + ArrowOrigin + laneOffset * lane;
+            bullet.Launch(direction); ShotsFired++;
+        }
     }
     public override void _ExitTree()
     {

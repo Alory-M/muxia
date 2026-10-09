@@ -11,6 +11,7 @@ public partial class Node2d : Node2D
 	{
 		_Map = GetNode<Sprite2D>("HUD/Map");
 		_pack = GetNode<Pack>("player/pack");
+        GetNode<CanvasLayer>("HUD").Layer = 2;
         AddChild(new InteractionController { Name = "Interactions" });
         AddChild(new ExpeditionHud { Name = "ExpeditionHud" });
         AudioSettings.Route(this);

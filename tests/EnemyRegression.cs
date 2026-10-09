@@ -54,6 +54,9 @@ public partial class EnemyRegression : Node
     }
     private async Task OpeningOverlapCases()
     {
+        foreach (Node node in _game.GetChildren())
+            if (node is Coffin closed) closed.SetPhysicsProcess(false);
+        await Frames();
         // 棺材已有实体碰撞；从真实可站立的交互位置开棺，检查安全出棺与可移动性。
         foreach (Node node in _game.GetChildren())
         {
@@ -77,13 +80,19 @@ public partial class EnemyRegression : Node
                     CollisionMask = _player.CollisionMask, CollideWithAreas = false,
                     Exclude = new Godot.Collections.Array<Rid> { _player.GetRid() }
                 };
-                if (_player.GetWorld2D().DirectSpaceState.IntersectShape(query, 1).Count == 0)
+                var ray = PhysicsRayQueryParameters2D.Create(candidate, coffin.GlobalPosition, 1,
+                    new Godot.Collections.Array<Rid> { _player.GetRid(), coffin.GetNode<StaticBody2D>("SolidBody").GetRid() });
+                if (_player.GetWorld2D().DirectSpaceState.IntersectShape(query, 1).Count == 0 &&
+                    _player.GetWorld2D().DirectSpaceState.IntersectRay(ray).Count == 0)
                 { playerStart = candidate; foundPosition = true; }
             }
             Check(foundPosition, $"{coffin.Name}: 棺材附近保留可站立的交互位置");
-            _player.GlobalPosition = playerStart;
-            await Frames();
-            coffin.Interact(_player); await Frames(4);
+            _player.GlobalPosition = playerStart; await Frames();
+            coffin.SetPhysicsProcess(true); await Frames(4);
+            Check(coffin.Status == Coffin.CoffinState.Fighting && !coffin.CanInteract &&
+                coffin.GetNode<StaticBody2D>("SolidBody").CollisionLayer == 0 &&
+                coffin.GetNode<CollisionShape2D>("SolidBody/CollisionShape2D").Disabled,
+                $"{coffin.Name}: 安全靠近自动开棺，战斗期间不摸棺且棺材不再阻挡");
             Check(guardian.IsActive && !PlayerOverlaps(guardian) && !OverlapsBody(guardian),
                 $"{coffin.Name}: 出棺位置不重叠玩家、棺材或墙体 (active={guardian.IsActive}, playerOverlap={PlayerOverlaps(guardian)}, bodyOverlap={OverlapsBody(guardian)}, coffin={coffin.GlobalPosition}, spawn={guardian.GlobalPosition}, player={_player.GlobalPosition})");
             int beforeHealth = guardian.Health;
@@ -158,8 +167,10 @@ public partial class EnemyRegression : Node
         trapped.Position = _arena + new Vector2(0, -240);
         _game.AddChild(trapped); trapped.SetPhysicsProcess(false);
         trapped.MoveSpeed = 0; await Frames();
-        Vector2 start = trapped.GlobalPosition; trapped._PhysicsProcess(1);
-        Check(trapped.GlobalPosition.IsEqualApprox(start), "无安全落点时回退普通追击而不传入玩家体内");
+        Vector2 start = trapped.GlobalPosition; trapped._PhysicsProcess(1.0 / 60.0);
+        Check(trapped.GlobalPosition.DistanceTo(start) < 20 &&
+            trapped.GlobalPosition.DistanceTo(_player.GlobalPosition) > trapped.AttackRange && !OverlapsBody(trapped),
+            "无安全落点时只回退本帧普通追击，不瞬移或传入玩家体内");
         trapped.QueueFree(); left.QueueFree(); right.QueueFree(); await Frames();
     }
     private async Task AnimationCases()

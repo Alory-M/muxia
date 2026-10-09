@@ -27,6 +27,8 @@ public partial class AmmoRegression : Node
             await Frames();
             var pack = _game.GetNode<Pack>("player/pack");
             var gold = _game.GetNode<Gold>("player/gold");
+            var player = _game.GetNode<Player>("player");
+            var soul = player.GetNode<soulpiece>("soulpiece");
             var store = _game.GetNode<Store>("HUD/store/store");
             pack.SetCount(SupplyKind.Bullet, 2); pack._totalBullet = 20;
             pack.Add(SupplyKind.Bullet, 5);
@@ -47,15 +49,21 @@ public partial class AmmoRegression : Node
             pack.AddDrug(1);
             Check(!pack.CanAdd(SupplyKind.Drug, 1) && pack.GetCount(SupplyKind.Drug) == int.MaxValue, "其他物资不会因累加溢出变为负数");
 
-            pack.SetCount(SupplyKind.Bullet, 2); pack._totalBullet = 20; gold.Amount = 1800;
+            pack.SetCount(SupplyKind.Bullet, 2); pack._totalBullet = 20; gold.Amount = 450;
             store.SetOpen(true); await Frames();
+            foreach (var product in GameData.Table("shop").EnumerateArray())
+            {
+                int id = product.GetProperty("ID").GetInt32();
+                Check(store.GetProductPrice(id) == (product.GetProperty("type").GetInt32() == 1 ? 5 : 150) &&
+                    store.GetProductStock(id) == int.MaxValue, $"商品 {id} 使用降低后的单价且库存不限量");
+            }
             int stock = store.GetProductStock(1005);
-            Check(store.TryPurchase(1005, 1) && gold.Amount == 1200 && pack.GetReserveBullet() == 30 &&
-                pack.GetCount(SupplyKind.Bullet) == 2 && store.GetProductStock(1005) == stock - 1,
-                "购买数量一获得十发备用弹药，花费六百财宝及一组库存");
+            Check(store.TryPurchase(1005, 1) && gold.Amount == 300 && pack.GetReserveBullet() == 30 &&
+                pack.GetCount(SupplyKind.Bullet) == 2 && store.GetProductStock(1005) == stock,
+                "购买一组获得十发备用弹药，花费一百五十财宝且商品不限库存");
             Check(store.TryPurchase(1005, 2) && gold.Amount == 0 && pack.GetReserveBullet() == 50 &&
-                pack.GetCount(SupplyKind.Bullet) == 2 && store.GetProductStock(1005) == stock - 3,
-                "购买数量二获得二十发备用弹药，花费一千二百财宝及两组库存");
+                pack.GetCount(SupplyKind.Bullet) == 2 && store.GetProductStock(1005) == stock,
+                "购买两组获得二十发备用弹药，花费三百财宝且不减少库存");
             stock = store.GetProductStock(1005);
             Check(!store.TryPurchase(1005, 1) && gold.Amount == 0 && pack.GetReserveBullet() == 50 &&
                 store.GetProductStock(1005) == stock, "余额不足不扣库存或增加子弹");
@@ -67,6 +75,27 @@ public partial class AmmoRegression : Node
             pack._totalBullet = int.MaxValue - 2;
             Check(!store.TryPurchase(1005, 1) && gold.Amount == 600 && pack.GetReserveBullet() == int.MaxValue - 2 &&
                 store.GetProductStock(1005) == stock, "备用弹药无法完整容纳十发时拒绝购买且不扣款");
+            Check(!store.TryPurchase(1004, 1) && gold.Amount == 600 && pack.GetCount(SupplyKind.Drug) == int.MaxValue,
+                "普通物资达到整数容量时拒绝购买且不扣款");
+            pack._totalBullet = 50; gold.Amount = 4500;
+            Check(store.TryPurchase(1005, 15) && store.TryPurchase(1005, 15) && gold.Amount == 0 &&
+                pack.GetReserveBullet() == 350 && pack.GetCount(SupplyKind.Bullet) == 2 && store.GetProductStock(1005) == stock,
+                "同一商品可连续购买十五组，累计三十组不会耗尽库存或改变弹匣");
+            gold.Amount = int.MaxValue; pack._totalBullet = 0;
+            int largestAffordable = int.MaxValue / store.GetProductPrice(1005);
+            Check(store.TryPurchase(1005, largestAffordable) && gold.Amount == int.MaxValue % 150 &&
+                pack.GetReserveBullet() == largestAffordable * Store.BulletsPerPurchase && store.GetProductStock(1005) == stock,
+                "接近整数金额边界的大批量弹药按长整数结算并完整发货");
+            soul._soulCounter = 125; float attack = player.EffectiveAttack;
+            Check(store.TryPurchase(3001, 11) && store.TryPurchase(3001, 12) && soul.GetSoul() == 10 &&
+                Mathf.IsEqualApprox(player.EffectiveAttack, attack * 12.5f) && store.GetProductStock(3001) == int.MaxValue,
+                "灵魂增益可连续购买超过十份，效果累计且不消耗库存");
+            soul._soulCounter = 100;
+            Check(!store.TryPurchase(3004, 6) && soul.GetSoul() == 100 && player.CriticalChance == 0,
+                "不限库存仍拒绝超过暴击百分之百上限的整笔购买且不扣款");
+            Check(store.TryPurchase(3004, 5) && soul.GetSoul() == 75 && player.CriticalChance == 1 &&
+                !store.TryPurchase(3004, 1) && soul.GetSoul() == 75 && store.GetProductStock(3004) == int.MaxValue,
+                "暴击达到百分之百后不再收费，限制来自属性上限而非库存");
             store.SetOpen(false);
             Check(!store.TryPurchase(1005, 1), "关闭商店后不能远程购买");
         }

@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 /// <summary>实际移动速度及机关箭场景的美术/碰撞/射击方向验证。</summary>
@@ -23,6 +24,22 @@ public partial class PresentationRegression : Node
             GetTree().Root.AddChild(_game); GetTree().CurrentScene = _game;
             _game.GetNode<StaticBody2D>("background/edge").CollisionLayer = 0;
             var player = _game.GetNode<Player>("player");
+            var camera = _game.GetNode<Camera2d>("Camera2D");
+            await Frames();
+            Check(camera.Zoom.IsEqualApprox(Vector2.One * 2.4f) && camera.VisibleWorldDiameter <= 140.1f &&
+                camera.VisibleWorldDiameter < 150f, "镜头放大至2.4倍，实际可见直径140像素小于单条墓道宽度");
+            var veil = camera.GetNode<Godot.ColorRect>("TombVision/VisionVeil");
+            var vision = veil.Material as ShaderMaterial;
+            Check(vision?.Shader.ResourcePath == "res://scenes/tomb_vision.gdshader" &&
+                Mathf.IsEqualApprox(vision.GetShaderParameter("world_radius").AsSingle(), 70f) &&
+                Mathf.IsEqualApprox(vision.GetShaderParameter("pixels_per_world").AsSingle(), camera.Zoom.X) &&
+                veil.Size.IsEqualApprox(GetViewport().GetVisibleRect().Size) &&
+                veil.MouseFilter == Control.MouseFilterEnum.Ignore,
+                "实际迷雾材质按世界半径限制视野，覆盖完整画面并保留鼠标操作");
+            Vector2 screenPlayer = GetViewport().GetCanvasTransform() * player.GlobalPosition;
+            camera._Process(0);
+            Check(vision.GetShaderParameter("player_screen").AsVector2().DistanceTo(screenPlayer) < 0.1f,
+                "迷雾亮区准确追随地图边界处的玩家屏幕位置");
             player.GlobalPosition = new Vector2(10000, 10000); await Frames();
             Vector2 start = player.GlobalPosition;
             Input.ActionPress("move_right"); await Frames(60); Input.ActionRelease("move_right");
@@ -40,6 +57,24 @@ public partial class PresentationRegression : Node
             Check(trap.Activate(), "真实暗箭机关启动"); await Frames(2);
             var arrow = GetTree().GetFirstNodeInGroup("bullet") as Bullet;
             Check(arrow != null && arrow.SceneFilePath == "res://scenes/trap_arrow.tscn", "暗箭发射独立箭矢场景");
+            var lanes = new HashSet<int>();
+            float longitudinal = float.NaN;
+            int arrows = 0;
+            foreach (Node node in GetTree().GetNodesInGroup("bullet"))
+            {
+                if (node is not Bullet shot || shot.SceneFilePath != "res://scenes/trap_arrow.tscn") continue;
+                Vector2 offset = shot.GlobalPosition - trap.GlobalPosition - trap.ArrowOrigin;
+                float lane = offset.Dot(trap.ArrowDirection.Normalized().Orthogonal());
+                float travel = offset.Dot(trap.ArrowDirection.Normalized());
+                Check(Mathf.Abs(lane - Mathf.Round(lane / 32f) * 32f) < 0.1f &&
+                    (float.IsNaN(longitudinal) || Mathf.Abs(travel - longitudinal) < 0.1f) &&
+                    shot.HitsEveryone && shot.Damage == arrow.Damage && shot.Speed == 400 &&
+                    Mathf.IsEqualApprox(shot.Rotation, -Mathf.Pi / 2),
+                    "首轮每支箭保留伤害和方向，实际弹道以32像素等距平行展开");
+                longitudinal = travel; lanes.Add(Mathf.RoundToInt(lane / 32f)); arrows++;
+            }
+            Check(arrows == 3 && lanes.SetEquals(new[] { -1, 0, 1 }) && trap.SalvosFired == 1 && trap.ShotsFired == 3,
+                "首轮实际生成三支箭，覆盖左、中、右三条独立弹道");
             var sprite = arrow.GetNode<Sprite2D>("ArrowSprite");
             Check(sprite.Texture.ResourcePath == "res://bin/projectiles/trap_arrow.png" && sprite.Texture.GetWidth() > 0,
                 "暗箭使用新生成的箭矢图像");
@@ -53,7 +88,7 @@ public partial class PresentationRegression : Node
             int before = zombie.Health; arrow.ApplyDamage(zombie);
             Check(zombie.Health == Mathf.Max(0, before - arrow.Damage), "换用箭矢美术后机关仍伤害僵尸");
             await Frames(80);
-            Check(trap.ShotsFired == 10, "暗箭仍按机关配置完成十连发");
+            Check(trap.SalvosFired == 10 && trap.ShotsFired == 30, "暗箭完成十轮三条平行弹道齐射，共三十支箭");
             _game.QueueFree(); await Frames(4);
             GC.Collect(); GC.WaitForPendingFinalizers(); await Frames();
             GD.Print($"PRESENTATION RESULT: {_checks} passed, 0 failed"); GetTree().Quit(0);

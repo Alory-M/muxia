@@ -101,8 +101,14 @@ public partial class InteractionTextRegression : Node
             _dialogueLabel = FindPanel(_dialogue).GetChild<VBoxContainer>(0).GetChild<Label>(0);
             await CheckDialogue(_game.GetNode<Treasure>("Treasure2"), "text_box");
             var coffin = _game.GetNode<Coffin>("coffin");
-            await CheckDialogue(coffin, "text_coffin");
-            coffin.Interact(_player);
+            _player.GlobalPosition = coffin.GlobalPosition + new Vector2(150, 0);
+            await Frames();
+            _dialogue.OpenDialogue(coffin);
+            Check(!coffin.CanInteract && !_dialogue.IsDialogOpen && !Stop.IsPaused,
+                "封闭棺材不再显示手动开棺对话；原开棺文本分类仍完整保留");
+            _player.GlobalPosition = coffin.GlobalPosition + new Vector2(90, 0);
+            await Frames(3);
+            Check(coffin.Status == Coffin.CoffinState.Fighting, "靠近自动出棺后等待战斗结束，不使用 F 开棺");
             // 此测试只关注文案状态切换，直接模拟守卫死亡信号，不依赖战斗动画时长。
             foreach (Node child in coffin.GetChildren())
                 if (child is Zombie guardian) guardian.EmitSignal(Zombie.SignalName.Died);

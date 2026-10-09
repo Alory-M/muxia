@@ -679,6 +679,30 @@ position = Vector2(1134, 1294)
 [node name="coffin16" parent="." instance=ExtResource("71_heavy")]
 position = Vector2(1541, 1294)
 
+[node name="coffin17" parent="." instance=ExtResource("65_3x28f")]
+position = Vector2(580, 170)
+
+[node name="coffin18" parent="." instance=ExtResource("66_weeiq")]
+position = Vector2(210, 800)
+
+[node name="coffin19" parent="." instance=ExtResource("67_uxocx")]
+position = Vector2(430, 732)
+
+[node name="coffin20" parent="." instance=ExtResource("68_7nv0b")]
+position = Vector2(1260, 471)
+
+[node name="coffin21" parent="." instance=ExtResource("70_arrow")]
+position = Vector2(1470, 170)
+
+[node name="coffin22" parent="." instance=ExtResource("71_heavy")]
+position = Vector2(1950, 690)
+
+[node name="coffin23" parent="." instance=ExtResource("66_weeiq")]
+position = Vector2(1050, 170)
+
+[node name="coffin24" parent="." instance=ExtResource("67_uxocx")]
+position = Vector2(1880, 1294)
+
 [node name="bgm" type="AudioStreamPlayer" parent="." unique_id=1379898773]
 stream = ExtResource("62_bnuda")
 bus = &"Music"

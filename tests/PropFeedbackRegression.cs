@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Threading.Tasks;
 
-/// <summary>真实守卫死亡、摸棺和物理踩踏验证；视觉提示不改变道具碰撞。</summary>
+/// <summary>靠近开棺、守卫死亡后的摸棺提示、开放通行与真实机关踩踏反馈。</summary>
 public partial class PropFeedbackRegression : Node
 {
     private Node2D _game;
@@ -22,6 +22,7 @@ public partial class PropFeedbackRegression : Node
 
     private async Task CoffinFeedback()
     {
+        _player.GlobalPosition = _arena + new Vector2(170, 0);
         var coffin = GD.Load<PackedScene>("res://zombiegd/Fzombie/CoMini.tscn").Instantiate<Coffin>();
         coffin.Position = _arena; _game.AddChild(coffin);
         var open = coffin.GetNode<Sprite2D>("open");
@@ -31,21 +32,38 @@ public partial class PropFeedbackRegression : Node
         Zombie guardian = null;
         foreach (Node child in coffin.GetChildren()) if (child is Zombie zombie) guardian = zombie;
         guardian.SetPhysicsProcess(false);
-        _player.GlobalPosition = _arena + new Vector2(90, 0); await Frames();
-        Check(!coffin.LootGlowEnabled && coffin.LootGlowStrength == 0 &&
+        await Frames();
+        Check(coffin.Status == Coffin.CoffinState.Closed && !coffin.CanInteract &&
+            !coffin.LootGlowEnabled && coffin.LootGlowStrength == 0 &&
             open.Material is ShaderMaterial material && material.Shader.ResourcePath == "res://scenes/coffin_loot_glow.gdshader",
-            "封闭棺材不发光，打开精灵使用独立的柔和金色描边材质");
-        coffin.Interact(_player); await Frames();
-        Check(coffin.Status == Coffin.CoffinState.Fighting && guardian.IsActive && coffin.LootGlowStrength == 0,
-            "开棺战斗期间不提前显示摸棺提示");
+            "封闭棺材不发光、不开放F交互，打开精灵具有独立的摸棺材质");
+        coffin.Interact(_player);
+        Check(coffin.Status == Coffin.CoffinState.Closed, "F交互不会提前打开封闭棺材");
+        var wall = new StaticBody2D { Position = _arena + new Vector2(45, 0) };
+        wall.AddChild(new CollisionShape2D { Shape = new RectangleShape2D { Size = new Vector2(20, 120) } });
+        _game.AddChild(wall);
+        _player.GlobalPosition = _arena + new Vector2(90, 0); await Frames(3);
+        Check(coffin.Status == Coffin.CoffinState.Closed && !guardian.IsActive && !guardian.Visible,
+            "110像素内隔墙靠近仍保持封闭，不从另一条墓道触发守卫");
+        wall.QueueFree(); await Frames(3);
+        var solid = coffin.GetNode<StaticBody2D>("SolidBody");
+        Check(coffin.Status == Coffin.CoffinState.Fighting && guardian.IsActive &&
+            !coffin.CanInteract && coffin.LootGlowStrength == 0 && solid.CollisionLayer == 0 && shape.Disabled,
+            "靠近自动开棺并释放棺材实体，战斗期间不提前显示摸棺提示");
         guardian.take_damage(guardian.Health);
         Check(coffin.Status == Coffin.CoffinState.Unlocked && coffin.CanInteract && coffin.LootGlowEnabled &&
-            coffin.LootGlowStrength > 0.25f && coffin.LootGlowStrength < 0.5f && open.Visible,
-            "真实击杀守卫立即解锁摸棺，并点亮轻微金色提示");
+            coffin.LootGlowStrength >= 0.65f && coffin.LootGlowStrength <= 1.2f && open.Visible &&
+            ((ShaderMaterial)open.Material).GetShaderParameter("glow_color").AsColor().G > 0.9f &&
+            ((ShaderMaterial)open.Material).GetShaderParameter("glow_color").AsColor().B > 0.95f,
+            "真实击杀守卫立即解锁摸棺，并点亮清晰的青白色提示");
         float first = coffin.LootGlowStrength;
         await Delay(0.15);
-        Check(coffin.LootGlowStrength != first && coffin.LootGlowStrength < 0.5f && open.Scale == scale &&
-            shape.GlobalTransform == transform, "柔和脉动只改材质，不扩大棺材图像和碰撞体");
+        Check(coffin.LootGlowStrength != first && coffin.LootGlowStrength >= 0.65f &&
+            coffin.LootGlowStrength <= 1.2f && open.Scale == scale && shape.GlobalTransform == transform,
+            "青白色脉动只改材质，不扩大棺材图像和碰撞体");
+        var obstacle = _player.MoveAndCollide(new Vector2(-180, 0));
+        Check(obstacle == null && _player.GlobalPosition.DistanceTo(_arena + new Vector2(-90, 0)) < 0.1f,
+            "守卫死亡后玩家可真实穿过已打开的棺材");
         var pause = new Stop(); AddChild(pause); pause.SetPaused(true);
         float paused = coffin.LootGlowStrength; await Delay(0.15);
         Check(coffin.LootGlowStrength == paused, "打开模态界面冻结摸棺光效脉动");
@@ -62,10 +80,9 @@ public partial class PropFeedbackRegression : Node
         var empty = GD.Load<PackedScene>("res://zombiegd/coffin.tscn").Instantiate<Coffin>();
         empty.Position = _arena + new Vector2(400, 0); _game.AddChild(empty);
         _player.GlobalPosition = empty.Position + new Vector2(90, 0); await Frames();
-        empty.Interact(_player);
         Check(empty.Status == Coffin.CoffinState.Unlocked && empty.LootGlowEnabled && empty.LootGlowStrength > 0 &&
             empty.GetNode<Sprite2D>("open").Material != open.Material && coffin.LootGlowStrength == 0,
-            "无守卫棺材打开即可摸棺，且光效材质互不污染");
+            "靠近无守卫棺材自动打开即可摸棺，且光效材质互不污染");
         empty.Interact(_player);
         Check(empty.Status == Coffin.CoffinState.Looted && empty.LootGlowStrength == 0,
             "无守卫棺材领取掉落后也立即熄灭光效");
