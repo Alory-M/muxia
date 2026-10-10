@@ -17,9 +17,9 @@ public partial class Camera2d : Camera2D
 	[Export(PropertyHint.Range, "1,4,0.05")]
 	public float ViewZoom { get; set; } = 2.4f;
 
-    // 可见直径140世界像素，约为一条墓道宽度；放大不改变地图碰撞和行走距离。
-    [Export(PropertyHint.Range, "50,100,1")]
-    public float VisionWorldRadius { get; set; } = 70f;
+    // 扩大至直径220世界像素；放大不改变地图碰撞和行走距离。
+    [Export(PropertyHint.Range, "50,180,1")]
+    public float VisionWorldRadius { get; set; } = 110f;
     public float VisibleWorldDiameter => VisionWorldRadius * 2f;
     private ShaderMaterial _visionMaterial;
 

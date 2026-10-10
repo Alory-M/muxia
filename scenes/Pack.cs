@@ -23,7 +23,7 @@ public partial class Pack : Node
 	[Export] public int _BulletCounter = 6;
 
 	// 还没装进弹匣的备用子弹。换弹时从这里扣,不是凭空变出来的
-	[Export] public int _totalBullet = 20;
+	[Export] public int _totalBullet = 60;
 
 	[Export] public int _drugCounter = 1;
 	[Export] public int _bandageCounter = 3;

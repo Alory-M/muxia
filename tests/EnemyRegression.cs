@@ -173,6 +173,36 @@ public partial class EnemyRegression : Node
             "无安全落点时只回退本帧普通追击，不瞬移或传入玩家体内");
         trapped.QueueFree(); left.QueueFree(); right.QueueFree(); await Frames();
     }
+    private async Task BalanceRangeCases()
+    {
+        foreach (string species in new[] { "arrow", "poison" })
+        {
+            var zombie = GD.Load<PackedScene>($"res://zombiegd/{species}_zom.tscn").Instantiate<ArrowZom>();
+            zombie.Position = _arena;
+            _game.AddChild(zombie); zombie.SetPhysicsProcess(false);
+            _player.GlobalPosition = _arena + new Vector2(450, 0);
+            await Frames();
+            Check(Mathf.IsEqualApprox(zombie.FireRange, 480), $"{species}: 表格加载后的实际攻击距离为 480");
+            float before = _player.hp;
+            zombie._PhysicsProcess(1.0 / 60.0);
+            await Delay(0.8);
+            Check(_player.hp < before, $"{species}: 在原射程外的 450px 距离发射箭矢并实际命中玩家");
+            zombie.QueueFree(); await Frames();
+        }
+        var teleporter = GD.Load<PackedScene>("res://zombiegd/fast_move_zom.tscn").Instantiate<FastMoveZom>();
+        teleporter.Position = _arena;
+        _game.AddChild(teleporter); teleporter.SetPhysicsProcess(false);
+        teleporter.TeleportTriggerRange = 0;
+        _player.GlobalPosition = _arena + new Vector2(900, 0);
+        await Frames();
+        teleporter._PhysicsProcess(1.0 / 60.0);
+        Check(teleporter.Velocity.X > 0, "瞬移僵尸在扩大的 900px 领地内仍追击玩家");
+        _player.GlobalPosition = _arena + new Vector2(1100, 0);
+        teleporter.GlobalPosition = _arena + new Vector2(100, 0);
+        teleporter._PhysicsProcess(1.0 / 60.0);
+        Check(teleporter.Velocity.X < 0, "玩家离开 960px 领地后瞬移僵尸正常返回");
+        teleporter.QueueFree(); await Frames();
+    }
     private async Task AnimationCases()
     {
         var pause = new Stop(); AddChild(pause);
@@ -230,7 +260,7 @@ public partial class EnemyRegression : Node
             // 专用物理场地位于地图之外，关闭游戏的无限边界，保留场景中的真实玩家与道具。
             _game.GetNode<StaticBody2D>("background/edge").CollisionLayer = 0;
             _player.GlobalPosition = _arena; await Frames();
-            await TeleportCases(); await AnimationCases();
+            await TeleportCases(); await BalanceRangeCases(); await AnimationCases();
             _game.QueueFree(); await Frames(4);
             GD.Print($"ENEMY RESULT: {_checks} passed, 0 failed"); GetTree().Quit(0);
         }

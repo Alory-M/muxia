@@ -72,8 +72,8 @@ public partial class PlayerFeedbackRegression : Node
         float before = _player.hp;
         state.ChangeState(PlayerState.Bleed); state.ChangeState(PlayerState.Slow);
         state._Process(1);
-        Check(_player.hp == before - 20 && bleed.Playing && poison.Playing && !hurt.Playing && !_run.IsHurting,
-            "同时流血/中毒各扣血10，只播放自己的短音，不重复直接受击喊声或姿势");
+        Check(_player.hp == before - 10 && bleed.Playing && poison.Playing && !hurt.Playing && !_run.IsHurting,
+            "同时流血/中毒各扣血5，只播放自己的短音，不重复直接受击喊声或姿势");
         state.ClearState(PlayerState.Bleed);
         Check(!bleed.Playing && poison.Playing && !state.IsBleeding && state.IsPoisoned,
             "治疗流血立刻停止流血声音，保留中毒反馈");

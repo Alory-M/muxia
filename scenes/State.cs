@@ -6,11 +6,11 @@ public enum PlayerState { Normal, Bleed, Slow }
 public partial class State : Node
 {
     [Signal] public delegate void StateChangedEventHandler(int previous, int current);
-    [Export] public float BleedPerSecond { get; set; } = 10f;
+    [Export] public float BleedPerSecond { get; set; } = 5f;
     [Export] public float BleedDuration { get; set; } = 0f;
     [Export] public float SlowDuration { get; set; } = 0f;
     [Export] public int HealAmount { get; set; } = 100;
-    [Export] public float PoisonDamagePerSecond { get; set; } = 10f;
+    [Export] public float PoisonDamagePerSecond { get; set; } = 5f;
     private Player _player;
     private float _bleedTime, _poisonTime, _bleedTick, _poisonTick;
     private float _interval = 1f;

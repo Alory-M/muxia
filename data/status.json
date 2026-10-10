@@ -2,7 +2,7 @@
   {
     "ID": 1,
     "status": "status_bleed",
-    "arguments": "1,10",
+    "arguments": "1,5",
     "note": "每{}秒损失{}血量"
   },
   {

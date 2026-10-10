@@ -58,7 +58,7 @@ public partial class ZombieMotionRegression : Node
             if (zombie is ArrowZom)
             {
                 zombie.GlobalPosition -= new Vector2(100, 0);
-                _player.GlobalPosition = zombie.ReturnPosition + new Vector2(250, 0);
+                _player.GlobalPosition = zombie.ReturnPosition + new Vector2(450, 0);
             }
             zombie._PhysicsProcess(1.0 / 60.0);
             Check(Mathf.IsEqualApprox(zombie.Velocity.Length(), _player.EffectiveMoveSpeed),

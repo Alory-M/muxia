@@ -30,6 +30,8 @@ public partial class AmmoRegression : Node
             var player = _game.GetNode<Player>("player");
             var soul = player.GetNode<soulpiece>("soulpiece");
             var store = _game.GetNode<Store>("HUD/store/store");
+            Check(pack.GetCount(SupplyKind.Bullet) == 6 && pack.GetReserveBullet() == 60,
+                "实际新局初始弹药为六发弹膛和六十发后备");
             pack.SetCount(SupplyKind.Bullet, 2); pack._totalBullet = 20;
             pack.Add(SupplyKind.Bullet, 5);
             Check(pack.GetCount(SupplyKind.Bullet) == 2 && pack.GetReserveBullet() == 25, "通用获取子弹入口只增加备用弹药");

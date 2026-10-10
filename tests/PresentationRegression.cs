@@ -26,12 +26,12 @@ public partial class PresentationRegression : Node
             var player = _game.GetNode<Player>("player");
             var camera = _game.GetNode<Camera2d>("Camera2D");
             await Frames();
-            Check(camera.Zoom.IsEqualApprox(Vector2.One * 2.4f) && camera.VisibleWorldDiameter <= 140.1f &&
-                camera.VisibleWorldDiameter < 150f, "镜头放大至2.4倍，实际可见直径140像素小于单条墓道宽度");
+            Check(camera.Zoom.IsEqualApprox(Vector2.One * 2.4f) && Mathf.IsEqualApprox(camera.VisibleWorldDiameter, 220f),
+                "镜头保持2.4倍，可见光亮直径扩大至220世界像素");
             var veil = camera.GetNode<Godot.ColorRect>("TombVision/VisionVeil");
             var vision = veil.Material as ShaderMaterial;
             Check(vision?.Shader.ResourcePath == "res://scenes/tomb_vision.gdshader" &&
-                Mathf.IsEqualApprox(vision.GetShaderParameter("world_radius").AsSingle(), 70f) &&
+                Mathf.IsEqualApprox(vision.GetShaderParameter("world_radius").AsSingle(), 110f) &&
                 Mathf.IsEqualApprox(vision.GetShaderParameter("pixels_per_world").AsSingle(), camera.Zoom.X) &&
                 veil.Size.IsEqualApprox(GetViewport().GetVisibleRect().Size) &&
                 veil.MouseFilter == Control.MouseFilterEnum.Ignore,

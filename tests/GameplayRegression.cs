@@ -78,7 +78,8 @@ public partial class GameplayRegression : Node
             state.ChangeState(PlayerState.Bleed); state.ChangeState(PlayerState.Slow);
             Check(state.IsBleeding && state.IsPoisoned && _player.EffectiveMoveSpeed == 480 && _player.EffectiveAttack == 2, "中毒与流血同时存在，毒减速与降攻击正确");
             float hp = _player.hp; state._Process(1.01);
-            Check(_player.hp == hp - 20, "一秒流血和毒伤独立结算");
+            Check(state.BleedPerSecond == 5 && state.PoisonDamagePerSecond == 5 && _player.hp == hp - 10,
+                "一秒流血和中毒各扣五点，总伤害降低到十点");
             int bandages = pack.GetCount(SupplyKind.Bandage); clear.UseBandage();
             Check(!state.IsBleeding && state.IsPoisoned && pack.GetCount(SupplyKind.Bandage) == bandages - 1, "绷带只解除流血");
             clear.UseBandage();
